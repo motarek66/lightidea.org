@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LightIdea — Business is multichannel</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Manrope:wght@500;600&family=Geist:wght@400;500&family=Onest:wght@500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+<!-- Phosphor icons (same icon set used in the Figma file) -->
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+
+<!-- Motion flag: set before first paint so the hero intro doesn't flash -->
+<script>
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('motion', 'motion-pending');
+    setTimeout(() => document.documentElement.classList.remove('motion-pending'), 3000); // safety net
+  }
+</script>
+
+<!-- Lenis smooth scroll -->
+<link rel="stylesheet" href="https://unpkg.com/lenis@1.3.11/dist/lenis.css">
+
+
+<style>
+/* =====================================================================
+   RESET (replaces the Tailwind browser runtime, which is dev-only and
+   re-compiled the stylesheet on every DOM change)
+   ===================================================================== */
+*, *::before, *::after { box-sizing: border-box; border: 0 solid; margin: 0; padding: 0; }
+html { line-height: 1.5; -webkit-text-size-adjust: 100%; tab-size: 4; }
+h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+a { color: inherit; text-decoration: inherit; }
+b, strong { font-weight: 600; }
+ol, ul, menu { list-style: none; }
+img, svg, video, canvas { display: block; vertical-align: middle; }
+img, video { max-width: 100%; height: auto; }
+button, input, select, textarea { font: inherit; color: inherit; letter-spacing: inherit; background-color: transparent; border-radius: 0; }
+button { cursor: pointer; }
+textarea { resize: vertical; }
+[hidden] { display: none !important; }
+
+:root {
+  --font-inter: "Inter", sans-serif;
+  --font-manrope: "Manrope", sans-serif;
+  --font-geist: "Geist", sans-serif;
+  --font-onest: "Onest", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+/* =====================================================================
+   DESIGN TOKENS
+   One place for layout scale, spacing rhythm and type scale.
+   ===================================================================== */
+:root {
+  /* Brand colours (from the LightIdea Figma file) */
+  --c-ink: #102f46;          /* headings */
+  --c-navy: #0f2d4d;         /* headings / dark text */
+  --c-deep: #03122e;         /* darkest text, dark buttons */
+  --c-text: #4a6382;         /* body copy */
+  --c-muted: #5c708a;        /* meta text */
+  --c-orange: #ef7b00;
+  --c-brand: #f2762e;
+  --c-blue: #016ab4;
+  --c-blue-2: #0068ab;
+  --c-line: rgba(15, 45, 77, 0.12);
+  --c-surface: #f5f7fa;      /* light panel */
+  --c-surface-2: #f3f5f8;
+
+  /* Layout */
+  --content-max: 1360px;
+  --page-gutter: clamp(16px, 2.2vw, 32px);
+  --frame: clamp(8px, 1.25vw, 24px);          /* gap between rounded panels and the window edge */
+  --section-space: clamp(56px, 8vh, 96px);    /* vertical rhythm between sections */
+  --panel-pad: clamp(40px, 7vh, 80px);        /* vertical padding inside tinted / dark panels */
+  --panel-radius: clamp(16px, 1.6vw, 24px);
+  --card-radius: clamp(14px, 1.3vw, 20px);
+  --card-gap: clamp(10px, 1vw, 16px);
+  --stack-gap: clamp(28px, 4.5vh, 48px);      /* header → content */
+  --copy-max: 62ch;
+
+  /* Type scale */
+  --fs-h1: clamp(38px, min(4.4vw, 7vh), 64px);
+  --fs-h2: clamp(32px, min(4vw, 6.4vh), 58px);
+  --fs-h3: clamp(22px, min(2.2vw, 3.8vh), 34px);
+  --fs-lead: clamp(16px, 1.25vw, 19px);
+  --fs-body: clamp(15px, 1.1vw, 16.5px);
+  --fs-small: 14px;
+}
+
+/* =====================================================================
+   BASE
+   ===================================================================== */
+html { scroll-behavior: auto; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: #fff; color: var(--c-text);
+  font-family: "Inter", sans-serif; font-size: var(--fs-body); line-height: 1.6;
+  -webkit-font-smoothing: antialiased; overflow-x: clip;
+}
+[id] { scroll-margin-top: 80px; }   /* room for the sticky navbar */
+:focus-visible { outline: 2px solid var(--c-blue); outline-offset: 3px; border-radius: 6px; }
+.on-dark :focus-visible { outline-color: #fff; }
+button { cursor: pointer; }
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* =====================================================================
+   REUSABLE LAYOUT COMPONENTS
+   ===================================================================== */
+.container { width: min(100% - 2 * var(--page-gutter), var(--content-max)); margin-inline: auto; }
+.section { padding-block: calc(var(--section-space) / 2 + 8px); }
+.section + .section { padding-top: calc(var(--section-space) / 2); }
+
+/* Tinted / dark full-width panels (rounded, inset from the window edge) */
+.panel {
+  margin: calc(var(--section-space) / 2) var(--frame);
+  border-radius: var(--panel-radius);
+  padding-block: var(--panel-pad);
+  position: relative; overflow: hidden;
+}
+.panel--light { background: var(--c-surface); }
+.panel--dark  { background: #02071a; color: #fff; }
+
+/* Section header: eyebrow → heading → supporting copy */
+.section-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 48px; margin-bottom: var(--stack-gap); }
+.section-head--center { flex-direction: column; align-items: center; text-align: center; }
+.section-head__titles { display: flex; flex-direction: column; align-items: flex-start; gap: clamp(12px, 2vh, 20px); }
+.section-head--center .section-head__titles { align-items: center; }
+.section-head__copy { max-width: 34em; font-size: var(--fs-lead); line-height: 1.6; color: var(--c-text); text-wrap: pretty; margin: 0; }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 30px; padding: 4px 12px; border-radius: 99px;
+  border: 1px solid rgba(15, 45, 77, 0.18);
+  font-size: 14px; font-weight: 500; letter-spacing: 0.04em; color: var(--c-ink); line-height: 1.2;
+}
+.eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 3px; background: var(--c-orange); }
+.eyebrow--blue::before { background: #1f8fe0; }
+
+.h2 {
+  margin: 0; font-size: var(--fs-h2); font-weight: 400; line-height: 1.08;
+  letter-spacing: -0.04em; color: var(--c-ink); text-wrap: balance;
+}
+.h2--medium { font-weight: 500; letter-spacing: -0.035em; color: var(--c-navy); }
+.on-dark .h2 { color: #fff; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 0 18px; border-radius: 12px;
+  font-size: 15px; font-weight: 500; white-space: nowrap; border: 1px solid transparent;
+}
+.btn--light { background: #fff; color: #0d0d0d; }
+.btn--ghost { border-color: rgba(255,255,255,0.5); color: #fff; }
+.btn--pill { border-radius: 99px; background: #fff; color: var(--c-ink); padding-inline: 22px; }
+
+.icon-btn {
+  display: grid; place-items: center; flex: none;
+  width: clamp(44px, 3.4vw, 52px); aspect-ratio: 1; border-radius: 50%;
+  border: 1px solid #d5dde8; background: #fff; color: var(--c-deep); font-size: 18px;
+}
+.icon-btn--dark { background: var(--c-deep); border-color: var(--c-deep); color: #fff; }
+.icon-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* Shared photographic background layers (hero / solutions / values panel) */
+.bg-layers, .bg-layers > * { position: absolute; inset: 0; }
+.bg-layers { overflow: hidden; border-radius: inherit; background: radial-gradient(ellipse 120% 80% at 50% 0%, #000b21 0%, #02071a 60%, #03040e 100%); }
+.bg-layers img { width: 100%; height: 100%; max-width: none; object-fit: cover; }
+.bg-layers .lighten { mix-blend-mode: lighten; }
+.bg-layers .warm { top: auto; height: 20%; background: linear-gradient(to top, rgba(250,190,140,0.55), rgba(250,190,140,0)); }
+
+/* =====================================================================
+   1. HERO
+   ===================================================================== */
+.hero {
+  margin: var(--frame) var(--frame) 0; border-radius: var(--panel-radius);
+  position: relative; overflow: hidden; color: #fff;
+  min-height: clamp(600px, calc(100svh - 2 * var(--frame)), 980px);
+  display: flex; flex-direction: column;
+}
+.hero__glow { position: absolute; left: 57.9%; top: 29.3%; width: 30.4%; aspect-ratio: 1; }
+.hero__glow img { position: absolute; inset: -38%; width: 176%; max-width: none; }
+.hero__person { position: absolute; left: 51%; top: 12%; height: 120.4%; width: auto; max-width: none; }
+.nav { position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; height: 76px; margin-top: 16px; width: min(100% - 2 * var(--page-gutter), 1256px); margin-inline: auto; }
+.nav__logo { height: 32px; width: auto; }
+.nav__links { display: flex; gap: clamp(20px, 2vw, 32px); font-family: var(--font-manrope); font-size: 15px; font-weight: 500; list-style: none; margin: 0; padding: 0; }
+.nav__links a:hover { opacity: 0.8; }
+.nav__cta { border: 1px solid #fff; border-radius: 8px; padding: 10px 18px; font-family: var(--font-manrope); font-size: 15px; font-weight: 600; }
+.nav__menu { display: none; width: 44px; height: 44px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.4); color: #fff; font-size: 22px; place-items: center; background: transparent; }
+.hero__body { position: relative; z-index: 2; flex: 1; display: flex; align-items: center; width: min(100% - 2 * var(--page-gutter), 1256px); margin-inline: auto; padding-block: clamp(24px, 4vh, 48px) clamp(48px, 9vh, 96px); }
+.hero__copy { max-width: min(13.8 * var(--fs-h1), 72%); display: flex; flex-direction: column; align-items: flex-start; }
+.hero__badge { display: inline-flex; align-items: center; gap: 8px; min-height: 30px; padding: 5px 12px 5px 10px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.3); font-size: 13px; }
+.hero__badge b { font-family: var(--font-onest); font-weight: 500; font-size: 11px; background: var(--c-brand); border-radius: 50px; padding: 2px 6px; }
+.hero h1 { margin: clamp(12px, 2vh, 18px) 0 0; font-size: var(--fs-h1); font-weight: 400; line-height: 1.1; letter-spacing: -0.04em; color: #fafafa; text-wrap: balance; }
+.hero__lead { margin: clamp(12px, 2vh, 18px) 0 0; max-width: 38em; font-size: clamp(16px, 1.25vw, 18px); line-height: 1.45; text-wrap: pretty; }
+.hero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(20px, 3.6vh, 32px); }
+.hero__trust { display: flex; align-items: center; gap: 14px; margin-top: clamp(18px, 3vh, 28px); font-size: 13px; line-height: 1.35; }
+.hero__trust img { height: 32px; width: auto; }
+.hero__trust span { display: block; }
+.hero__trust .muted { color: rgba(255,255,255,0.7); }
+
+/* Floating industry pills — sized relative to the hero */
+.pills { position: absolute; inset: 0; z-index: 2; pointer-events: none; font-size: clamp(13px, 1.15vw, 23px); }
+.pill { position: absolute; display: inline-flex; align-items: center; gap: 0.57em; padding: 0.64em 1.14em; border-radius: 99em; white-space: nowrap; font-family: var(--font-geist); font-weight: 500; line-height: 1.25; background: rgba(255,255,255,0.16); box-shadow: inset 0 0.07em 0 rgba(255,255,255,0.55); backdrop-filter: blur(26px); -webkit-backdrop-filter: blur(26px); }
+.pill i { width: 0.57em; height: 0.57em; border-radius: 50%; }
+.pill--soft { font-weight: 400; background: rgba(255,255,255,0.12); border: 1.6px solid rgba(255,255,255,0.3); box-shadow: none; opacity: 0.85; filter: blur(0.9px); }
+
+/* =====================================================================
+   2. TRUSTED BY
+   ===================================================================== */
+.trusted { text-align: center; padding-top: clamp(28px, 4vh, 40px); }
+.trusted p { margin: 0 0 clamp(20px, 3.5vh, 36px); font-size: 13px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #181b25; line-height: 1.6; }
+.trusted p span { color: var(--c-brand); }
+.logos {
+  position: relative; overflow: hidden; margin-inline: calc(50% - 50vw); padding-block: 8px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%);
+}
+.logos__track { display: flex; width: max-content; animation: logos-marquee 40s linear infinite; }
+.logos:hover .logos__track { animation-play-state: paused; }
+.logos__group { flex: none; display: flex; align-items: center; gap: clamp(36px, 4.2vw, 72px); padding-right: clamp(36px, 4.2vw, 72px); }
+@keyframes logos-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.logos img { height: clamp(30px, 2.4vw, 42px); width: auto; }
+.logos .duo { display: flex; align-items: center; gap: 8px; }
+.logos .duo img:first-child { height: clamp(18px, 1.4vw, 25px); }
+.logos .duo img:last-child { height: clamp(16px, 1.2vw, 22px); }
+.logos .round { height: clamp(38px, 3vw, 53px); }
+@media (prefers-reduced-motion: reduce) {
+  .logos { margin-inline: 0; -webkit-mask-image: none; mask-image: none; }
+  .logos__track { width: auto; justify-content: center; }
+  .logos__group { flex-wrap: wrap; justify-content: center; padding-right: 0; row-gap: 24px; }
+  .logos__group[aria-hidden="true"] { display: none; }
+}
+
+/* =====================================================================
+   3. ABOUT
+   ===================================================================== */
+.about__panel {
+  display: grid; grid-template-columns: minmax(0, min(470px, 50vh)) minmax(0, 1fr); align-items: center;
+  gap: clamp(32px, 4.6vw, 64px);
+  background: #f2f6f9; border-radius: clamp(18px, 2vw, 30px); overflow: hidden;
+  padding: clamp(28px, 4.6vh, 56px) clamp(20px, 4.8vw, 66px);
+}
+.about-card { position: relative; container-type: inline-size; aspect-ratio: 502 / 496; }
+.about-card__bg { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: clamp(16px, 4.8cqw, 24px); }
+.about-card__head { position: absolute; left: 3.6%; top: -16.6%; width: 105.6%; height: 116.7%; border-radius: 37.7% / 34.5%; overflow: hidden; }
+.about-card__head img { position: absolute; left: -12.83%; top: 0; width: 112.91%; height: 103.35%; max-width: none; }
+.about-card__warm { position: absolute; inset: auto 0 0; height: 27%; border-radius: inherit; border-radius: 0 0 clamp(16px, 4.8cqw, 24px) clamp(16px, 4.8cqw, 24px); background: linear-gradient(to top, rgba(250,190,140,0.55), rgba(250,190,140,0)); }
+.about-card__shade { position: absolute; inset: auto 0 0; height: 44.8%; border-radius: 0 0 clamp(16px, 4.8cqw, 24px) clamp(16px, 4.8cqw, 24px); background: linear-gradient(to top, rgba(2,10,28,0.92) 0%, rgba(2,10,28,0.6) 55%, rgba(2,10,28,0) 100%); }
+.about-card__stats { position: absolute; left: calc(50% + 1.6cqw); bottom: 7cqw; transform: translateX(-50%); width: 87.25cqw; display: flex; align-items: flex-end; justify-content: space-between; color: #fff; font-weight: 500; }
+.about-card__big { display: block; font-size: 22.3cqw; line-height: 0.85; letter-spacing: -0.065em; }
+.about-card__label { display: block; margin-top: 1.2cqw; font-size: max(12px, 3.39cqw); }
+.about-card__rule { width: 35.9cqw; height: 1px; background: rgba(255,255,255,0.35); margin: 4cqw 0; }
+.about-card__small { display: flex; align-items: baseline; gap: 2.6cqw; }
+.about-card__small b { font-size: 7.97cqw; line-height: 1; letter-spacing: -0.045em; font-weight: 500; }
+.about-card__small span { white-space: nowrap; font-size: max(11px, 2.99cqw); color: #d6e6f6; }
+.about-card__partner { display: flex; flex-direction: column; align-items: flex-end; gap: 1.3cqw; padding: 2.25cqw 3.86cqw; border-radius: 2.57cqw; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); }
+.about-card__partner span { font-size: max(8px, 1.77cqw); font-weight: 600; letter-spacing: 0.12em; }
+.about-card__partner img { width: 19.85cqw; height: auto; }
+.about__copy { display: flex; flex-direction: column; align-items: flex-start; gap: clamp(14px, 2.2vh, 18px); }
+.about__copy h3 { margin: 0; font-size: var(--fs-h3); font-weight: 500; line-height: 1.15; letter-spacing: -0.03em; color: var(--c-ink); }
+.about__copy .prose { display: flex; flex-direction: column; gap: 10px; font-size: clamp(15px, 1.05vw, 16px); max-width: var(--copy-max); color: #50687e; line-height: 1.55; text-wrap: pretty; }
+.about__copy .prose p { margin: 0; }
+.about__copy .prose strong { font-weight: 500; color: var(--c-ink); }
+
+/* =====================================================================
+   4. VALUES (Mission, Vision & Values)
+   ===================================================================== */
+.values__nav { display: flex; align-items: center; gap: 14px; }
+.values__count { font-family: var(--font-mono); font-size: 14px; color: var(--c-muted); min-width: 4.6em; text-align: right; }
+.values { overflow: visible; padding-block: 0; }         /* visible: the stage grows past the panel edges to full screen */
+.values__scroller { height: calc(100svh + 80svh + (var(--n) - 1) * 75svh); }   /* expand distance + card deck distance */
+.values__sticky { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; padding-block: clamp(32px, 6vh, 72px); }
+.values__sticky > .container { flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; z-index: 1; }
+.values__sticky > .container .section-head { will-change: transform, opacity; }
+.values__slot { flex: 1; min-height: 0; }
+.values__stage {
+  position: absolute; top: 0; bottom: 0; left: calc(-1 * var(--frame)); right: calc(-1 * var(--frame)); z-index: 2;
+  overflow: hidden; background: var(--c-navy); container-type: size;
+  clip-path: inset(var(--ins-t, 0px) var(--ins-r, 0px) var(--ins-b, 0px) var(--ins-l, 0px) round var(--ins-rad, 24px));
+}
+.values__deck { position: absolute; inset: 0; transform: translate(var(--dx, 0px), var(--dy, 0px)); }
+.values__deck .value-card::after {          /* cards underneath the stack get slightly darker */
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: rgba(15, 45, 77, var(--shade, 0));
+}
+.values__deck .value-card {
+  position: absolute; left: 50%; top: 50%;
+  width: min(968px, 86cqw, calc((var(--slot-h, 100cqh) - 72px) * 2));   /* sized to the resting slot, so it never jumps */
+  transform: translate(-50%, -50%) translateY(var(--y, 0px)) scale(var(--s, 1));
+  transform-origin: 50% 0%;               /* covered cards shrink toward their top edge, so they peek out above */
+  will-change: transform;
+}
+.value-card {
+  container-type: inline-size; width: min(968px, 100%, calc((100svh - 430px) * 2));
+  display: grid; grid-template-columns: 38fr 51.3fr; gap: 3.57cqw; padding: 3.57cqw;
+  background: #fff; border-radius: max(16px, 2.68cqw);
+  filter: drop-shadow(0 -17px 22px rgba(0,0,0,0.16));
+}
+.value-card__text { display: flex; flex-direction: column; gap: 1.8cqw; min-width: 0; }
+.value-card__top { display: flex; align-items: center; justify-content: space-between; }
+.value-card__icon { display: grid; place-items: center; width: max(36px, 4.3cqw); aspect-ratio: 1; border-radius: 30%; background: rgba(1,106,180,0.1); color: var(--c-blue); font-size: max(18px, 1.96cqw); }
+.value-card__num { font-size: 12px; color: var(--c-muted); }
+.value-card h3 { margin: auto 0 0; font-size: clamp(28px, 4.64cqw, 45px); font-weight: 500; line-height: 1.08; letter-spacing: -0.035em; color: var(--c-navy); }
+.value-card p { margin: 0; font-size: clamp(15px, 1.7cqw, 16.5px); line-height: 1.6; color: var(--c-text); text-wrap: pretty; }
+.value-card__art { display: grid; place-items: center; aspect-ratio: 497 / 415; border-radius: max(14px, 1.96cqw); background: #eaf2fb; overflow: hidden; }
+.value-card__art img { width: 63%; height: auto; }
+
+/* =====================================================================
+   5. APPROACH
+   ===================================================================== */
+.approach { display: flex; flex-direction: column; gap: var(--card-gap); }
+.approach__row { display: flex; gap: var(--card-gap); container-type: inline-size; }
+.ap-card {
+  position: relative; text-align: left; font: inherit; color: inherit; cursor: pointer;
+  height: clamp(280px, 36vh, 310px); border-radius: var(--card-radius); overflow: hidden;
+  background: var(--c-surface-2); border: 1px solid var(--c-surface-2); padding: 0;
+  flex: 1 1 0; min-width: 0;
+  transition: flex-grow 0.75s var(--ease-out), background-color 0.5s var(--ease-out), border-color 0.5s var(--ease-out), box-shadow 0.6s var(--ease-out);
+}
+.ap-card[aria-expanded="true"] { flex-grow: 2.2; background: #fff; border-color: #e3e8ef; box-shadow: 0 30px 60px -30px rgba(3,18,46,0.3); cursor: default; }
+.ap-card__fan { position: absolute; left: 50%; top: 50%; width: 561px; height: 316px; max-width: none; transform: translate(-50%, -50%); object-fit: cover; opacity: 0.3; pointer-events: none; transition: opacity 0.4s var(--ease-out); }
+.ap-card__num { position: absolute; left: 24px; top: 22px; font-size: clamp(44px, 4.2vw, 60px); font-weight: 500; line-height: 1; letter-spacing: -0.05em; color: #d3dae3; transition: opacity 0.35s var(--ease-out), transform 0.6s var(--ease-out); }
+.ap-card__title { position: absolute; left: 24px; right: 24px; bottom: 22px; font-size: clamp(17px, 1.4vw, 20px); font-weight: 500; line-height: 1.25; letter-spacing: -0.02em; color: var(--c-deep); text-wrap: balance; transition: opacity 0.35s var(--ease-out), transform 0.6s var(--ease-out); }
+.ap-card[aria-expanded="true"] .ap-card__fan { opacity: 0; }
+.ap-card[aria-expanded="true"] .ap-card__num { opacity: 0; transform: translateY(-10px); }
+.ap-card[aria-expanded="true"] .ap-card__title { opacity: 0; transform: translateY(10px); }
+/* the open layout has a fixed width (its final size), so it never re-wraps while the card grows */
+.ap-card__body {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: calc((100cqw - 2 * var(--card-gap)) * 2.2 / 4.2);
+  display: grid; grid-template-columns: 49.5fr 50.5fr; gap: 8px; padding: 10px;
+  opacity: 0; visibility: hidden; transition: opacity 0.25s var(--ease-out), visibility 0s linear 0.25s;
+}
+.ap-card[aria-expanded="true"] .ap-card__body { opacity: 1; visibility: visible; transition: opacity 0.55s var(--ease-out) 0.2s, visibility 0s; }
+.ap-card__body .ap-card__img { transform: scale(1.06); transition: transform 0.9s var(--ease-out); }
+.ap-card__body .ap-card__text { transform: translateX(18px); transition: transform 0.8s var(--ease-out) 0.1s; }
+.ap-card[aria-expanded="true"] .ap-card__img, .ap-card[aria-expanded="true"] .ap-card__text { transform: none; }
+.ap-card__img { width: 100%; height: 100%; min-height: 220px; object-fit: cover; border-radius: 14px; }
+.ap-card__text { display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding: 16px 16px 14px 14px; }
+.ap-card__text small { font-size: 13px; color: #1f6fc4; }
+.ap-card__text small { display: block; }
+.ap-card__h { display: block; margin: 0; font-size: clamp(22px, 1.9vw, 28px); font-weight: 500; line-height: 1.12; letter-spacing: -0.03em; color: var(--c-deep); text-wrap: balance; }
+.ap-card__p { display: block; margin: 0; font-size: 14.5px; line-height: 1.6; color: #4a5a70; text-wrap: pretty; }
+
+/* =====================================================================
+   6. SOLUTIONS
+   ===================================================================== */
+.solutions .bg-layers .glow { inset: auto; left: 57.5%; top: 56%; width: 27%; aspect-ratio: 1; margin-top: -13.5%; }
+.solutions .bg-layers .glow img { position: absolute; inset: -38%; width: 176%; height: auto; }
+.solutions .bg-layers .tint { background: rgba(11,11,30,0.22); }
+.solutions .container { position: relative; }
+.solutions .h2 { max-width: 9.5em; }
+.solutions .section-head__copy { color: #e3eef7; max-width: 28em; }
+.sol-grid { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); gap: clamp(12px, 1.5vw, 20px); }
+.sol-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: clamp(140px, 19vh, 194px); gap: clamp(8px, 0.9vw, 12px); }
+.tile {
+  display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
+  padding: clamp(16px, 1.7vw, 24px); border: 0; border-radius: 16px; color: #fff; text-align: left; font: inherit; cursor: pointer;
+  background: rgba(60,76,98,0.58); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  transition: background-color 0.45s var(--ease-out), color 0.45s var(--ease-out), box-shadow 0.55s var(--ease-out), transform 0.55s var(--ease-out);
+}
+.tile:hover { background: rgba(70,88,112,0.68); }
+.tile__top { display: flex; width: 100%; justify-content: space-between; align-items: flex-start; }
+.tile__top > i:first-child { font-size: clamp(26px, 2.4vw, 34px); line-height: 1; transition: color 0.45s var(--ease-out); }
+.tile__name { font-size: clamp(15px, 1.2vw, 18px); font-weight: 500; line-height: 1.35; letter-spacing: -0.01em; text-wrap: pretty; max-width: 15em; }
+.tile__go {
+  display: grid; place-items: center; width: clamp(40px, 3.4vw, 49px); aspect-ratio: 1; border-radius: 50%;
+  background: var(--c-blue-2); color: #fff; font-size: 18px; line-height: 1;
+  opacity: 0; transform: scale(0.6) rotate(-45deg); transition: opacity 0.35s var(--ease-out), transform 0.55s var(--ease-out);
+}
+.tile.is-active { background: #fff; color: #102f46; transform: translateY(-3px); box-shadow: 0 24px 48px -14px rgba(0,8,22,0.6); }
+.tile.is-active .tile__top > i:first-child { color: var(--c-blue-2); }
+.tile.is-active .tile__go { opacity: 1; transform: none; }
+.tile--more { background: rgba(4,14,30,0.3); align-items: stretch; }
+.tile--more .tile__name { font-size: clamp(16px, 1.3vw, 19.4px); }
+.tile--more .tile__go { opacity: 1; transform: none; align-self: flex-end; background: #fff; color: var(--c-blue-2); }
+.tile--more[aria-expanded="true"] .tile__go { transform: rotate(-90deg); }
+.sol-detail__body { display: flex; flex-direction: column; gap: clamp(14px, 2.2vh, 20px); }
+.sol-detail {
+  display: flex; flex-direction: column; gap: clamp(14px, 2.2vh, 20px); padding: clamp(24px, 2.6vw, 37px);
+  border-radius: 16px; background: rgba(4,14,30,0.5); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+}
+.sol-detail__icon { display: grid; place-items: center; width: clamp(52px, 4.6vw, 65px); aspect-ratio: 1; border-radius: 16px; background: #fff; color: var(--c-blue-2); font-size: clamp(28px, 2.4vw, 34px); }
+.sol-detail h3 { margin: 6px 0 0; font-size: clamp(24px, 2.1vw, 30.5px); font-weight: 500; line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance; }
+.sol-detail p { margin: 0; font-size: clamp(16px, 1.25vw, 18px); line-height: 1.6; color: #e3eef7; text-wrap: pretty; }
+.sol-detail__foot { margin-top: auto; display: flex; align-items: center; gap: 12px; font-size: 15px; color: #e3eef7; }
+.sol-detail__foot::before { content: ""; width: 32px; height: 2px; background: var(--c-orange); }
+
+/* =====================================================================
+   7. INSIGHTS
+   ===================================================================== */
+.blog__track {
+  display: flex; gap: clamp(14px, 1.5vw, 20px); overflow-x: auto; overscroll-behavior-x: contain;
+  margin-inline-end: calc(50% - 50vw); padding-inline-end: var(--page-gutter); padding-bottom: 4px;
+}
+.post { flex: 0 0 clamp(272px, 31vw, 440px); display: flex; flex-direction: column; gap: clamp(10px, 1.6vh, 16px); }
+.post__media { position: relative; aspect-ratio: 440 / 275; border-radius: 18px; overflow: hidden; background: #020a1c; }
+.post__media img { position: absolute; max-width: none; }
+.post__media .bgimg { top: 0; height: 100%; width: 111.94%; }
+.post__media .photo { left: 50%; top: 50%; object-fit: cover; }
+.post__tag { position: absolute; left: 14px; top: 14px; z-index: 1; padding: 5px 10px; border-radius: 99px; background: var(--c-deep); color: #fff; font-size: 12px; font-weight: 600; line-height: 1.2; }
+.post h3 { margin: 4px 0 0; font-size: clamp(19px, 1.6vw, 23px); font-weight: 500; line-height: 1.3; letter-spacing: -0.025em; color: var(--c-deep); text-wrap: pretty; }
+.post p { margin: 0; color: #4a5a70; line-height: 1.55; text-wrap: pretty; }
+.post time { font-size: 14px; color: #6b7a90; }
+.blog__progress { height: 3px; margin-top: var(--stack-gap); border-radius: 3px; background: #e3e8ef; overflow: hidden; }
+.blog__progress div { height: 100%; width: 50%; background: var(--c-deep); }
+
+/* =====================================================================
+   8. FAQ
+   ===================================================================== */
+.faq { display: grid; grid-template-columns: minmax(0, 520px) minmax(0, 600px); justify-content: space-between; gap: var(--stack-gap) clamp(32px, 5vw, 96px); align-items: start; }
+.faq .h2 { margin-bottom: 18px; }
+.faq__intro p { margin: 0; max-width: 28em; font-size: var(--fs-lead); line-height: 1.6; }
+.faq__list { display: flex; flex-direction: column; gap: 10px; }
+.faq-item { border-radius: 18px; border: 1px solid rgba(15,45,77,0.16); background: #fff; overflow: hidden; }
+.faq-item.is-open { border-color: rgba(15,45,77,0.1); background: radial-gradient(ellipse 95% 75% at 50% 125%, #4d9bd6 0%, #145290 38%, #06204a 62%, #030a1c 88%); }
+.faq-q { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 20px; padding: clamp(18px, 2.4vh, 22px) clamp(18px, 1.7vw, 24px); background: none; border: 0; text-align: left; font: inherit; }
+.faq-q span:first-child { font-size: clamp(17px, 1.4vw, 20px); font-weight: 500; line-height: 1.35; letter-spacing: -0.02em; color: var(--c-navy); }
+.faq-q .faq-icon { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(15,45,77,0.1); color: var(--c-navy); font-size: 16px; }
+.is-open .faq-q span:first-child { color: #fff; }
+.is-open .faq-q .faq-icon { background: #fff; color: var(--c-deep); transform: rotate(45deg); }
+.faq-a { padding: 0 clamp(18px, 1.7vw, 24px) clamp(18px, 2.4vh, 24px); }
+.faq-a p { margin: 0; max-width: 34em; font-size: clamp(15px, 1.2vw, 17px); line-height: 1.6; color: #e1e4ea; }
+
+/* =====================================================================
+   9. CONTACT
+   ===================================================================== */
+.contact__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); gap: 16px; }
+.office { position: relative; min-height: clamp(380px, 56vh, 527px); border-radius: 24px; overflow: hidden; background: #02071a; color: #fff; }
+.office > img.bg { position: absolute; left: 50%; bottom: -25%; width: 214%; height: 129%; max-width: none; transform: translateX(-50%); object-fit: cover; }
+.office__logo { position: absolute; left: clamp(20px, 2.6vw, 36px); top: clamp(20px, 2.6vw, 36px); height: 24px; width: auto; }
+.office__card { position: absolute; left: 16px; right: 16px; bottom: 16px; display: flex; flex-direction: column; gap: 10px; padding: clamp(18px, 1.8vw, 24px); border-radius: 18px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.35); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.office__card small { font-size: 12px; letter-spacing: 0.08em; }
+.office__card strong { font-size: clamp(18px, 1.55vw, 22px); font-weight: 600; line-height: 1.4; letter-spacing: -0.02em; }
+.office__card div { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 15px; font-weight: 500; }
+.form { background: #fff; border-radius: 24px; padding: clamp(20px, 2.6vw, 36px); display: flex; flex-direction: column; gap: 16px; }
+.form__title { margin: 0 0 4px; font-size: clamp(19px, 1.55vw, 22px); font-weight: 500; line-height: 1.35; letter-spacing: -0.02em; color: var(--c-navy); }
+.form__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 500; color: var(--c-navy); }
+.field input, .field textarea { width: 100%; border: 1px solid transparent; outline: none; border-radius: 12px; background: var(--c-surface); padding: 0 16px; font: 400 15px/1.5 "Inter", sans-serif; color: var(--c-navy); }
+.field input { height: 50px; }
+.field textarea { height: clamp(100px, 14vh, 126px); padding-block: 12px; resize: vertical; }
+.field input:focus, .field textarea:focus { border-color: var(--c-blue); background: #fff; }
+.form__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.check { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: #000; cursor: pointer; }
+.check input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.check .box { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; border: 1px solid #e1e4ea; background: var(--c-surface); color: transparent; font-size: 13px; }
+.check input:checked + .box { background: #094e87; border-color: #094e87; color: #fff; }
+.check input:focus-visible + .box { outline: 2px solid var(--c-blue); outline-offset: 2px; }
+.submit { display: inline-flex; align-items: center; gap: 12px; height: 50px; padding: 0 6px 0 24px; border-radius: 99px; border: 0; background: #094e87; color: #fff; font: 600 17px "Inter", sans-serif; }
+.submit span { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #fff; color: #094e87; font-size: 16px; }
+
+/* =====================================================================
+   10. FOOTER
+   ===================================================================== */
+.footer { margin: calc(var(--section-space) / 2) var(--frame) var(--frame); border-radius: var(--panel-radius); position: relative; overflow: hidden; background: #020a1c; color: #e6eef8; padding: clamp(56px, 10vh, 97px) 0 clamp(32px, 5vh, 52px); }
+.footer > img.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; max-width: none; }
+.footer .container { position: relative; }
+.footer__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px; }
+.footer__grid h4 { margin: 0 0 4px; font-size: 13px; font-weight: 400; letter-spacing: 0.1em; color: #7fd0ff; }
+.footer__col { display: flex; flex-direction: column; gap: 14px; font-size: 16px; line-height: 1.4; }
+.footer__col a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.footer__about img { align-self: flex-start; }
+.footer__about p { margin: 0; max-width: 20em; font-size: clamp(15px, 1.2vw, 17px); line-height: 1.6; color: #c3cfdf; }
+.footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; margin-top: clamp(40px, 7vh, 64px); padding-top: 22px; border-top: 1px solid rgba(140,200,255,0.14); font-size: 15px; }
+.footer__bottom nav { display: flex; gap: 24px; color: #a9b8cc; }
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media (max-width: 1199px) {
+  .nav__links { display: none; }
+  .nav__menu { display: grid; }
+  .nav__right { display: flex; align-items: center; gap: 12px; }
+}
+@media (max-width: 1099px) {
+  .approach__row { display: contents; }
+  .approach { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ap-card, .ap-card[aria-expanded="true"] {
+    height: auto; display: flex; flex-direction: column; cursor: default; padding: 10px; gap: 4px;
+    background: #fff; border-color: #e3e8ef; box-shadow: 0 30px 60px -30px rgba(3,18,46,0.2);
+  }
+  .ap-card .ap-card__fan, .ap-card .ap-card__num, .ap-card .ap-card__title { display: none; }
+  .ap-card .ap-card__body, .ap-card[aria-expanded="true"] .ap-card__body { position: static; width: auto; display: contents; opacity: 1; visibility: visible; }
+  .ap-card .ap-card__img { transform: none; height: auto; min-height: 0; aspect-ratio: 343 / 290; }
+  .ap-card .ap-card__text { transform: none; justify-content: flex-start; padding: 14px 10px 10px; }
+
+  .sol-grid { grid-template-columns: 1fr; }
+  .contact__grid { grid-template-columns: 1fr; }
+  .office { min-height: 380px; }
+  .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 899px) {
+  .hero { min-height: 0; }
+  .nav { order: 0; } .hero__body { order: 1; } .hero__visual { order: 2; }
+  .hero .bg-layers::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(2,7,26,0.82) 0%, rgba(2,7,26,0.7) 40%, rgba(2,7,26,0) 68%); }
+  .hero__body { padding-bottom: 0; flex: none; }
+  .hero__copy { max-width: 100%; }
+  .hero__visual { position: relative; height: clamp(320px, 72vw, 520px); margin-top: 24px; }
+  .hero__person { left: 50%; top: 0; height: 100%; transform: translateX(-50%); }
+  .hero__glow { left: 50%; top: 10%; width: 70%; transform: translateX(-50%); }
+  .pills { display: none; }
+  .about__panel { grid-template-columns: 1fr; padding-top: clamp(64px, 14vw, 96px); }
+  .about-card { width: min(100%, 460px); margin-inline: auto; }
+  .faq { grid-template-columns: 1fr; }
+}
+@media (min-width: 900px) {
+  .hero__visual { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+}
+@media (max-width: 767px) {
+  .section-head { margin-bottom: 28px; }
+  .value-card { grid-template-columns: 1fr; gap: 20px; padding: 20px; width: 100%; }
+  .value-card h3 { margin-top: 28px; }
+  .value-card__art { aspect-ratio: 16 / 11; }
+  .value-card__art img { width: 55%; }
+  .approach { grid-template-columns: 1fr; }
+  .sol-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: minmax(132px, auto); }
+  .form__grid { grid-template-columns: 1fr; }
+  .footer__grid { grid-template-columns: 1fr; gap: 32px; }
+  .footer > img.bg { height: 175%; }   /* tall footer: keep only the dark-to-blue part of the image */
+  .nav__cta { display: none; }
+}
+/* =====================================================================
+   MOBILE SIDE MENU — the page shrinks into a card on the left and the
+   anchor links sit on a dark background to its right.
+   ===================================================================== */
+.app { background: #fff; }
+.side-menu { display: none; }
+html.menu-open, html.menu-open body, html.menu-closing, html.menu-closing body { background: #03070f; overflow: hidden; }
+.app { transition: transform 0.65s var(--ease-out), border-radius 0.65s var(--ease-out); }
+html.menu-open .app {
+  transform: translateX(calc(-100vw + 20vw)) scale(0.85);
+  border-radius: 32px; pointer-events: none; user-select: none;
+}
+html.menu-open .side-menu { display: flex; }
+.side-menu {
+  position: fixed; inset: 0; z-index: 100;
+  align-items: center; padding: 0 24px 0 calc(20vw + 40px);
+}
+.side-menu__close { position: absolute; left: 0; top: 0; bottom: 0; width: calc(20vw + 16px); background: transparent; border: 0; }
+.side-menu ul { list-style: none; margin: 0; padding: 0; width: 100%; max-width: 340px; display: flex; flex-direction: column; }
+.side-menu a {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  min-height: 56px; font-size: clamp(22px, 6.4vw, 30px); font-weight: 300; letter-spacing: 0.01em; line-height: 1.2; color: #fff;
+}
+.side-menu a::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: transparent; }
+.side-menu a[aria-current="true"]::after { background: var(--c-brand); }
+.side-menu a:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+@media (min-width: 1200px) { .side-menu { display: none !important; } }
+
+/* =====================================================================
+   STICKY NAVBAR — hidden while scrolling down, shown as soon as the
+   visitor scrolls up (only after the hero, which has its own nav).
+   ===================================================================== */
+.sticky-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 90;
+  background: #fff; border-bottom: 1px solid #e9ecef;
+  transform: translateY(-100%); visibility: hidden;
+}
+.sticky-nav { transition: transform var(--motion-fast) var(--ease-out), visibility 0s linear var(--motion-fast); }
+.sticky-nav.is-visible { transform: none; visibility: visible; transition: transform 0.45s var(--ease-out), visibility 0s; }
+html.menu-open .sticky-nav, html.menu-closing .sticky-nav { display: none; }
+.sticky-nav__inner { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 24px; width: min(100% - 2 * var(--page-gutter), 1256px); margin-inline: auto; }
+.sticky-nav__logo { display: block; flex: none; }
+.sticky-nav__logo img { display: block; height: 28px; width: auto; }   /* your colored logo (assets/logo-color.svg) */
+.sticky-nav__links { display: flex; gap: clamp(20px, 2.4vw, 32px); list-style: none; margin: 0; padding: 0; font-family: var(--font-manrope); font-size: 15px; font-weight: 600; color: #0f1115; }
+.sticky-nav__links a:hover { color: var(--c-blue); }
+/* same button as the hero navbar's Contact US (outlined, 8px corners), in dark for the white bar */
+.sticky-nav__cta { flex: none; display: inline-flex; align-items: center; border: 1px solid #0f1115; border-radius: 8px; padding: 10px 18px; font-family: var(--font-manrope); font-size: 15px; font-weight: 600; line-height: normal; color: #0f1115; transition: background-color var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out); }
+.sticky-nav__cta:hover { background: #0f1115; color: #fff; }
+.sticky-nav__menu { display: none; place-items: center; width: 44px; height: 44px; border-radius: 10px; border: 1px solid #e3e8ef; background: #fff; color: #0f1115; font-size: 22px; }
+.sticky-nav__right { display: flex; align-items: center; gap: 10px; }
+@media (max-width: 1199px) {
+  .sticky-nav__links { display: none; }
+  .sticky-nav__menu { display: grid; }
+}
+@media (max-width: 767px) { .sticky-nav__cta { display: none; } .sticky-nav__inner { height: 60px; } }
+
+/* Card deck falls back to a simple stacked list on phones and for reduced motion */
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  .values { padding-block: var(--panel-pad); }
+  .values__scroller { height: auto; }
+  .values__sticky { position: static; height: auto; padding: 0; }
+  .values__slot { display: none; }
+  .values__stage { position: relative; left: auto; right: auto; top: auto; bottom: auto; z-index: auto; container-type: normal; clip-path: none; border-radius: var(--panel-radius); margin-inline: var(--page-gutter); }
+  .values__deck { transform: none; }
+  .values__deck { position: static; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: clamp(14px, 4vw, 48px); }
+  .values__deck .value-card { position: relative; left: auto; top: auto; transform: none; width: min(968px, 100%); will-change: auto; }
+  .values__nav { display: none; }
+}
+
+/* =====================================================================
+   MOTION SYSTEM (GSAP + ScrollTrigger + SplitText + Lenis)
+   Tokens shared by CSS transitions; the JS uses the same values.
+   ===================================================================== */
+:root {
+  --motion-fast: 0.35s;
+  --motion-medium: 0.7s;
+  --motion-slow: 1s;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);      /* ≈ power3.out */
+  --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
+}
+html.motion-pending .hero { visibility: hidden; }  /* hidden only until the intro timeline is built */
+.split-word { will-change: transform, opacity, filter; }
+@media (min-width: 900px) { .faq__intro { position: sticky; top: 100px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<!-- ============================== STICKY NAVBAR (appears on scroll up) ============================== -->
+<header class="sticky-nav" id="sticky-nav" aria-label="Sticky navigation">
+  <div class="sticky-nav__inner">
+    <a href="#" class="sticky-nav__logo"><img src="assets/logo-color.svg" alt="LightIdea" width="182" height="32"></a>
+    <ul class="sticky-nav__links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#solutions">Services</a></li>
+      <li><a href="#solutions">Solutions</a></li>
+      <li><a href="#insights">Insights &amp; Blog</a></li>
+      <li><a href="#about">About us</a></li>
+      <li><a href="#faq">More</a></li>
+    </ul>
+    <div class="sticky-nav__right">
+      <a href="#contact" class="sticky-nav__cta">Contact US</a>
+      <button class="sticky-nav__menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="side-menu"><i class="ph ph-list"></i></button>
+    </div>
+  </div>
+</header>
+
+<div class="app" id="app">
+
+<!-- ============================== 1. HERO ============================== -->
+<header class="hero on-dark">
+  <div class="bg-layers" aria-hidden="true">
+    <img src="assets/hero-bg3.jpg" alt="" style="object-position: bottom">
+    <img src="assets/hero-bg4.jpg" alt="" class="lighten">
+    <div class="warm"></div>
+  </div>
+
+  <div class="hero__visual" aria-hidden="true">
+    <div class="hero__glow"><img src="assets/hero-glow.svg" alt=""></div>
+    <img src="assets/hero-man.png" alt="" class="hero__person">
+  </div>
+
+  <nav class="nav" aria-label="Main">
+    <a href="#"><img src="assets/logo-white.svg" alt="LightIdea" class="nav__logo"></a>
+    <ul class="nav__links" id="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#solutions">Services</a></li>
+      <li><a href="#solutions">Solutions</a></li>
+      <li><a href="#insights">Insights &amp; Blog</a></li>
+      <li><a href="#about">About us</a></li>
+      <li><a href="#faq">More</a></li>
+    </ul>
+    <div class="nav__right">
+      <a href="#contact" class="nav__cta">Contact US</a>
+      <button class="nav__menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="side-menu"><i class="ph ph-list"></i></button>
+    </div>
+  </nav>
+
+  <div class="hero__body">
+    <div class="hero__copy">
+      <a href="#" class="hero__badge"><b>NEW</b> UAE E-Invoicing with Sanade Book a demo now <i class="ph-bold ph-arrow-right" style="font-size:12px"></i></a>
+      <h1>Business is multichannel and business software should be too</h1>
+      <p class="hero__lead">Transform your business with a cloud-based business management platform that enables streamlining operations and increases efficiency</p>
+      <div class="hero__actions">
+        <a href="#contact" class="btn btn--light">Start Your Transformation</a>
+        <a href="#solutions" class="btn btn--ghost">Explore Services</a>
+      </div>
+      <div class="hero__trust">
+        <img src="assets/flags.png" alt="Flags of UAE, Egypt, KSA, Oman and India">
+        <div><span style="font-weight:500">UAE · EGYPT · KSA · OMAN · INDIA</span><span class="muted">Trusted in</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pills" aria-hidden="true">
+    <span class="pill" style="left:53.4%; top:73.6%; transform: rotate(-8deg)"><i style="background:#ff8a3d"></i>Real Estate</span>
+    <span class="pill pill--soft" style="left:55.5%; top:84%; transform: rotate(5deg)">Healthcare</span>
+    <span class="pill" style="left:80.4%; top:63.5%; transform: rotate(9deg); font-size:0.9em"><i style="background:#5ee0ff"></i>Manufacturing</span>
+    <span class="pill" style="left:84.3%; top:72.6%; transform: rotate(-6deg); font-size:0.9em"><i style="background:#3ddc97"></i>Insurance</span>
+    <span class="pill pill--soft" style="left:81.3%; top:80.5%; transform: rotate(4deg); font-size:0.84em">Energy &amp; Utilities</span>
+  </div>
+</header>
+
+<main>
+  <!-- ============================== 2. TRUSTED BY ============================== -->
+  <section class="trusted container" aria-label="Clients">
+    <p>Trusted by finance teams at <span>companies</span> and <span>institutions</span> across the UAE</p>
+    <div class="logos">
+      <div class="logos__track">
+       <div class="logos__group">
+        <img src="assets/client-1.svg" alt="Prograte Printing &amp; Packing">
+        <span class="duo"><img src="assets/client-2a.svg" alt=""><img src="assets/client-2b.svg" alt="Trio"></span>
+        <img src="assets/client-3.svg" alt="Quarter Accounting">
+        <img src="assets/client-4.svg" alt="Prograte Printing &amp; Packing">
+        <img src="assets/client-5.svg" alt="GCDS">
+        <img src="assets/client-6.svg" alt="Al-Fairouz">
+        <img src="assets/client-7.svg" alt="Client seal" class="round">
+        <img src="assets/client-8.svg" alt="Al-Fairouz">
+       </div>
+       <div class="logos__group" aria-hidden="true">
+        <img src="assets/client-1.svg" alt="" data-alt="Prograte Printing &amp; Packing">
+        <span class="duo"><img src="assets/client-2a.svg" alt="" data-alt=""><img src="assets/client-2b.svg" alt="" data-alt="Trio"></span>
+        <img src="assets/client-3.svg" alt="" data-alt="Quarter Accounting">
+        <img src="assets/client-4.svg" alt="" data-alt="Prograte Printing &amp; Packing">
+        <img src="assets/client-5.svg" alt="" data-alt="GCDS">
+        <img src="assets/client-6.svg" alt="" data-alt="Al-Fairouz">
+        <img src="assets/client-7.svg" alt="" data-alt="Client seal" class="round">
+        <img src="assets/client-8.svg" alt="" data-alt="Al-Fairouz">
+       </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== 3. ABOUT ============================== -->
+  <section id="about" class="section" style="padding-top: var(--section-space)">
+    <div class="container">
+      <div class="section-head section-head--center">
+        <div class="section-head__titles">
+          <span class="eyebrow" style="letter-spacing:0">About us</span>
+          <h2 class="h2" style="max-width: 12.5em">Transform Your Business with Smart Digital Solutions</h2>
+        </div>
+      </div>
+
+      <div class="about__panel">
+        <div class="about-card">
+          <img src="assets/about-card-bg.png" alt="" class="about-card__bg">
+          <div class="about-card__head"><img src="assets/about-man.png" alt="LightIdea consultant"></div>
+          <div class="about-card__warm"></div>
+          <div class="about-card__shade"></div>
+          <div class="about-card__stats">
+            <div style="width:41cqw">
+              <span class="about-card__big">10+</span>
+              <span class="about-card__label">Years of experience</span>
+              <div class="about-card__rule"></div>
+              <div class="about-card__small"><b>07+</b><span>Industries served</span></div>
+            </div>
+            <div class="about-card__partner"><span>PARTNER</span><img src="assets/oracle.svg" alt="Oracle"></div>
+          </div>
+        </div>
+
+        <div class="about__copy">
+          <h3>About LightIdea</h3>
+          <div class="prose">
+            <p>LightIdea is an esteemed <strong>Oracle Partner</strong> dedicated to empowering organizations with sustainable improvement and effective business performance management. We specialize in Oracle Fusion solutions spanning ERP, EPM, Risk Management, and Fusion Analytics Warehouse, combining proven methodologies with deep functional and technical expertise.</p>
+            <p>Our team is drawn from Big-4 and leading consulting firms, bringing together senior professionals with extensive experience in enterprise transformation, finance, supply chain, risk, and analytics. We serve organizations across the public and private sectors, delivering solutions that are practical, scalable, and aligned with real business objectives.</p>
+            <p>At LightIdea, we believe that technology alone does not drive transformation — it is the combination of the right solution, the right expertise, and the right support that creates lasting value. That belief shapes everything we do, from initial advisory engagements through full-scale implementation and long-term managed services.</p>
+          </div>
+          <a href="#solutions" class="btn btn--pill" style="margin-top:4px">Explore Services <i class="ph-bold ph-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== 4. MISSION, VISION & VALUES ============================== -->
+  <section class="panel panel--light values" id="values" aria-labelledby="values-title">
+   <div class="values__scroller" style="--n: 5">
+   <div class="values__sticky">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__titles">
+          <span class="eyebrow">OUR FOUNDATION</span>
+          <h2 class="h2" id="values-title">Mission, Vision &amp; Values</h2>
+        </div>
+        <div class="values__nav">
+          <span class="values__count" id="values-counter" aria-live="polite">01 / 05</span>
+          <button type="button" class="icon-btn" id="values-prev" aria-label="Previous value"><i class="ph-bold ph-arrow-left"></i></button>
+          <button type="button" class="icon-btn icon-btn--dark" id="values-next" aria-label="Next value"><i class="ph-bold ph-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <div class="values__slot" aria-hidden="true"></div>
+    </div>
+
+    <!-- the stage sits on top of the slot and grows to full screen while scrolling -->
+      <div class="values__stage" id="values-stage">
+        <div class="bg-layers" aria-hidden="true">
+          <img src="assets/hero-bg3.jpg" alt="" style="object-position: bottom">
+          <img src="assets/hero-bg4.jpg" alt="" class="lighten">
+        </div>
+        <div class="values__deck" id="values-deck">
+          <article class="value-card">
+              <div class="value-card__text">
+                <div class="value-card__top"><span class="value-card__icon"><i class="ph ph-medal"></i></span><span class="value-card__num">01 / 05</span></div>
+                <h3>Excellence</h3>
+                <p>We hold ourselves to the highest professional standards in every engagement, delivering quality work that creates lasting value for our clients.</p>
+              </div>
+              <div class="value-card__art"><img src="assets/badge-excellence.png" alt=""></div>
+            </article>
+          <article class="value-card">
+              <div class="value-card__text">
+                <div class="value-card__top"><span class="value-card__icon"><i class="ph ph-shield-check"></i></span><span class="value-card__num">02 / 05</span></div>
+                <h3>Integrity</h3>
+                <p>We are transparent, honest, and accountable in all our relationships — with clients, partners, and each other.</p>
+              </div>
+              <div class="value-card__art"><img src="assets/badge-integrity.png" alt=""></div>
+            </article>
+          <article class="value-card">
+              <div class="value-card__text">
+                <div class="value-card__top"><span class="value-card__icon"><i class="ph ph-handshake"></i></span><span class="value-card__num">03 / 05</span></div>
+                <h3>Collaboration</h3>
+                <p>We work as a true extension of our clients' teams, combining our expertise with their business knowledge to achieve the best outcomes.</p>
+              </div>
+              <div class="value-card__art"><img src="assets/badge-collaboration.png" alt="" style="width:60%"></div>
+            </article>
+          <article class="value-card">
+              <div class="value-card__text">
+                <div class="value-card__top"><span class="value-card__icon"><i class="ph ph-lightbulb"></i></span><span class="value-card__num">04 / 05</span></div>
+                <h3>Innovation</h3>
+                <p>We continuously explore new technologies and approaches — including AI, automation, and analytics — to help our clients stay ahead in a rapidly evolving landscape.</p>
+              </div>
+              <div class="value-card__art"><img src="assets/badge-innovation.png" alt="" style="width:57%"></div>
+            </article>
+          <article class="value-card">
+              <div class="value-card__text">
+                <div class="value-card__top"><span class="value-card__icon"><i class="ph ph-target"></i></span><span class="value-card__num">05 / 05</span></div>
+                <h3>Client Focus</h3>
+                <p>Our clients' success is our success. We listen carefully, advise honestly, and remain committed throughout the entire journey.</p>
+              </div>
+              <div class="value-card__art"><img src="assets/badge-clientfocus.png" alt="" style="width:60%"></div>
+            </article>
+        </div>
+      </div>
+     </div></div>
+  </section>
+
+  <!-- ============================== 5. OUR APPROACH ============================== -->
+  <section class="section" aria-labelledby="approach-title">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__titles">
+          <span class="eyebrow eyebrow--blue">HOW WE WORK</span>
+          <h2 class="h2 h2--medium" id="approach-title">Our Approach</h2>
+        </div>
+      </div>
+
+      <div class="approach" id="approach">
+        <div class="approach__row">
+          <button type="button" class="ap-card" aria-expanded="true" data-img="assets/approach-1.png" data-num="01" data-title="Oracle Partner Expertise" data-text="As a recognized Oracle Partner, LightIdea brings certified expertise across Oracle ERP, EPM, Risk Management, and Analytics Warehouse, ensuring implementations aligned with Oracle best practices."></button>
+          <button type="button" class="ap-card" aria-expanded="false" data-img="assets/approach-2.png" data-num="02" data-title="Big-4 Consulting Pedigree" data-text="Our team is drawn from Big-4 and leading consulting firms, combining deep subject matter knowledge with hands-on implementation experience across complex enterprise environments."></button>
+          <button type="button" class="ap-card" aria-expanded="false" data-img="assets/approach-3.png" data-num="03" data-title="Local Presence, Global Standards" data-text="LightIdea maintains a strong local presence while delivering services to the highest international standards, providing clients with responsive support and culturally aligned delivery."></button>
+        </div>
+        <div class="approach__row">
+          <button type="button" class="ap-card" aria-expanded="false" data-img="assets/approach-4.png" data-num="04" data-title="End-to-End Delivery" data-text="From strategy and advisory through implementation, training, and ongoing managed support, LightIdea provides full-lifecycle services under one trusted partnership."></button>
+          <button type="button" class="ap-card" aria-expanded="false" data-img="assets/approach-5.png" data-num="05" data-title="AI and Automation Integration" data-text="We enhance business solutions with automation, Generative AI, and intelligent process optimization, helping clients achieve greater efficiency, stronger compliance, and reduced operational costs."></button>
+          <button type="button" class="ap-card" aria-expanded="false" data-img="assets/approach-6.png" data-num="06" data-title="Referenceable Client Base" data-text="LightIdea has delivered successful outcomes for a wide network of enterprise clients across government, finance, healthcare, and other sectors, with a strong track record of measurable results."></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== 6. ENTERPRISE-GRADE SOLUTIONS ============================== -->
+  <section id="solutions" class="panel panel--dark solutions on-dark" aria-labelledby="solutions-title">
+    <div class="bg-layers" aria-hidden="true">
+      <img src="assets/hero-bg3.jpg" alt="" style="object-position: bottom">
+      <img src="assets/hero-bg4.jpg" alt="" class="lighten">
+      <div class="glow"><img src="assets/hero-glow.svg" alt=""></div>
+      <div class="tint"></div>
+    </div>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__titles">
+          <h2 class="h2" id="solutions-title"><span style="white-space:nowrap">Enterprise-Grade</span> Solutions</h2>
+        </div>
+        <p class="section-head__copy">We deliver comprehensive technology consulting services tailored to complex enterprise environments across the Middle East and beyond.</p>
+      </div>
+
+      <div class="sol-grid">
+        <div class="sol-tiles">
+          <button type="button" class="tile" data-icon="ph-stack" data-desc="End-to-end Oracle Fusion ERP implementation services that modernize your core business operations and deliver a unified, cloud-native enterprise platform."><span class="tile__top"><i class="ph-light ph-stack"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Oracle Fusion ERP Implementation</span></button>
+          <button type="button" class="tile" data-icon="ph-chart-line-up" data-desc="Implement Oracle EPM to unify financial planning, budgeting, forecasting, and consolidation — enabling smarter, faster business decisions."><span class="tile__top"><i class="ph-light ph-chart-line-up"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Oracle Enterprise Performance Management (EPM)</span></button>
+          <button type="button" class="tile" data-icon="ph-shield-check" data-desc="Strengthen your internal controls, audit management, and compliance framework with Oracle Risk Management Cloud, implemented by LightIdea."><span class="tile__top"><i class="ph-light ph-shield-check"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Oracle Risk Management</span></button>
+          <button type="button" class="tile" data-icon="ph-chart-pie-slice" data-desc="Unlock enterprise insights with Oracle Fusion Analytics Warehouse — pre-built analytics for ERP, HCM, SCM, and CX, implemented and customized by LightIdea."><span class="tile__top"><i class="ph-light ph-chart-pie-slice"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Oracle Fusion Analytics Warehouse</span></button>
+          <button type="button" class="tile" data-icon="ph-compass" data-desc="Chart a clear path to Oracle Cloud with LightIdea's advisory services — covering business case development, roadmap planning, and cloud readiness assessment."><span class="tile__top"><i class="ph-light ph-compass"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Oracle Cloud Advisory and Strategy</span></button>
+          <button type="button" class="tile is-active" data-icon="ph-target" data-desc="Align strategy with execution through integrated performance management frameworks, KPI design, and Oracle-powered reporting solutions." aria-current="true"><span class="tile__top"><i class="ph-light ph-target"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Business Performance Management</span></button>
+          <button type="button" class="tile" data-icon="ph-chalkboard-teacher" data-desc="Maximize Oracle adoption with structured training programs and change management support tailored to your organization and users."><span class="tile__top"><i class="ph-light ph-chalkboard-teacher"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">End-User Training and Change Enablement</span></button>
+          <button type="button" class="tile" data-icon="ph-headset" data-desc="Keep your Oracle environment stable and performing with LightIdea's dedicated 24/7 managed support service — staffed by experienced Oracle consultants."><span class="tile__top"><i class="ph-light ph-headset"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">24/7 Oracle Application Support</span></button>
+          <button type="button" class="tile tile--extra" data-icon="ph-robot" data-desc="Enhance your Oracle environment with AI and automation capabilities that improve efficiency, reduce manual effort, and accelerate decision-making." hidden><span class="tile__top"><i class="ph-light ph-robot"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">AI and Automation Services</span></button>
+          <button type="button" class="tile tile--extra" data-icon="ph-cpu" data-desc="Deploy cognitive robotic process automation to handle complex, judgment-intensive Oracle processes that go beyond traditional rule-based automation." hidden><span class="tile__top"><i class="ph-light ph-cpu"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Cognitive RPA</span></button>
+          <button type="button" class="tile tile--extra" data-icon="ph-sparkle" data-desc="Apply Generative AI within Oracle environments to accelerate content creation, enhance decision support, and automate knowledge-intensive tasks." hidden><span class="tile__top"><i class="ph-light ph-sparkle"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Generative AI for Enterprise Operations</span></button>
+          <button type="button" class="tile tile--extra" data-icon="ph-flow-arrow" data-desc="Use AI-powered process mining and analytics to identify inefficiencies in your Oracle processes and implement targeted improvements." hidden><span class="tile__top"><i class="ph-light ph-flow-arrow"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Intelligent Process Optimization</span></button>
+          <button type="button" class="tile tile--extra" data-icon="ph-plugs-connected" data-desc="Connect Oracle Fusion seamlessly with your existing enterprise systems, third-party applications, and data sources through robust integration architecture." hidden><span class="tile__top"><i class="ph-light ph-plugs-connected"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">System Integration</span></button>
+          <button type="button" class="tile tile--extra" data-icon="ph-database" data-desc="Design and implement Oracle-native reporting and data solutions that give your organization accurate, timely, and actionable information." hidden><span class="tile__top"><i class="ph-light ph-database"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Data and Reporting Solutions</span></button>
+          <button type="button" class="tile tile--more" aria-expanded="false"><span class="tile__name">Explore All</span><i class="ph-bold ph-arrow-right tile__go"></i></button>
+        </div>
+        <aside class="sol-detail" aria-live="polite">
+          <div class="sol-detail__body">
+            <span class="sol-detail__icon"><i class="ph-light ph-target"></i></span>
+            <h3>Business Performance Management</h3>
+            <p>Align strategy with execution through integrated performance management frameworks, KPI design, and Oracle-powered reporting solutions.</p>
+          </div>
+          <span class="sol-detail__foot">06 / 14</span>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== 7. INSIGHTS & BLOG ============================== -->
+  <section id="insights" class="section" aria-labelledby="insights-title">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__titles">
+          <span class="eyebrow eyebrow--blue">INSIGHTS &amp; BLOG</span>
+          <h2 class="h2 h2--medium" id="insights-title" style="max-width: 17em">Insights &amp; expert advice for enterprise transformation</h2>
+        </div>
+        <div class="values__nav">
+          <button type="button" class="icon-btn" id="blog-prev" aria-label="Previous articles"><i class="ph-bold ph-arrow-left"></i></button>
+          <button type="button" class="icon-btn icon-btn--dark" id="blog-next" aria-label="Next articles"><i class="ph-bold ph-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <div class="blog__track no-scrollbar" id="blog-track">
+        <a href="#" class="post">
+          <div class="post__media">
+            <img src="assets/blog-bg1.png" alt="" class="bgimg" style="left:-5.97%">
+            <img src="assets/blog-1.png" alt="LightIdea team at an e-invoicing event" class="photo" style="width:101.8%; height:236%; transform: translate(-49.1%, -42.4%)">
+            <span class="post__tag">Compliance</span>
+          </div>
+          <h3>UAE E-Invoicing: what finance teams must prepare before go-live</h3>
+          <p>A practical sequence for data, systems and approvals so the mandate lands without disrupting the close.</p>
+          <time>Nov 4, 2026 · 6 min read</time>
+        </a>
+        <a href="#" class="post">
+          <div class="post__media">
+            <img src="assets/blog-bg2.png" alt="" class="bgimg" style="left:-2.99%">
+            <img src="assets/blog-2.png" alt="LightIdea team at the Oracle EPM Cloud Summit" class="photo" style="width:100.1%; height:284.8%; transform: translate(-49.94%, -49.94%)">
+            <span class="post__tag">ERP</span>
+          </div>
+          <h3>Oracle Fusion ERP migration: a 90-day readiness checklist</h3>
+          <p>The decisions that matter before the first workshop — scope, data ownership, and integration boundaries.</p>
+          <time>Oct 28, 2026 · 8 min read</time>
+        </a>
+        <a href="#" class="post">
+          <div class="post__media">
+            <img src="assets/blog-bg2.png" alt="" class="bgimg" style="left:-8.96%">
+            <img src="assets/blog-3.png" alt="Oracle EPM CXO Summit speakers" class="photo" style="width:134.35%; height:108.45%; transform: translate(-45.33%, -53.84%)">
+            <span class="post__tag">EPM</span>
+          </div>
+          <h3>Closing the books faster with Oracle EPM Cloud</h3>
+          <p>How consolidation, reconciliation and narrative reporting fit together in a modern close.</p>
+          <time>Oct 21, 2026 · 5 min read</time>
+        </a>
+        <a href="#" class="post">
+          <div class="post__media">
+            <img src="assets/blog-bg1.png" alt="" class="bgimg" style="left:-1.79%">
+            <img src="assets/blog-4.png" alt="LightIdea team at a technology exhibition" class="photo" style="width:100%; height:120%; transform: translate(-50%, -45.3%)">
+            <span class="post__tag">AI &amp; Automation</span>
+          </div>
+          <h3>Where Generative AI actually fits in enterprise finance</h3>
+          <p>Separating useful automation from demos — the processes where AI earns its place today.</p>
+          <time>Oct 14, 2026 · 7 min read</time>
+        </a>
+        <a href="#" class="post">
+          <div class="post__media">
+            <img src="assets/blog-bg2.png" alt="" class="bgimg" style="left:-5.97%">
+            <span class="post__tag">Risk</span>
+          </div>
+          <h3>Risk Management Cloud: building controls auditors trust</h3>
+          <p>Designing segregation-of-duties and continuous monitoring that hold up under audit.</p>
+          <time>Oct 7, 2026 · 6 min read</time>
+        </a>
+        <a href="#" class="post">
+          <div class="post__media">
+            <img src="assets/blog-bg1.png" alt="" class="bgimg" style="left:-10.15%">
+            <span class="post__tag">Analytics</span>
+          </div>
+          <h3>From reports to decisions: Fusion Analytics for executives</h3>
+          <p>Turning pre-built ERP and HCM analytics into a dashboard leadership actually opens.</p>
+          <time>Sep 30, 2026 · 4 min read</time>
+        </a>
+      </div>
+      <div class="blog__progress" aria-hidden="true"><div id="blog-progress"></div></div>
+    </div>
+  </section>
+
+  <!-- ============================== 8. FAQ ============================== -->
+  <section id="faq" class="section" aria-labelledby="faq-title">
+    <div class="container faq">
+      <div class="faq__intro">
+        <h2 class="h2 h2--medium" id="faq-title" style="max-width: 9em">Frequently Asked Questions</h2>
+        <p>Find answers to common questions about our services, methodologies, and enterprise solutions.</p>
+      </div>
+      <div class="faq__list" id="faq-list">
+        <div class="faq-item is-open">
+          <button class="faq-q" type="button" aria-expanded="true" aria-controls="faq-a1"><span>What services does LightIdea provide?</span><span class="faq-icon"><i class="ph ph-plus"></i></span></button>
+          <div class="faq-a" id="faq-a1"><p>LightIdea provides business transformation, performance management, AI solutions, automation, digital strategy, process optimization, training, and ongoing application support to help organizations improve efficiency and decision-making.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a2"><span>How can LightIdea help improve business performance?</span><span class="faq-icon"><i class="ph ph-plus"></i></span></button>
+          <!-- Answer text is not in the Figma file yet -->
+          <div class="faq-a" id="faq-a2" hidden><p></p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a3"><span>Does LightIdea provide AI and automation solutions?</span><span class="faq-icon"><i class="ph ph-plus"></i></span></button>
+          <!-- Answer text is not in the Figma file yet -->
+          <div class="faq-a" id="faq-a3" hidden><p></p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== 9. GET IN TOUCH ============================== -->
+  <section id="contact" class="panel panel--light" aria-labelledby="contact-title">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__titles">
+          <span class="eyebrow">GLOBAL OFFICES</span>
+          <h2 class="h2 h2--medium" id="contact-title">Get in Touch</h2>
+        </div>
+        <p class="section-head__copy" style="max-width: 31em">Whether you are exploring digital transformation for the first time, looking to enhance your existing business systems, or seeking ongoing managed support, LightIdea’s team is ready to help. Contact us to speak with a specialist about your specific needs.</p>
+      </div>
+
+      <div class="contact__grid">
+        <div class="office on-dark">
+          <img src="assets/hero-bg3.jpg" alt="" class="bg">
+          <img src="assets/logo-white.svg" alt="LightIdea" class="office__logo">
+          <div class="office__card">
+            <small>HEADQUARTERS</small>
+            <strong>Office 207, Al Nahyan Camp, Muroor Road, Abu Dhabi, United Arab Emirates P.O.BOX 110620</strong>
+            <div><a href="mailto:info@lightidea.org">info@lightidea.org</a><a href="tel:+971543711199">+971 54 371 1199</a></div>
+          </div>
+        </div>
+
+        <form class="form" onsubmit="return false;">
+          <p class="form__title">Send us a <span style="color:var(--c-orange)">message</span> and one of our <span style="color:#094e87">experts</span> will respond ASAP</p>
+          <div class="form__grid">
+            <label class="field">First Name<input type="text" name="first_name" autocomplete="given-name"></label>
+            <label class="field">Last Name<input type="text" name="last_name" autocomplete="family-name"></label>
+            <label class="field">Work Email<input type="email" name="email" autocomplete="email"></label>
+            <label class="field">Company Name<input type="text" name="company" autocomplete="organization"></label>
+          </div>
+          <label class="field">How can we help you?<textarea name="message"></textarea></label>
+          <div class="form__foot">
+            <label class="check"><input type="checkbox" name="privacy"><span class="box"><i class="ph-bold ph-check"></i></span>I have read and agree to the Privacy Policy <i class="ph ph-arrow-up-right"></i></label>
+            <button type="submit" class="submit">Submit <span><i class="ph ph-arrow-up-right"></i></span></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============================== 10. FOOTER ============================== -->
+<footer class="footer">
+  <img src="assets/hero-bg3.jpg" alt="" class="bg">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__col footer__about">
+        <img src="assets/logo-white.svg" alt="LightIdea" style="height:28px; width:auto">
+        <p>Lightidea helps organizations execute digital, data, and platform initiatives with more clarity and control.</p>
+      </div>
+      <div class="footer__col">
+        <h4>SOLUTIONS</h4>
+        <a href="#">Sanade – UAE Electronic Invoicing Platform</a>
+        <a href="#">Oracle Fusion ERP Transformation</a>
+        <a href="#">Enterprise Performance Management Platform</a>
+        <a href="#">Risk and Compliance Management</a>
+        <a href="#">Fusion Analytics and Executive Dashboards</a>
+        <a href="#">AI-Powered Finance Operations</a>
+      </div>
+      <div class="footer__col">
+        <h4>COMPANY</h4>
+        <a href="#about">About Us</a>
+        <a href="#">Our Clients</a>
+        <a href="#">Technology Partners</a>
+        <a href="#">Our Team</a>
+        <a href="#insights">Insights</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer__col">
+        <h4>GLOBAL PRESENCE</h4>
+        <span style="line-height:1.5">HQ: Office 207, Al Nahyan Camp, Muroor Road, Abu Dhabi, United Arab Emirates P.O.BOX 110620</span>
+        <a href="tel:+971543711199">Phone: +971543711199</a>
+        <a href="mailto:info@lightidea.org">info@lightidea.org</a>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span style="color:#e1e4ea">© LightIdea. All rights reserved.</span>
+      <nav aria-label="Legal"><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Site Map</a></nav>
+    </div>
+  </div>
+</footer>
+</div><!-- /.app -->
+
+<!-- ============================== MOBILE SIDE MENU ============================== -->
+<nav class="side-menu" id="side-menu" aria-label="Site menu">
+  <button type="button" class="side-menu__close" aria-label="Close menu"></button>
+  <ul>
+    <li><a href="#" aria-current="true">Home</a></li>
+    <li><a href="#solutions">Services</a></li>
+    <li><a href="#solutions">Solutions</a></li>
+    <li><a href="#insights">Insights &amp; Blog</a></li>
+    <li><a href="#about">About us</a></li>
+    <li><a href="#faq">More</a></li>
+    <li><a href="#contact">Contact us</a></li>
+  </ul>
+</nav>
+
+<script src="https://unpkg.com/lenis@1.3.11/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script>
+/* =====================================================================
+   MOTION CORE — one smooth-scroll engine (Lenis) driven by GSAP's ticker,
+   so ScrollTrigger and Lenis always agree on the scroll position.
+   ===================================================================== */
+const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const HAS_GSAP = !!(window.gsap && window.ScrollTrigger && window.SplitText);
+const lenis = (!REDUCED_MOTION && window.Lenis)
+  ? new Lenis({ duration: 1.1, wheelMultiplier: 0.9, touchMultiplier: 1, smoothWheel: true, syncTouch: false, autoRaf: !HAS_GSAP })
+  : null;
+window.lenis = lenis;
+if (HAS_GSAP) {
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+  if (lenis) {
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((t) => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+}
+
+/* Smooth in-page anchors, leaving room for the sticky navbar */
+function scrollToHash(hash) {
+  const target = hash === '#' ? 0 : document.querySelector(hash);
+  if (target === null) return;
+  history.replaceState(null, '', hash === '#' ? location.pathname : hash);
+  if (lenis) lenis.scrollTo(target, { offset: target === 0 ? 0 : -80 });
+  else if (target === 0) window.scrollTo(0, 0);
+  else target.scrollIntoView();
+}
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || e.defaultPrevented) return;
+  e.preventDefault();
+  scrollToHash(a.getAttribute('href'));
+});
+
+/* ---------- Mobile side menu: the page shrinks to the left, links slide in ---------- */
+(function sideMenu() {
+  const root = document.documentElement;
+  const app = document.getElementById('app');
+  const menu = document.getElementById('side-menu');
+  const buttons = [...document.querySelectorAll('.nav__menu, .sticky-nav__menu')];
+  let btn = buttons[0];
+  const links = [...menu.querySelectorAll('a')];
+  let closing = null;
+
+  const open = () => {
+    if (closing) closing();                       // finish an unfinished close first
+    lenis?.stop();
+    const y = window.scrollY, vh = window.innerHeight;
+    app.style.transformOrigin = `right ${y + vh / 2}px`;
+    app.style.clipPath = `inset(${y}px 0 ${app.scrollHeight - y - vh}px 0 round 36px)`;
+    root.classList.add('menu-open');
+    app.inert = true;
+    btn.setAttribute('aria-expanded', 'true');
+    if (HAS_GSAP && !REDUCED_MOTION) {
+      gsap.fromTo(links, { opacity: 0, x: 40, filter: 'blur(8px)' },
+        { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.6, stagger: 0.06, delay: 0.15, ease: 'power3.out', clearProps: 'filter,transform' });
+    }
+    (links.find((l) => l.getAttribute('aria-current') === 'true') || links[0]).focus({ preventScroll: true });
+  };
+
+  // closes, waits for the page to grow back, then runs `then` (e.g. scroll to a section)
+  const close = (focusButton = true, then) => {
+    root.classList.remove('menu-open');
+    root.classList.add('menu-closing');
+    app.inert = false;
+    btn.setAttribute('aria-expanded', 'false');
+    const finish = () => {
+      closing = null;
+      root.classList.remove('menu-closing');
+      app.style.transformOrigin = ''; app.style.clipPath = '';
+      lenis?.start();
+      btn.closest('.sticky-nav')?.classList.add('is-visible'); // menu was opened from the sticky bar
+      if (focusButton) btn.focus({ preventScroll: true });
+      if (then) then();
+    };
+    closing = finish;
+    if (REDUCED_MOTION) return finish();
+    const t = setTimeout(() => { if (closing === finish) finish(); }, 700);
+    app.addEventListener('transitionend', (e) => {
+      if (e.target === app && e.propertyName === 'transform' && closing === finish) { clearTimeout(t); finish(); }
+    }, { once: true });
+  };
+
+  buttons.forEach((b) => b.addEventListener('click', () => { btn = b; open(); }));
+  menu.querySelector('.side-menu__close').addEventListener('click', () => close());
+  links.forEach((a) => a.addEventListener('click', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    links.forEach((l) => l.removeAttribute('aria-current'));
+    a.setAttribute('aria-current', 'true');
+    close(false, () => scrollToHash(a.getAttribute('href')));
+  }));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && root.classList.contains('menu-open')) close(); });
+  window.matchMedia('(min-width: 1200px)').addEventListener('change', (m) => { if (m.matches && root.classList.contains('menu-open')) close(false); });
+})();
+
+/* ---------- Sticky navbar: hide on scroll down, show on scroll up ---------- */
+(function stickyNav() {
+  const bar = document.getElementById('sticky-nav');
+  const hero = document.querySelector('.hero');
+  let lastY = window.scrollY;
+  const onScroll = () => {
+    if (document.documentElement.classList.contains('menu-open')) return;
+    const y = window.scrollY;
+    const pastHero = y > hero.offsetTop + hero.offsetHeight - 64;
+    if (!pastHero) bar.classList.remove('is-visible');          // the hero already has its own nav
+    else if (y < lastY - 4) bar.classList.add('is-visible');    // scrolling up
+    else if (y > lastY + 4) bar.classList.remove('is-visible'); // scrolling down
+    if (Math.abs(y - lastY) > 4) lastY = y;
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  // jumping to a section from the bar scrolls down, so hide it right away
+  bar.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', () => bar.classList.remove('is-visible')));
+})();
+
+/* ---------- Mission, Vision & Values: opening stage + stacking cards ----------
+   Phase 1 (first ~0.8 screen of scrolling): the dark stage grows from its place under the
+   heading until it keeps the same margin as the other panels; the heading fades away.
+   Phase 2: only one card shows; each next card slides up from below and lands on top,
+   the covered ones shrink and peek out above — ending as a stack of all five. */
+const flatLayout = window.matchMedia('(max-width: 767px), (prefers-reduced-motion: reduce)');
+const valuesDeck = (function () {
+  const scroller = document.querySelector('.values__scroller');
+  const stage = document.getElementById('values-stage');
+  const slot = document.querySelector('.values__slot');
+  const head = document.querySelector('.values__sticky > .container .section-head');
+  const deck = document.getElementById('values-deck');
+  const cards = [...deck.children];
+  const counter = document.getElementById('values-counter');
+  const prev = document.getElementById('values-prev');
+  const next = document.getElementById('values-next');
+  const N = cards.length;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  cards.forEach((c, i) => { c.style.zIndex = i + 1; });           // later cards land on top
+
+  const span = () => scroller.offsetHeight - window.innerHeight;
+  const expandLen = () => window.innerHeight * 0.8;           // scroll distance used to open the stage
+  const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const RADIUS = 24;
+  let current = 0;
+  const update = () => {
+    if (flatLayout.matches) {
+      cards.forEach((c) => ['--y', '--s', '--shade'].forEach((v) => c.style.removeProperty(v)));
+      ['--ins-t', '--ins-r', '--ins-b', '--ins-l', '--dx', '--dy', '--slot-h'].forEach((v) => (v.startsWith('--d') ? deck : stage).style.removeProperty(v));
+      head.style.opacity = ''; head.style.transform = '';
+      return;
+    }
+    const scrolled = clamp(-scroller.getBoundingClientRect().top, 0, span());
+    const E = expandLen();
+
+    // phase 1 — open the stage from the slot until it keeps the same margin as the other panels
+    const e = easeInOut(clamp(scrolled / E, 0, 1));
+    const st = stage.getBoundingClientRect(), sl = slot.getBoundingClientRect();
+    const M = stage.parentElement.getBoundingClientRect().left - st.left;   // = the page frame margin
+    const k = 1 - e;
+    const ins = (from) => (M + (from - M) * k).toFixed(1) + 'px';
+    stage.style.setProperty('--ins-t', ins(sl.top - st.top));
+    stage.style.setProperty('--ins-r', ins(st.right - sl.right));
+    stage.style.setProperty('--ins-b', ins(st.bottom - sl.bottom));
+    stage.style.setProperty('--ins-l', ins(sl.left - st.left));
+    stage.style.setProperty('--ins-rad', RADIUS + 'px');
+    stage.style.setProperty('--slot-h', sl.height.toFixed(1) + 'px');
+    deck.style.setProperty('--dx', (((sl.left + sl.right) - (st.left + st.right)) / 2 * k).toFixed(1) + 'px');
+    head.style.opacity = String(clamp(1 - e * 1.6, 0, 1));
+    head.style.transform = `translateY(${(-40 * e).toFixed(1)}px) scale(${(1 - 0.04 * e).toFixed(3)})`;
+
+    // phase 2 — one card at a time: the next card slides up from below and lands on top;
+    // the cards underneath shrink a little and peek out above, so the deck ends as a neat stack
+    const p = clamp((scrolled - E) / (span() - E), 0, 1);
+    const seg = p * (N - 1);
+    const arrived = cards.map((c, i) => (i === 0 ? 1 : clamp(seg - (i - 1), 0, 1)));
+    const STEP = Math.min(22, sl.height * 0.035);                 // how far each covered card peeks out
+    const enter = stage.clientHeight / 2 + cards[0].offsetHeight / 2 + 40;   // start fully below the stage
+    cards.forEach((c, i) => {
+      let above = 0;
+      for (let j = i + 1; j < N; j++) above += arrived[j];       // how many cards now sit on top of this one
+      c.style.setProperty('--y', ((1 - arrived[i]) * enter - STEP * above).toFixed(1) + 'px');
+      c.style.setProperty('--s', (1 - 0.045 * above).toFixed(4));
+      c.style.setProperty('--shade', Math.min(0.22, 0.07 * above).toFixed(3));
+    });
+    // keep the growing stack centred in the stage
+    const centreY = (((sl.top + sl.bottom) - (st.top + st.bottom)) / 2) * k;
+    deck.style.setProperty('--dy', (centreY + (STEP * seg) / 2).toFixed(1) + 'px');
+    current = clamp(Math.round(seg), 0, N - 1);
+    counter.textContent = String(current + 1).padStart(2, '0') + ' / ' + String(N).padStart(2, '0');
+    prev.disabled = current === 0;
+    next.disabled = current === N - 1;
+  };
+  const go = (d) => {
+    const k = clamp(current + d, 0, N - 1);
+    const top = scroller.getBoundingClientRect().top + window.scrollY;
+    const E = expandLen();
+    const y = top + E + (k / (N - 1)) * (span() - E);
+    lenis ? lenis.scrollTo(y) : window.scrollTo(0, y);
+  };
+  prev.addEventListener('click', () => go(-1));
+  next.addEventListener('click', () => go(1));
+  return update;
+})();
+
+/* Values deck follows the scroll (Lenis moves the real scroll position) */
+(function deckLoop() {
+  let queued = false;
+  const tick = () => { queued = false; valuesDeck(); };
+  const request = () => { if (!queued) { queued = true; requestAnimationFrame(tick); } };
+  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('resize', request);
+  flatLayout.addEventListener('change', request);
+  tick();
+})();
+
+/* ---------- Our Approach: one card open at a time, opens smoothly on hover ---------- */
+(function approach() {
+  const cards = [...document.querySelectorAll('.ap-card')];
+  cards.forEach((c) => {
+    const d = c.dataset;
+    c.innerHTML = `
+      <img src="assets/fan.png" alt="" class="ap-card__fan" aria-hidden="true">
+      <span class="ap-card__num" aria-hidden="true">${d.num}.</span>
+      <span class="ap-card__title">${d.title}</span>
+      <span class="ap-card__body">
+        <img src="${d.img}" alt="" class="ap-card__img">
+        <span class="ap-card__text">
+          <small>${d.num} / 06</small>
+          <strong class="ap-card__h">${d.title}</strong>
+          <span class="ap-card__p">${d.text}</span>
+        </span>
+      </span>`;
+  });
+  // open on hover (with a short intent delay so passing the mouse across doesn't flicker), focus or click
+  const small = window.matchMedia('(max-width: 1099px)');   // all cards are open on smaller screens
+  const activate = (c) => { if (!small.matches) cards.forEach((x) => x.setAttribute('aria-expanded', String(x === c))); };
+  let timer;
+  cards.forEach((c) => {
+    c.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'mouse') return; clearTimeout(timer); timer = setTimeout(() => activate(c), 90); });
+    c.addEventListener('pointerleave', () => clearTimeout(timer));
+    c.addEventListener('focus', () => activate(c));
+    c.addEventListener('click', () => activate(c));
+  });
+})();
+
+/* ---------- Insights: native horizontal scroll + buttons + progress ---------- */
+(function blog() {
+  const track = document.getElementById('blog-track');
+  const bar = document.getElementById('blog-progress');
+  const prev = document.getElementById('blog-prev');
+  const next = document.getElementById('blog-next');
+  const step = () => track.firstElementChild.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap || 20);
+  const update = () => {
+    const max = track.scrollWidth - track.clientWidth;
+    bar.style.width = (Math.min(1, track.clientWidth / track.scrollWidth + (max > 0 ? track.scrollLeft / track.scrollWidth : 0)) * 100) + '%';
+    prev.disabled = track.scrollLeft <= 2;
+    next.disabled = track.scrollLeft >= max - 2;
+  };
+  // glide one card at a time and land exactly on a card edge
+  const go = (dir) => {
+    const s = step(), max = track.scrollWidth - track.clientWidth;
+    const target = Math.max(0, Math.min(max, (Math.round(track.scrollLeft / s) + dir) * s));
+    if (window.gsap && !REDUCED_MOTION) gsap.to(track, { scrollLeft: target, duration: 1, ease: 'power3.inOut', overwrite: true });
+    else track.scrollTo({ left: target });
+  };
+  prev.addEventListener('click', () => go(-1));
+  next.addEventListener('click', () => go(1));
+  track.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+/* ---------- Solutions: hover / tap a card to read it; Explore All opens the rest ---------- */
+(function solutions() {
+  const tiles = [...document.querySelectorAll('.sol-tiles .tile:not(.tile--more)')];
+  const extras = tiles.filter((t) => t.classList.contains('tile--extra'));
+  const more = document.querySelector('.tile--more');
+  const body = document.querySelector('.sol-detail__body');
+  const icon = body.querySelector('.sol-detail__icon i');
+  const title = body.querySelector('h3');
+  const text = body.querySelector('p');
+  const foot = document.querySelector('.sol-detail__foot');
+  const animate = HAS_GSAP && !REDUCED_MOTION;
+  const pad = (n) => String(n).padStart(2, '0');
+  let active = tiles.find((t) => t.classList.contains('is-active'));
+
+  const show = (t) => {
+    if (t === active) return;
+    active.classList.remove('is-active'); active.removeAttribute('aria-current');
+    t.classList.add('is-active'); t.setAttribute('aria-current', 'true');
+    active = t;
+    const fill = () => {
+      icon.className = 'ph-light ' + t.dataset.icon;
+      title.textContent = t.querySelector('.tile__name').textContent;
+      text.textContent = t.dataset.desc;
+      foot.textContent = pad(tiles.indexOf(t) + 1) + ' / ' + pad(tiles.length);
+    };
+    if (!animate) return fill();
+    gsap.killTweensOf(body);
+    gsap.timeline()
+      .to(body, { opacity: 0, y: -10, filter: 'blur(6px)', duration: 0.2, ease: 'power2.in', onComplete: fill })
+      .to(body, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5, ease: 'power3.out', clearProps: 'filter,transform' });
+  };
+
+  let timer;
+  tiles.forEach((t) => {
+    t.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'mouse') return; clearTimeout(timer); timer = setTimeout(() => show(t), 90); });
+    t.addEventListener('pointerleave', () => clearTimeout(timer));
+    t.addEventListener('focus', () => show(t));
+    t.addEventListener('click', () => show(t));
+  });
+
+  more.addEventListener('click', () => {
+    const open = more.getAttribute('aria-expanded') !== 'true';
+    more.setAttribute('aria-expanded', String(open));
+    more.querySelector('.tile__name').textContent = open ? 'Show less' : 'Explore All';
+    extras.forEach((x) => { x.hidden = !open; });
+    if (!open && extras.includes(active)) show(tiles[5]);
+    if (open && animate) {
+      gsap.from(extras, { opacity: 0, y: 30, scale: 0.96, filter: 'blur(8px)', duration: 0.65, stagger: 0.06, ease: 'power3.out', clearProps: 'filter,transform,opacity' });
+    }
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+  });
+})();
+
+/* ---------- FAQ accordion (height + fade) ---------- */
+(function faq() {
+  const items = [...document.querySelectorAll('.faq-item')];
+  const animate = HAS_GSAP && !REDUCED_MOTION;
+  const setOpen = (x, open) => {
+    const a = x.querySelector('.faq-a');
+    x.classList.toggle('is-open', open);
+    x.querySelector('.faq-q').setAttribute('aria-expanded', String(open));
+    if (!animate) { a.hidden = !open; return; }
+    gsap.killTweensOf(a);
+    if (open) {
+      a.hidden = false;
+      gsap.fromTo(a, { height: 0, opacity: 0 }, { height: 'auto', opacity: 1, duration: 0.45, ease: 'power2.out', clearProps: 'height,opacity' });
+    } else if (!a.hidden) {
+      gsap.to(a, { height: 0, opacity: 0, duration: 0.35, ease: 'power2.out', onComplete: () => { a.hidden = true; gsap.set(a, { clearProps: 'height,opacity' }); } });
+    }
+  };
+  items.forEach((it) => it.querySelector('.faq-q').addEventListener('click', () => {
+    const willOpen = !it.classList.contains('is-open');
+    items.forEach((x) => { if (x === it) setOpen(x, willOpen); else if (x.classList.contains('is-open')) setOpen(x, false); });
+  }));
+})();
+
+/* =====================================================================
+   PAGE MOTION — hero intro timeline + scroll-triggered reveals,
+   split-text headings, staggers, masked images, parallax, blobs, footer.
+   ===================================================================== */
+(async function pageMotion() {
+  const root = document.documentElement;
+  if (!HAS_GSAP || REDUCED_MOTION) { root.classList.remove('motion-pending'); return; }
+  // give the text font a moment to load (max 300ms) so the hero never waits on icon fonts
+  await Promise.race([document.fonts.load('400 64px Inter'), new Promise((r) => setTimeout(r, 300))]);
+
+  const W = window.innerWidth;
+  const S = W < 768 ? 0.55 : W < 1100 ? 0.8 : 1;     // shorter travel on tablet / phone
+  const BLUR = W < 768 ? 8 : 12;
+  const DESKTOP = W >= 900;
+  const EASE = 'power3.out';
+  const once = (trigger, start = 'top 85%') => ({ trigger, start, once: true });
+  const split = (el) => new SplitText(el, { type: 'words', wordsClass: 'split-word' }).words;
+
+  /* ---------- 1. Hero intro: shell → logo/nav → title words → copy → CTA → person → pills ---------- */
+  const heroWords = split(document.querySelector('.hero h1'));
+  const tl = gsap.timeline({ defaults: { ease: EASE } });
+  tl.from('.hero', { opacity: 0, scale: 0.96, y: 20, duration: 1, clearProps: 'transform' })
+    .from('.nav__logo', { opacity: 0, scale: 0.92, filter: `blur(${BLUR}px)`, duration: 0.7, clearProps: 'filter' }, 0.2)
+    .from('.nav__links li, .nav__right', { opacity: 0, y: -12, duration: 0.5, stagger: 0.05, clearProps: 'transform' }, 0.3)
+    .from('.hero__badge', { opacity: 0, y: 16, filter: 'blur(8px)', duration: 0.6, clearProps: 'filter,transform' }, 0.45)
+    .from(heroWords, { opacity: 0, yPercent: 70, filter: 'blur(14px)', duration: 0.85, stagger: 0.06, clearProps: 'filter' }, 0.55)
+    .from('.hero__lead', { opacity: 0, y: 24, filter: 'blur(8px)', duration: 0.7, clearProps: 'filter,transform' }, '-=0.55')
+    .from('.hero__actions > *', { opacity: 0, y: 18, scale: 0.97, duration: 0.55, stagger: 0.1, clearProps: 'transform' }, '-=0.45')
+    .from('.hero__trust', { opacity: 0, y: 16, filter: 'blur(6px)', duration: 0.55, clearProps: 'filter,transform' }, '-=0.35')
+    .from('.hero__visual', { opacity: 0, y: 110 * S, scale: 0.92, filter: 'blur(10px)', duration: 1.1, transformOrigin: '50% 100%', clearProps: 'filter,transform' }, 0.7);
+  const pills = gsap.utils.toArray('.pill');
+  if (DESKTOP && pills.length) {
+    // each pill comes in from its own side, then keeps a slow, uneven float
+    const from = [{ x: -40 }, { y: 40 }, { x: 40, y: -30 }, { x: 40 }, { y: 40 }];
+    pills.forEach((p, i) => {
+      tl.from(p, { opacity: 0, scale: 0.92, ...from[i % from.length], duration: 0.8, ease: EASE }, 1.35 + i * 0.1);
+    });
+    tl.add(() => pills.forEach((p, i) => gsap.to(p, {
+      y: `-=${8 + (i % 3) * 3}`, rotation: `+=${i % 2 ? 1.2 : -1.2}`,
+      duration: 3.2 + i * 0.45, repeat: -1, yoyo: true, ease: 'sine.inOut',
+    })));
+  }
+  root.classList.remove('motion-pending');
+
+  /* Hero leaves with depth while scrolling out (scrubbed, so it reverses on the way back) */
+  if (DESKTOP) {
+    const out = { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true };
+    gsap.to('.hero__person', { yPercent: 10, ease: 'none', scrollTrigger: out });
+    gsap.to('.pills', { yPercent: -10, ease: 'none', scrollTrigger: out });
+    gsap.to('.hero__body', { y: -60, opacity: 0.25, ease: 'none', scrollTrigger: out });
+  }
+
+  /* ---------- 2. Animated gradient blobs (the existing glows drift slowly) ---------- */
+  if (DESKTOP) {
+    gsap.to('.hero__glow', { xPercent: 12, yPercent: -10, scale: 1.12, duration: 8, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+    gsap.to('.solutions .glow', { xPercent: -14, yPercent: 10, scale: 1.15, duration: 9, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+  }
+
+  /* ---------- 3. Client logos: stagger with a light blur ---------- */
+  gsap.timeline({ scrollTrigger: once('.trusted', 'top 90%') })
+    .from('.trusted > p', { opacity: 0, y: 16, filter: 'blur(6px)', duration: 0.6, ease: EASE, clearProps: 'filter,transform' })
+    .from('.logos__group:first-child > *', { opacity: 0, y: 18, scale: 0.9, filter: 'blur(8px)', duration: 0.55, stagger: 0.07, ease: 'power2.out', clearProps: 'filter,transform' }, '-=0.3');
+
+  /* ---------- 4. Every section header: eyebrow → split heading → copy ---------- */
+  document.querySelectorAll('.section-head, .faq__intro').forEach((head) => {
+    const h2 = head.querySelector('.h2');
+    const t = gsap.timeline({ scrollTrigger: once(head, 'top 82%'), defaults: { ease: EASE } });
+    const eyebrow = head.querySelector('.eyebrow');
+    if (eyebrow) t.from(eyebrow, { opacity: 0, y: 16, filter: 'blur(6px)', duration: 0.6, clearProps: 'filter,transform' });
+    if (h2) t.from(split(h2), { opacity: 0, yPercent: 60, filter: 'blur(14px)', duration: 0.85, stagger: 0.05, clearProps: 'filter' }, eyebrow ? '-=0.35' : 0);
+    const rest = head.querySelectorAll(':scope > .section-head__copy, :scope > .values__nav, :scope > p');
+    if (rest.length) t.from(rest, { opacity: 0, y: 24, filter: 'blur(8px)', duration: 0.7, stagger: 0.1, clearProps: 'filter,transform' }, '-=0.5');
+  });
+
+  /* ---------- 5. About: card rises, copy follows, the portrait drifts (parallax) ---------- */
+  gsap.timeline({ scrollTrigger: once('.about__panel', 'top 80%'), defaults: { ease: EASE } })
+    .from('.about__panel', { opacity: 0, y: 40 * S, scale: 0.98, duration: 0.9, clearProps: 'transform' })
+    .from('.about-card', { opacity: 0, y: 64 * S, scale: 0.96, filter: `blur(${BLUR}px)`, duration: 1, clearProps: 'filter,transform' }, '-=0.6')
+    .from(split(document.querySelector('.about__copy h3')), { opacity: 0, yPercent: 60, filter: 'blur(12px)', duration: 0.8, stagger: 0.06, clearProps: 'filter' }, '-=0.75')
+    .from('.about__copy .prose > p, .about__copy > .btn', { opacity: 0, y: 24, filter: 'blur(8px)', duration: 0.7, stagger: 0.1, clearProps: 'filter,transform' }, '-=0.55');
+  if (DESKTOP) gsap.to('.about-card__head', { yPercent: -6, ease: 'none', scrollTrigger: { trigger: '.about__panel', start: 'top bottom', end: 'bottom top', scrub: true } });
+
+  /* ---------- 6. Values: the dark stage scales in, then the card deck takes over ---------- */
+  gsap.from('.values__stage', { opacity: 0, y: 60 * S, scale: 0.96, filter: `blur(${BLUR}px)`, duration: 1, ease: EASE, clearProps: 'filter,transform', scrollTrigger: once('.values', 'top 70%') });
+
+  /* ---------- 7. Approach: Staggered Scatter-to-Grid Card Reveal ----------
+     Each card starts small, blurred and slightly off its spot (fixed offsets, never random),
+     then flies into its own place in the existing layout. Phones: vertical offset only. */
+  const PHONE = W < 768;
+  const apOffsets = [{ x: -110, y: 30 }, { x: 0, y: -70 }, { x: 110, y: 25 }, { x: -90, y: 85 }, { x: 5, y: 105 }, { x: 95, y: 80 }];
+  gsap.fromTo('.ap-card',
+    {
+      opacity: 0,
+      scale: PHONE ? 0.75 : 0.35,
+      x: (i) => (PHONE ? 0 : apOffsets[i % apOffsets.length].x * S),
+      y: (i) => (PHONE ? 45 : apOffsets[i % apOffsets.length].y * S),
+      filter: `blur(${PHONE ? 6 : 10}px)`,
+      transformOrigin: 'center center',
+    },
+    {
+      opacity: 1, scale: 1, x: 0, y: 0, filter: 'blur(0px)',
+      duration: 0.85, stagger: { each: PHONE ? 0.08 : 0.1, from: 'start' }, ease: EASE,
+      clearProps: 'transform,filter', scrollTrigger: once('#approach', 'top 72%'),
+    });
+
+  /* ---------- 8. Solutions: panel scales in, bento tiles + detail stagger ---------- */
+  gsap.from('.solutions', { opacity: 0, y: 60 * S, scale: 0.97, duration: 1, ease: EASE, clearProps: 'transform', scrollTrigger: once('.solutions', 'top 88%') });
+  gsap.from('.sol-tiles > *, .sol-detail', { opacity: 0, y: 56 * S, scale: 0.97, filter: `blur(${BLUR}px)`, duration: 0.9, stagger: 0.07, ease: EASE, clearProps: 'filter,transform', scrollTrigger: once('.sol-grid', 'top 80%') });
+
+  /* ---------- 9. Insights: cards fade up, images open from a mask ---------- */
+  gsap.timeline({ scrollTrigger: once('#blog-track', 'top 82%'), defaults: { ease: EASE } })
+    .from('.post', { opacity: 0, y: 40 * S, duration: 0.8, stagger: 0.1, clearProps: 'transform' })
+    .fromTo('.post__media', { clipPath: 'inset(100% 0% 0% 0% round 18px)', scale: 1.08 },
+      { clipPath: 'inset(0% 0% 0% 0% round 18px)', scale: 1, duration: 1.1, stagger: 0.1, clearProps: 'clipPath,transform' }, 0)
+    .from('.blog__progress', { scaleX: 0, transformOrigin: 'left center', duration: 0.9, clearProps: 'transform' }, 0.3);
+
+  /* ---------- 10. FAQ: questions stagger in ---------- */
+  gsap.from('.faq-item', { opacity: 0, y: 30, filter: 'blur(6px)', duration: 0.6, stagger: 0.08, ease: 'power2.out', clearProps: 'filter,transform', scrollTrigger: once('#faq-list', 'top 82%') });
+
+  /* ---------- 11. Contact: panel rises, office image opens from a mask, form fields stagger ---------- */
+  gsap.from('#contact', { opacity: 0, y: 60 * S, scale: 0.97, duration: 1, ease: EASE, clearProps: 'transform', scrollTrigger: once('#contact', 'top 88%') });
+  gsap.timeline({ scrollTrigger: once('.contact__grid', 'top 80%'), defaults: { ease: EASE } })
+    .fromTo('.office', { clipPath: 'inset(100% 0% 0% 0% round 24px)' }, { clipPath: 'inset(0% 0% 0% 0% round 24px)', duration: 1.1, clearProps: 'clipPath' })
+    .from('.office__card', { opacity: 0, y: 30, filter: 'blur(8px)', duration: 0.7, clearProps: 'filter,transform' }, '-=0.45')
+    .from('.form', { opacity: 0, y: 50 * S, scale: 0.98, duration: 0.9, clearProps: 'transform' }, 0.1)
+    .from('.form > *, .form__grid > *', { opacity: 0, y: 20, filter: 'blur(6px)', duration: 0.55, stagger: 0.05, clearProps: 'filter,transform' }, 0.35);
+  if (DESKTOP) gsap.to('.office__card', { yPercent: -10, ease: 'none', scrollTrigger: { trigger: '.office', start: 'top bottom', end: 'bottom top', scrub: true } });
+
+  /* ---------- 12. Footer: dark block wipes up, columns stagger ---------- */
+  gsap.timeline({ scrollTrigger: once('.footer', 'top 88%'), defaults: { ease: EASE } })
+    .fromTo('.footer', { clipPath: 'inset(100% 0% 0% 0% round 24px)' }, { clipPath: 'inset(0% 0% 0% 0% round 24px)', duration: 1, clearProps: 'clipPath' })
+    .from('.footer__grid > *, .footer__bottom', { opacity: 0, y: 25, filter: 'blur(8px)', duration: 0.6, stagger: 0.08, ease: 'power2.out', clearProps: 'filter,transform' }, '-=0.45');
+
+  ScrollTrigger.refresh();
+})();
+</script>
+</body>
+</html>
