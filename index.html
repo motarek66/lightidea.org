@@ -674,6 +674,53 @@ html.menu-open .sticky-nav, html.menu-closing .sticky-nav { display: none; }
 }
 
 /* =====================================================================
+   ANNOUNCEMENT MODAL (first visit). Image → icon → eyebrow → title → copy → actions,
+   in the site's light-card language: white card, 24px radius, inset sky + copper visual.
+   ===================================================================== */
+/* Size: large marketing-announcement class (Canva ~890×560, Emergent ~830×600; Atlassian /
+   Polaris large modals 800–980). Desktop: 880 × 560 split, image left, content right.
+   Below 760px it stacks: image on top, content under it. */
+.announce { width: min(880px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 0; border: 0; border-radius: 28px; overflow: auto; background: #fff; color: var(--c-text); box-shadow: 0 50px 100px -30px rgba(2,7,26,0.6), 0 0 0 1px rgba(15,45,77,0.06); }
+.announce[open] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: min(560px, calc(100dvh - 32px)); }
+.announce:focus { outline: none; }
+.announce::backdrop { background: rgba(2,7,26,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.announce__media { position: relative; margin: 10px; border-radius: 20px; overflow: hidden; background: #0b2a55; min-height: 300px; }
+.announce__media > img { position: absolute; max-width: none; }
+.announce__sky { inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.announce__ribbon { left: -62%; top: 18%; width: 205%; height: auto; }
+.announce__media::after { content: ""; position: absolute; inset: auto 0 0; height: 40%; background: linear-gradient(to top, rgba(255,255,255,0.2), rgba(255,255,255,0)); }
+.announce__close { position: absolute; right: 18px; top: 18px; z-index: 2; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; font-size: 16px; color: var(--c-deep); background: #fff; border: 1px solid #d5dde8; transition: background-color 0.3s var(--ease-out); }
+.announce__close:hover { background: var(--c-surface); }
+.announce__body { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 64px 52px 48px 42px; }
+.announce .eyebrow { font-size: 13px; }
+.announce__title { margin: 20px 0 0; font-size: 40px; font-weight: 500; line-height: 1.08; letter-spacing: -0.04em; color: var(--c-navy); text-wrap: balance; }
+.announce__text { margin: 16px 0 0; font-size: 17px; line-height: 1.6; color: var(--c-text); text-wrap: pretty; }
+.announce__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 32px; }
+.announce__later { min-height: 50px; padding: 0 22px; border-radius: 99px; font-size: 16px; font-weight: 500; color: var(--c-ink); border: 1px solid #d5dde8; background: #fff; transition: background-color 0.3s var(--ease-out); }
+.announce__later:hover { background: var(--c-surface); }
+.announce .submit { text-decoration: none; }
+@media (max-width: 759px) {
+  .announce { width: min(480px, calc(100vw - 32px)); border-radius: 24px; }
+  .announce[open] { grid-template-columns: 1fr; min-height: 0; }
+  .announce__media { margin: 8px 8px 0; min-height: 0; aspect-ratio: 4 / 3; border-radius: 18px; }
+  .announce__ribbon { left: -24%; top: 6%; width: 140%; }
+  .announce__close { right: 16px; top: 16px; width: 36px; height: 36px; color: #fff; background: rgba(2,7,26,0.35); border-color: rgba(255,255,255,0.3); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .announce__body { padding: 24px 24px 24px; }
+  .announce__title { margin-top: 14px; font-size: clamp(26px, 7.4vw, 30px); }
+  .announce__text { margin-top: 10px; font-size: 15.5px; }
+  .announce__actions { width: 100%; margin-top: 22px; }
+  .announce__actions > * { flex: 1 1 auto; justify-content: center; }
+  .announce .submit { height: 48px; font-size: 16px; }
+}
+html.motion .announce[open] { animation: announce-in 0.7s var(--ease-out) both; }
+html.motion .announce[open]::backdrop { animation: announce-fade 0.5s ease both; }
+html.motion .announce.is-closing { animation: announce-out 0.3s ease both; }
+html.motion .announce.is-closing::backdrop { animation: announce-fade 0.3s ease reverse both; }
+@keyframes announce-in { from { opacity: 0; transform: translateY(24px); filter: blur(8px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes announce-out { to { opacity: 0; transform: translateY(12px); } }
+@keyframes announce-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* =====================================================================
    MOTION SYSTEM (GSAP + ScrollTrigger + SplitText + Lenis)
    Tokens shared by CSS transitions; the JS uses the same values.
    ===================================================================== */
@@ -1653,6 +1700,60 @@ document.addEventListener('click', (e) => {
     hero.addEventListener('pointerleave', () => { tx = 0; ty = 0; wake(); });
   }
   addEventListener('scroll', apply, { passive: true });
+})();
+</script>
+<!-- ============================== ANNOUNCEMENT (first visit) ============================== -->
+<dialog class="announce" id="announce" tabindex="-1" aria-labelledby="announce-title" aria-describedby="announce-text">
+  <button type="button" class="announce__close" data-announce-close aria-label="Close announcement"><i class="ph-bold ph-x"></i></button>
+  <div class="announce__media">
+    <img src="assets/about-card-bg.webp" alt="" class="announce__sky">
+    <img src="assets/hero-ribbon.webp" alt="" class="announce__ribbon">
+  </div>
+  <div class="announce__body">
+    <span class="eyebrow">NEW · SANADE</span>
+    <h2 class="announce__title" id="announce-title">UAE E-Invoicing is here with Sanade</h2>
+    <p class="announce__text" id="announce-text">Get your finance team ready for the UAE e-invoicing mandate. Sanade connects to your ERP and keeps every invoice compliant, from issue to submission.</p>
+    <div class="announce__actions">
+      <button type="button" class="announce__later" data-announce-close>Maybe later</button>
+      <a href="#contact" class="submit" data-announce-close>Book a demo <span><i class="ph ph-arrow-up-right"></i></span></a>
+    </div>
+  </div>
+</dialog>
+
+<script>
+/* Announcement: opens once per visitor shortly after the hero intro; ?announce=1 forces it.
+   <dialog> gives focus trapping, Esc to close and the backdrop for free. */
+(() => {
+  const dlg = document.getElementById('announce');
+  if (!dlg || typeof dlg.showModal !== 'function') return;
+  const KEY = 'li-announce-sanade-v1';
+  const force = new URLSearchParams(location.search).has('announce');
+  let seen = false;
+  try { seen = localStorage.getItem(KEY) === '1'; } catch (e) {}
+  if (seen && !force) return;
+
+  const motion = document.documentElement.classList.contains('motion');
+  const close = () => {
+    try { localStorage.setItem(KEY, '1'); } catch (e) {}
+    if (!dlg.open) return;
+    if (!motion) { dlg.close(); return; }
+    dlg.classList.add('is-closing');
+    // close when the exit animation ends; the timer covers tabs where animations don't run
+    setTimeout(() => { dlg.classList.remove('is-closing'); if (dlg.open) dlg.close(); }, 320);
+  };
+  dlg.addEventListener('close', () => window.lenis && window.lenis.start());
+  dlg.addEventListener('cancel', (e) => { e.preventDefault(); close(); });                       // Esc
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) close(); });                      // backdrop
+  dlg.querySelectorAll('[data-announce-close]').forEach((el) => el.addEventListener('click', close));
+
+  const open = () => {
+    if (dlg.open) return;
+    window.lenis && window.lenis.stop();
+    dlg.showModal();
+    dlg.focus({ preventScroll: true });   // focus the dialog itself, so no button shows a focus ring on open
+  };
+  const start = () => setTimeout(open, motion ? 1800 : 600);   // after the hero intro settles
+  if (document.readyState === 'complete') start(); else addEventListener('load', start, { once: true });
 })();
 </script>
 </body>
