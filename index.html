@@ -696,9 +696,12 @@ html.menu-open .sticky-nav, html.menu-closing .sticky-nav { display: none; }
 .announce__title { margin: 20px 0 0; font-size: 40px; font-weight: 500; line-height: 1.08; letter-spacing: -0.04em; color: var(--c-navy); text-wrap: balance; }
 .announce__text { margin: 16px 0 0; font-size: 17px; line-height: 1.6; color: var(--c-text); text-wrap: pretty; }
 .announce__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 32px; }
-.announce__later { min-height: 50px; padding: 0 22px; border-radius: 99px; font-size: 16px; font-weight: 500; color: var(--c-ink); border: 1px solid #d5dde8; background: #fff; transition: background-color 0.3s var(--ease-out); }
+.announce__later { min-height: 42px; padding: 0 18px; border-radius: 8px; font-size: 15px; font-weight: 500; color: var(--c-ink); border: 1px solid #d5dde8; background: #fff; transition: background-color 0.3s var(--ease-out); }
 .announce__later:hover { background: var(--c-surface); }
-.announce .submit { text-decoration: none; }
+/* Buttons: compact 42px, 8px corners, dark-navy primary (Perplexity, Mistral, Shopify modals). */
+.announce .submit { height: 42px; padding: 0 18px; border-radius: 8px; font-size: 15px; font-weight: 500; background: var(--c-deep); text-decoration: none; transition: background-color 0.3s var(--ease-out); }
+.announce .submit:hover { background: var(--c-navy); }
+.announce__actions { gap: 10px; margin-top: 28px; }
 @media (max-width: 759px) {
   .announce { width: min(480px, calc(100vw - 32px)); border-radius: 24px; }
   .announce[open] { grid-template-columns: 1fr; min-height: 0; }
@@ -710,7 +713,8 @@ html.menu-open .sticky-nav, html.menu-closing .sticky-nav { display: none; }
   .announce__text { margin-top: 10px; font-size: 15.5px; }
   .announce__actions { width: 100%; margin-top: 22px; }
   .announce__actions > * { flex: 1 1 auto; justify-content: center; }
-  .announce .submit { height: 48px; font-size: 16px; }
+  .announce .submit { height: 44px; }
+  .announce__later { min-height: 44px; }
 }
 html.motion .announce[open] { animation: announce-in 0.7s var(--ease-out) both; }
 html.motion .announce[open]::backdrop { animation: announce-fade 0.5s ease both; }
@@ -1715,7 +1719,7 @@ document.addEventListener('click', (e) => {
     <p class="announce__text" id="announce-text">Get your finance team ready for the UAE e-invoicing mandate. Sanade connects to your ERP and keeps every invoice compliant, from issue to submission.</p>
     <div class="announce__actions">
       <button type="button" class="announce__later" data-announce-close>Maybe later</button>
-      <a href="#contact" class="submit" data-announce-close>Book a demo <span><i class="ph ph-arrow-up-right"></i></span></a>
+      <a href="#contact" class="submit" data-announce-close>Book a demo</a>
     </div>
   </div>
 </dialog>
