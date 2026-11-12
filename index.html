@@ -185,7 +185,45 @@ button { cursor: pointer; }
 }
 .hero__glow { position: absolute; left: 57.9%; top: 29.3%; width: 30.4%; aspect-ratio: 1; }
 .hero__glow img { position: absolute; inset: -38%; width: 176%; max-width: none; }
-.hero__person { position: absolute; left: 51%; top: 12%; height: 120.4%; width: auto; max-width: none; }
+
+/* Copper ribbon (hero + about card). Motion is split over three wrappers so the transforms
+   never fight: .ribbon__track = pointer/scroll parallax (JS), .ribbon__drift = slow idle
+   orbit, .ribbon = blur-in reveal. No scaling anywhere: scaling a large image layer while
+   it animates makes it look soft or pixelated, then snap sharp at the end. */
+.hero__ribbon { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+.hero__ribbon .ribbon__track { position: absolute; right: -3%; bottom: -5%; width: min(75%, 1180px); }
+.ribbon__track { will-change: transform; }
+.ribbon__drift { position: relative; }
+.ribbon { position: relative; aspect-ratio: 1376 / 768; }
+.ribbon img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; }
+.ribbon::after {   /* metal glint, clipped to the copper by the image's own alpha */
+  content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; opacity: 0;
+  background: linear-gradient(112deg, rgba(255,226,196,0) 38%, rgba(255,236,214,0.75) 50%, rgba(255,226,196,0) 62%) no-repeat;
+  background-size: 280% 100%; background-position: 150% 0;
+  -webkit-mask: url(assets/hero-ribbon.webp) center / 100% 100% no-repeat; mask: url(assets/hero-ribbon.webp) center / 100% 100% no-repeat;
+}
+html.motion .ribbon:not(.is-in) { opacity: 0; }
+html.motion .ribbon.is-in { animation: ribbon-in 2.2s cubic-bezier(0.25, 1, 0.5, 1) both; }
+html.motion .ribbon.is-in::after { animation: ribbon-glint 9s cubic-bezier(0.45, 0, 0.25, 1) 2.6s infinite; }
+html.motion .ribbon__drift { animation: ribbon-drift 24s ease-in-out 2.2s infinite; }
+@keyframes ribbon-in {
+  0%   { opacity: 0; transform: translateY(24px); filter: blur(24px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@keyframes ribbon-drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33%      { transform: translate(-0.8%, -1.4%) rotate(-1.1deg); }
+  66%      { transform: translate(0.6%, -0.5%) rotate(0.7deg); }
+}
+@keyframes ribbon-glint {
+  0%   { opacity: 0; background-position: 150% 0; }
+  12%  { opacity: 1; }
+  45%  { opacity: 1; background-position: -50% 0; }
+  55%, 100% { opacity: 0; background-position: -50% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ribbon, .ribbon::after, .ribbon__drift { animation: none !important; }
+}
 .nav { position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; height: 76px; margin-top: 16px; width: min(100% - 2 * var(--page-gutter), 1256px); margin-inline: auto; }
 .nav__logo { height: 32px; width: auto; }
 .nav__links { display: flex; gap: clamp(20px, 2vw, 32px); font-family: var(--font-manrope); font-size: 15px; font-weight: 500; list-style: none; margin: 0; padding: 0; }
@@ -203,12 +241,6 @@ button { cursor: pointer; }
 .hero__trust img { height: 32px; width: auto; }
 .hero__trust span { display: block; }
 .hero__trust .muted { color: rgba(255,255,255,0.7); }
-
-/* Floating industry pills — sized relative to the hero */
-.pills { position: absolute; inset: 0; z-index: 2; pointer-events: none; font-size: clamp(13px, 1.15vw, 23px); }
-.pill { position: absolute; display: inline-flex; align-items: center; gap: 0.57em; padding: 0.64em 1.14em; border-radius: 99em; white-space: nowrap; font-family: var(--font-geist); font-weight: 500; line-height: 1.25; background: rgba(255,255,255,0.16); box-shadow: inset 0 0.07em 0 rgba(255,255,255,0.55); backdrop-filter: blur(26px); -webkit-backdrop-filter: blur(26px); }
-.pill i { width: 0.57em; height: 0.57em; border-radius: 50%; }
-.pill--soft { font-weight: 400; background: rgba(255,255,255,0.12); border: 1.6px solid rgba(255,255,255,0.3); box-shadow: none; opacity: 0.85; filter: blur(0.9px); }
 
 /* =====================================================================
    2. TRUSTED BY
@@ -246,22 +278,32 @@ button { cursor: pointer; }
   background: #f2f6f9; border-radius: clamp(18px, 2vw, 30px); overflow: hidden;
   padding: clamp(28px, 4.6vh, 56px) clamp(20px, 4.8vw, 66px);
 }
+/* Built 1:1 from Figma (node 1374:31084, card 502 × 496): sky ground → copper ribbon →
+   warm band → frosted stats. --u is one Figma pixel at the card's current width, so each
+   measurement below is the Figma number × var(--u). */
 .about-card { position: relative; container-type: inline-size; aspect-ratio: 502 / 496; }
-.about-card__bg { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: clamp(16px, 4.8cqw, 24px); }
-.about-card__head { position: absolute; left: 3.6%; top: -16.6%; width: 105.6%; height: 116.7%; border-radius: 37.7% / 34.5%; overflow: hidden; }
-.about-card__head img { position: absolute; left: -12.83%; top: 0; width: 112.91%; height: 103.35%; max-width: none; }
-.about-card__warm { position: absolute; inset: auto 0 0; height: 27%; border-radius: inherit; border-radius: 0 0 clamp(16px, 4.8cqw, 24px) clamp(16px, 4.8cqw, 24px); background: linear-gradient(to top, rgba(250,190,140,0.55), rgba(250,190,140,0)); }
-.about-card__shade { position: absolute; inset: auto 0 0; height: 44.8%; border-radius: 0 0 clamp(16px, 4.8cqw, 24px) clamp(16px, 4.8cqw, 24px); background: linear-gradient(to top, rgba(2,10,28,0.92) 0%, rgba(2,10,28,0.6) 55%, rgba(2,10,28,0) 100%); }
-.about-card__stats { position: absolute; left: calc(50% + 1.6cqw); bottom: 7cqw; transform: translateX(-50%); width: 87.25cqw; display: flex; align-items: flex-end; justify-content: space-between; color: #fff; font-weight: 500; }
-.about-card__big { display: block; font-size: 22.3cqw; line-height: 0.85; letter-spacing: -0.065em; }
-.about-card__label { display: block; margin-top: 1.2cqw; font-size: max(12px, 3.39cqw); }
-.about-card__rule { width: 35.9cqw; height: 1px; background: rgba(255,255,255,0.35); margin: 4cqw 0; }
-.about-card__small { display: flex; align-items: baseline; gap: 2.6cqw; }
-.about-card__small b { font-size: 7.97cqw; line-height: 1; letter-spacing: -0.045em; font-weight: 500; }
-.about-card__small span { white-space: nowrap; font-size: max(11px, 2.99cqw); color: #d6e6f6; }
-.about-card__partner { display: flex; flex-direction: column; align-items: flex-end; gap: 1.3cqw; padding: 2.25cqw 3.86cqw; border-radius: 2.57cqw; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); }
-.about-card__partner span { font-size: max(8px, 1.77cqw); font-weight: 600; letter-spacing: 0.12em; }
-.about-card__partner img { width: 19.85cqw; height: auto; }
+.about-card__inner { --u: calc(100cqw / 502); position: absolute; inset: 0; border-radius: calc(24 * var(--u)); overflow: hidden; background: #fff; }
+.about-card__bg { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
+.about-card .ribbon__track { position: absolute; left: calc(-332 * var(--u)); top: calc(62.09 * var(--u)); width: calc(836 * var(--u)); }
+.about-card__warm { position: absolute; left: 0; right: 0; top: calc(362.43 * var(--u)); height: calc(134 * var(--u)); border-radius: calc(24 * var(--u)); background: linear-gradient(to top, rgba(250,190,140,0.55), rgba(250,190,140,0)); }
+.about-card__glass {
+  position: absolute; left: 0; right: 0; top: calc(237.09 * var(--u)); bottom: 0;
+  border-radius: 0 0 calc(22 * var(--u)) calc(22 * var(--u));
+  background: linear-gradient(to top, rgba(255,255,255,0.1), rgba(255,255,255,0));
+  -webkit-backdrop-filter: blur(calc(5 * var(--u))); backdrop-filter: blur(calc(5 * var(--u)));
+}
+.about-card__stats { position: absolute; left: calc(40 * var(--u)); top: calc(23.35 * var(--u)); width: calc(438 * var(--u)); display: flex; align-items: flex-end; justify-content: space-between; color: #fff; font-weight: 500; }
+.about-card__main { width: calc(205.73 * var(--u)); display: flex; flex-direction: column; gap: calc(20 * var(--u)); }
+.about-card__head { display: flex; flex-direction: column; gap: calc(6 * var(--u)); }
+.about-card__big { font-size: calc(112 * var(--u)); line-height: 0.85; letter-spacing: -0.065em; white-space: nowrap; }
+.about-card__label { font-size: max(12px, calc(17 * var(--u))); line-height: 1.21; white-space: nowrap; }
+.about-card__rule { width: calc(180 * var(--u)); height: 1px; background: rgba(255,255,255,0.8); }
+.about-card__small { position: relative; height: calc(40 * var(--u)); white-space: nowrap; }
+.about-card__small b { position: absolute; left: 0; top: 0; font-weight: 500; font-size: calc(40 * var(--u)); line-height: 1; letter-spacing: -0.045em; }
+.about-card__small span { position: absolute; left: calc(81.2 * var(--u)); top: calc(19 * var(--u)); font-size: max(11px, calc(15 * var(--u))); line-height: 1.2; color: #d6e6f6; }
+.about-card__partner { display: flex; flex-direction: column; align-items: flex-end; gap: calc(6.45 * var(--u)); padding: calc(11.29 * var(--u)) calc(19.36 * var(--u)); }
+.about-card__partner span { font-size: max(8px, calc(8.874 * var(--u))); font-weight: 600; letter-spacing: 0.12em; line-height: 1.2; }
+.about-card__partner img { width: calc(99.66 * var(--u)); height: auto; }
 .about__copy { display: flex; flex-direction: column; align-items: flex-start; gap: clamp(14px, 2.2vh, 18px); }
 .about__copy h3 { margin: 0; font-size: var(--fs-h3); font-weight: 500; line-height: 1.15; letter-spacing: -0.03em; color: var(--c-ink); }
 .about__copy .prose { display: flex; flex-direction: column; gap: 10px; font-size: clamp(15px, 1.05vw, 16px); max-width: var(--copy-max); color: #50687e; line-height: 1.55; text-wrap: pretty; }
@@ -271,45 +313,45 @@ button { cursor: pointer; }
 /* =====================================================================
    4. VALUES (Mission, Vision & Values)
    ===================================================================== */
-.values__nav { display: flex; align-items: center; gap: 14px; }
-.values__count { font-family: var(--font-mono); font-size: 14px; color: var(--c-muted); min-width: 4.6em; text-align: right; }
-.values { overflow: visible; padding-block: 0; }         /* visible: the stage grows past the panel edges to full screen */
-.values__scroller { height: calc(100svh + 80svh + (var(--n) - 1) * 75svh); }   /* expand distance + card deck distance */
-.values__sticky { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; padding-block: clamp(32px, 6vh, 72px); }
-.values__sticky > .container { flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; z-index: 1; }
-.values__sticky > .container .section-head { will-change: transform, opacity; }
-.values__slot { flex: 1; min-height: 0; }
-.values__stage {
-  position: absolute; top: 0; bottom: 0; left: calc(-1 * var(--frame)); right: calc(-1 * var(--frame)); z-index: 2;
-  overflow: hidden; background: var(--c-navy); container-type: size;
-  clip-path: inset(var(--ins-t, 0px) var(--ins-r, 0px) var(--ins-b, 0px) var(--ins-l, 0px) round var(--ins-rad, 24px));
+.values__nav { display: flex; align-items: center; gap: 14px; }   /* shared with the Insights header */
+
+/* Built 1:1 from Figma (node 1381:36269). One card is open (792 wide), the other four are
+   132-wide tabs with a vertical title; hovering, focusing or clicking a tab opens it.
+   --u is one Figma pixel at the 1360 container, so the layout is exact at full width and
+   scales down proportionally. */
+.values.panel { background: #f6f7fb; padding-block: 73px 113px; }   /* Figma: 73 + 40 below the cards */
+.values .section-head { padding-inline: 32px; margin-bottom: 40px; }
+.values .eyebrow { font-size: 16px; letter-spacing: 0; padding-block: 5px; }
+.values__row { --u: calc(100cqw / 1360); display: flex; gap: calc(10 * var(--u)); height: calc(560 * var(--u)); }
+.values__wrap { container-type: inline-size; }
+.v-card {
+  position: relative; flex: 132 1 0; min-width: 0; height: 100%; padding: 0; text-align: left;
+  font: inherit; color: inherit; cursor: pointer; background: #fff; border-radius: calc(24 * var(--u)); overflow: hidden;
+  transition: flex-grow 0.75s var(--ease-out);
 }
-.values__deck { position: absolute; inset: 0; transform: translate(var(--dx, 0px), var(--dy, 0px)); }
-.values__deck .value-card::after {          /* cards underneath the stack get slightly darker */
-  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  background: rgba(15, 45, 77, var(--shade, 0));
-}
-.values__deck .value-card {
-  position: absolute; left: 50%; top: 50%;
-  width: min(968px, 86cqw, calc((var(--slot-h, 100cqh) - 72px) * 2));   /* sized to the resting slot, so it never jumps */
-  transform: translate(-50%, -50%) translateY(var(--y, 0px)) scale(var(--s, 1));
-  transform-origin: 50% 0%;               /* covered cards shrink toward their top edge, so they peek out above */
-  will-change: transform;
-}
-.value-card {
-  container-type: inline-size; width: min(968px, 100%, calc((100svh - 430px) * 2));
-  display: grid; grid-template-columns: 38fr 51.3fr; gap: 3.57cqw; padding: 3.57cqw;
-  background: #fff; border-radius: max(16px, 2.68cqw);
-  filter: drop-shadow(0 -17px 22px rgba(0,0,0,0.16));
-}
-.value-card__text { display: flex; flex-direction: column; gap: 1.8cqw; min-width: 0; }
-.value-card__top { display: flex; align-items: center; justify-content: space-between; }
-.value-card__icon { display: grid; place-items: center; width: max(36px, 4.3cqw); aspect-ratio: 1; border-radius: 30%; background: rgba(1,106,180,0.1); color: var(--c-blue); font-size: max(18px, 1.96cqw); }
-.value-card__num { font-size: 12px; color: var(--c-muted); }
-.value-card h3 { margin: auto 0 0; font-size: clamp(28px, 4.64cqw, 45px); font-weight: 500; line-height: 1.08; letter-spacing: -0.035em; color: var(--c-navy); }
-.value-card p { margin: 0; font-size: clamp(15px, 1.7cqw, 16.5px); line-height: 1.6; color: var(--c-text); text-wrap: pretty; }
-.value-card__art { display: grid; place-items: center; aspect-ratio: 497 / 415; border-radius: max(14px, 1.96cqw); background: #eaf2fb; overflow: hidden; }
-.value-card__art img { width: 63%; height: auto; }
+.v-card[aria-expanded="true"] { flex-grow: 792; cursor: default; }
+
+/* closed: fan texture, vertical title, number */
+.v-card__fan { position: absolute; top: 0; left: 50%; width: calc(561 * var(--u)); height: calc(315.73 * var(--u)); max-width: none; transform: translateX(-50%); object-fit: cover; opacity: 0.09; pointer-events: none; }
+.v-card__title { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap; font-size: calc(26 * var(--u)); font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; color: #03122e; }
+.v-card__num { position: absolute; left: 0; right: 0; bottom: calc(22 * var(--u)); text-align: center; font-size: max(11px, calc(13 * var(--u))); line-height: 1.2; color: #5b6b80; }
+.v-card__fan, .v-card__title, .v-card__num { transition: opacity 0.35s var(--ease-out); }
+.v-card[aria-expanded="true"] :is(.v-card__fan, .v-card__title, .v-card__num) { opacity: 0; }
+
+/* open: the layout has its final (792) width from the start, so it never re-wraps while the card grows */
+.v-card__body { position: absolute; top: 0; left: 0; bottom: 0; width: calc(792 * var(--u)); opacity: 0; visibility: hidden; transition: opacity 0.3s var(--ease-out), visibility 0s linear 0.3s; }
+.v-card[aria-expanded="true"] .v-card__body { opacity: 1; visibility: visible; transition: opacity 0.55s var(--ease-out) 0.2s, visibility 0s; }
+.v-card__text { position: absolute; left: 0; top: 0; bottom: 0; width: calc(452 * var(--u)); padding: calc(36 * var(--u)); display: flex; flex-direction: column; }
+.v-card__top { display: flex; align-items: center; gap: calc(12 * var(--u)); }
+.v-card__icon { display: grid; place-items: center; width: calc(44 * var(--u)); aspect-ratio: 1; border-radius: calc(12 * var(--u)); background: #f5f7fa; color: #094e87; font-size: calc(20 * var(--u)); }
+.v-card__count { font-size: max(11px, calc(13 * var(--u))); color: #717784; }
+.v-card__h { margin-top: auto; font-size: calc(56 * var(--u)); font-weight: 500; line-height: 1; letter-spacing: -0.045em; color: #03122e; white-space: nowrap; }
+.v-card__p { padding-top: calc(16 * var(--u)); width: calc(380 * var(--u)); font-size: max(14px, calc(17 * var(--u))); line-height: 1.6; color: #3e4f66; text-wrap: pretty; }
+.v-card__art { position: absolute; left: calc(452 * var(--u)); top: 0; width: calc(340 * var(--u)); height: 100%; }
+.v-card__glow { position: absolute; left: calc(-32 * var(--u)); top: calc(-99.92 * var(--u)); width: calc(646 * var(--u)); height: calc(646 * var(--u)); max-width: none; object-fit: cover; filter: blur(calc(50 * var(--u))); }
+.v-card__badge { position: absolute; left: calc(10 * var(--u)); top: calc(110.33 * var(--u)); width: calc(320 * var(--u)); height: calc(320 * var(--u)); max-width: none; object-fit: contain; }
+.v-card__text, .v-card__badge { transform: translateX(calc(18 * var(--u))); transition: transform 0.8s var(--ease-out) 0.1s; }
+.v-card[aria-expanded="true"] :is(.v-card__text, .v-card__badge) { transform: none; }
 
 /* =====================================================================
    5. APPROACH
@@ -432,13 +474,38 @@ button { cursor: pointer; }
    9. CONTACT
    ===================================================================== */
 .contact__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); gap: 16px; }
-.office { position: relative; min-height: clamp(380px, 56vh, 527px); border-radius: 24px; overflow: hidden; background: #02071a; color: #fff; }
-.office > img.bg { position: absolute; left: 50%; bottom: -25%; width: 214%; height: 129%; max-width: none; transform: translateX(-50%); object-fit: cover; }
+/* Office card, built from Figma (node 1384:36314, 597 × 532): sky ground → region map with the
+   HQ pinned → legend → frosted address card with actions. */
+.office { position: relative; container-type: inline-size; min-height: clamp(380px, 56vh, 532px); border-radius: 24px; overflow: hidden; background: #02071a; color: #fff; }
+.office__bg { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
 .office__logo { position: absolute; left: clamp(20px, 2.6vw, 36px); top: clamp(20px, 2.6vw, 36px); height: 24px; width: auto; }
-.office__card { position: absolute; left: 16px; right: 16px; bottom: 16px; display: flex; flex-direction: column; gap: 10px; padding: clamp(18px, 1.8vw, 24px); border-radius: 18px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.35); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
-.office__card small { font-size: 12px; letter-spacing: 0.08em; }
-.office__card strong { font-size: clamp(18px, 1.55vw, 22px); font-weight: 600; line-height: 1.4; letter-spacing: -0.02em; }
-.office__card div { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 15px; font-weight: 500; }
+/* region map: Natural Earth 110m, the same window as the Figma frame (645 wide, 11px past the left edge) */
+.office__map { position: absolute; left: -1.84%; top: 4px; width: 108.06%; aspect-ratio: 641 / 456; opacity: 0.9;
+  -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent); mask-image: linear-gradient(to bottom, #000 80%, transparent); }
+.office__map img { width: 100%; height: 100%; max-width: none; }
+.office__pin { position: absolute; left: 52.38%; top: 46.18%; width: 0; height: 0; }
+.office__pin::before { content: ""; position: absolute; left: -7px; top: -7px; width: 14px; height: 14px; border-radius: 50%; background: var(--c-brand); box-shadow: 0 0 0 3px rgba(255,255,255,0.9); }
+.office__pin::after { content: ""; position: absolute; left: -19.2px; top: -19.2px; width: 38.4px; height: 38.4px; border-radius: 50%; box-shadow: 0 0 0 5.5px rgba(255,138,61,0.8); opacity: 0.42; }
+html.motion .office__pin::after { animation: pin-breathe 3.2s ease-in-out infinite; }
+@keyframes pin-breathe { 50% { opacity: 0.18; } }
+.office__tag { position: absolute; left: 16px; top: -18px; display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; border-radius: 12px; white-space: nowrap; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.office__tag strong { font-size: 14px; font-weight: 600; line-height: 1.6; }
+.office__tag span { font-size: 12px; line-height: 1.6; color: rgba(255,255,255,0.9); }
+.office__legend { position: absolute; right: clamp(20px, 6cqw, 36px); top: clamp(20px, 2.6vw, 36px); display: flex; gap: 14px; padding: 7px 12px; border-radius: 99px; font-size: 12.5px; line-height: 20px; color: rgba(255,255,255,0.75); background: rgba(2,7,26,0.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.office__legend span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.office__legend i { width: 7px; height: 7px; border-radius: 2px; background: #5ee0ff; }
+.office__legend span:first-child i { background: var(--c-brand); }
+.office__card { position: absolute; left: 16px; right: 16px; bottom: 16px; display: flex; flex-direction: column; gap: 10px; padding: 24px; border-radius: 18px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.35); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.office__card small { font-size: 12px; line-height: 1.6; letter-spacing: 0.08em; }
+.office__card strong { font-size: 18px; font-weight: 600; line-height: 1.4; letter-spacing: -0.02em; }
+.office__actions { display: flex; flex-wrap: wrap; gap: 10px 20px; padding-top: 4px; }
+.office__btn { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 13px; border-radius: 99px; font-size: 13.5px; font-weight: 500; line-height: 1.6; white-space: nowrap; color: #fff; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); transition: background-color 0.3s var(--ease-out); }
+.office__btn:hover { background: rgba(255,255,255,0.18); }
+.office__btn i { font-size: 14px; }
+.office__btn--primary { color: #03122e; background: #fff; border-color: #fff; }
+.office__btn--primary:hover { background: #eaf3fb; }
+.office__btn--primary i { font-size: 16px; }
+@media (max-width: 560px) { .office__legend { display: none; } }
 .form { background: #fff; border-radius: 24px; padding: clamp(20px, 2.6vw, 36px); display: flex; flex-direction: column; gap: 16px; }
 .form__title { margin: 0 0 4px; font-size: clamp(19px, 1.55vw, 22px); font-weight: 500; line-height: 1.35; letter-spacing: -0.02em; color: var(--c-navy); }
 .form__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
@@ -493,7 +560,7 @@ button { cursor: pointer; }
 
   .sol-grid { grid-template-columns: 1fr; }
   .contact__grid { grid-template-columns: 1fr; }
-  .office { min-height: 380px; }
+  .office { min-height: 640px; }
   .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 899px) {
@@ -503,9 +570,8 @@ button { cursor: pointer; }
   .hero__body { padding-bottom: 0; flex: none; }
   .hero__copy { max-width: 100%; }
   .hero__visual { position: relative; height: clamp(320px, 72vw, 520px); margin-top: 24px; }
-  .hero__person { left: 50%; top: 0; height: 100%; transform: translateX(-50%); }
   .hero__glow { left: 50%; top: 10%; width: 70%; transform: translateX(-50%); }
-  .pills { display: none; }
+  .hero__ribbon .ribbon__track { width: 135%; right: -22%; bottom: -4%; }
   .about__panel { grid-template-columns: 1fr; padding-top: clamp(64px, 14vw, 96px); }
   .about-card { width: min(100%, 460px); margin-inline: auto; }
   .faq { grid-template-columns: 1fr; }
@@ -515,10 +581,6 @@ button { cursor: pointer; }
 }
 @media (max-width: 767px) {
   .section-head { margin-bottom: 28px; }
-  .value-card { grid-template-columns: 1fr; gap: 20px; padding: 20px; width: 100%; }
-  .value-card h3 { margin-top: 28px; }
-  .value-card__art { aspect-ratio: 16 / 11; }
-  .value-card__art img { width: 55%; }
   .approach { grid-template-columns: 1fr; }
   .sol-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: minmax(132px, auto); }
   .form__grid { grid-template-columns: 1fr; }
@@ -582,18 +644,81 @@ html.menu-open .sticky-nav, html.menu-closing .sticky-nav { display: none; }
 }
 @media (max-width: 767px) { .sticky-nav__cta { display: none; } .sticky-nav__inner { height: 60px; } }
 
-/* Card deck falls back to a simple stacked list on phones and for reduced motion */
 @media (max-width: 767px), (prefers-reduced-motion: reduce) {
-  .values { padding-block: var(--panel-pad); }
-  .values__scroller { height: auto; }
-  .values__sticky { position: static; height: auto; padding: 0; }
-  .values__slot { display: none; }
-  .values__stage { position: relative; left: auto; right: auto; top: auto; bottom: auto; z-index: auto; container-type: normal; clip-path: none; border-radius: var(--panel-radius); margin-inline: var(--page-gutter); }
-  .values__deck { transform: none; }
-  .values__deck { position: static; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: clamp(14px, 4vw, 48px); }
-  .values__deck .value-card { position: relative; left: auto; top: auto; transform: none; width: min(968px, 100%); will-change: auto; }
   .values__nav { display: none; }
 }
+
+/* Values: below 1100px the tabs would get too narrow, so every value shows as an open card */
+@media (max-width: 1099px) {
+  .values.panel { padding-block: var(--panel-pad); }
+  .values .section-head { padding-inline: 0; margin-bottom: 28px; }
+  .values__row { flex-direction: column; height: auto; gap: 12px; }
+  .v-card, .v-card[aria-expanded="true"] { flex: none; height: auto; cursor: default; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-radius: 20px; }
+  .v-card__fan, .v-card__title, .v-card__num { display: none; }
+  .v-card .v-card__body, .v-card[aria-expanded="true"] .v-card__body { display: contents; opacity: 1; visibility: visible; }
+  .v-card .v-card__text, .v-card[aria-expanded="true"] .v-card__text { position: static; width: auto; min-height: 340px; padding: 28px; transform: none; }
+  .v-card__top { gap: 12px; }
+  .v-card__icon { width: 44px; border-radius: 12px; font-size: 20px; }
+  .v-card__count { font-size: 13px; }
+  .v-card__h { font-size: clamp(34px, 5vw, 48px); white-space: normal; }
+  .v-card__p { width: auto; padding-top: 14px; font-size: 16px; }
+  .v-card__art { position: relative; left: auto; width: auto; height: auto; min-height: 300px; overflow: hidden; }
+  .v-card__glow { left: 50%; top: 50%; width: min(100%, 420px); height: auto; aspect-ratio: 1; transform: translate(-50%, -50%); filter: blur(40px); }
+  .v-card .v-card__badge, .v-card[aria-expanded="true"] .v-card__badge { left: 50%; top: 50%; width: min(72%, 260px); height: auto; aspect-ratio: 1; transform: translate(-50%, -50%); }
+}
+@media (max-width: 699px) {
+  .v-card, .v-card[aria-expanded="true"] { grid-template-columns: 1fr; }
+  .v-card__art { order: -1; min-height: 240px; }
+  .v-card .v-card__text, .v-card[aria-expanded="true"] .v-card__text { min-height: 0; padding: 22px; }
+  .v-card__h { margin-top: 24px; }
+}
+
+/* =====================================================================
+   ANNOUNCEMENT MODAL (first visit). Image → icon → eyebrow → title → copy → actions,
+   in the site's light-card language: white card, 24px radius, inset sky + copper visual.
+   ===================================================================== */
+/* Size: large marketing-announcement class (Canva ~890×560, Emergent ~830×600; Atlassian /
+   Polaris large modals 800–980). Desktop: 880 × 560 split, image left, content right.
+   Below 760px it stacks: image on top, content under it. */
+.announce { width: min(880px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 0; border: 0; border-radius: 28px; overflow: auto; background: #fff; color: var(--c-text); box-shadow: 0 50px 100px -30px rgba(2,7,26,0.6), 0 0 0 1px rgba(15,45,77,0.06); }
+.announce[open] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: min(560px, calc(100dvh - 32px)); }
+.announce:focus { outline: none; }
+.announce::backdrop { background: rgba(2,7,26,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.announce__media { position: relative; margin: 10px; border-radius: 20px; overflow: hidden; background: #0b2a55; min-height: 300px; }
+.announce__media > img { position: absolute; max-width: none; }
+.announce__sky { inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.announce__ribbon { left: -62%; top: 18%; width: 205%; height: auto; }
+.announce__media::after { content: ""; position: absolute; inset: auto 0 0; height: 40%; background: linear-gradient(to top, rgba(255,255,255,0.2), rgba(255,255,255,0)); }
+.announce__close { position: absolute; right: 18px; top: 18px; z-index: 2; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; font-size: 16px; color: var(--c-deep); background: #fff; border: 1px solid #d5dde8; transition: background-color 0.3s var(--ease-out); }
+.announce__close:hover { background: var(--c-surface); }
+.announce__body { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 64px 52px 48px 42px; }
+.announce .eyebrow { font-size: 13px; }
+.announce__title { margin: 20px 0 0; font-size: 40px; font-weight: 500; line-height: 1.08; letter-spacing: -0.04em; color: var(--c-navy); text-wrap: balance; }
+.announce__text { margin: 16px 0 0; font-size: 17px; line-height: 1.6; color: var(--c-text); text-wrap: pretty; }
+.announce__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 32px; }
+.announce__later { min-height: 50px; padding: 0 22px; border-radius: 99px; font-size: 16px; font-weight: 500; color: var(--c-ink); border: 1px solid #d5dde8; background: #fff; transition: background-color 0.3s var(--ease-out); }
+.announce__later:hover { background: var(--c-surface); }
+.announce .submit { text-decoration: none; }
+@media (max-width: 759px) {
+  .announce { width: min(480px, calc(100vw - 32px)); border-radius: 24px; }
+  .announce[open] { grid-template-columns: 1fr; min-height: 0; }
+  .announce__media { margin: 8px 8px 0; min-height: 0; aspect-ratio: 4 / 3; border-radius: 18px; }
+  .announce__ribbon { left: -24%; top: 6%; width: 140%; }
+  .announce__close { right: 16px; top: 16px; width: 36px; height: 36px; color: #fff; background: rgba(2,7,26,0.35); border-color: rgba(255,255,255,0.3); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .announce__body { padding: 24px 24px 24px; }
+  .announce__title { margin-top: 14px; font-size: clamp(26px, 7.4vw, 30px); }
+  .announce__text { margin-top: 10px; font-size: 15.5px; }
+  .announce__actions { width: 100%; margin-top: 22px; }
+  .announce__actions > * { flex: 1 1 auto; justify-content: center; }
+  .announce .submit { height: 48px; font-size: 16px; }
+}
+html.motion .announce[open] { animation: announce-in 0.7s var(--ease-out) both; }
+html.motion .announce[open]::backdrop { animation: announce-fade 0.5s ease both; }
+html.motion .announce.is-closing { animation: announce-out 0.3s ease both; }
+html.motion .announce.is-closing::backdrop { animation: announce-fade 0.3s ease reverse both; }
+@keyframes announce-in { from { opacity: 0; transform: translateY(24px); filter: blur(8px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes announce-out { to { opacity: 0; transform: translateY(12px); } }
+@keyframes announce-fade { from { opacity: 0; } to { opacity: 1; } }
 
 /* =====================================================================
    MOTION SYSTEM (GSAP + ScrollTrigger + SplitText + Lenis)
@@ -647,7 +772,7 @@ html.motion-pending .hero { visibility: hidden; }  /* hidden only until the intr
 
   <div class="hero__visual" aria-hidden="true">
     <div class="hero__glow"><img src="assets/hero-glow.svg" alt=""></div>
-    <img src="assets/hero-man.png" alt="" class="hero__person">
+    <div class="hero__ribbon"><div class="ribbon__track"><div class="ribbon__drift"><div class="ribbon"><img src="assets/hero-ribbon.webp" alt=""></div></div></div></div>
   </div>
 
   <nav class="nav" aria-label="Main">
@@ -680,14 +805,6 @@ html.motion-pending .hero { visibility: hidden; }  /* hidden only until the intr
         <div><span style="font-weight:500">UAE · EGYPT · KSA · OMAN · INDIA</span><span class="muted">Trusted in</span></div>
       </div>
     </div>
-  </div>
-
-  <div class="pills" aria-hidden="true">
-    <span class="pill" style="left:53.4%; top:73.6%; transform: rotate(-8deg)"><i style="background:#ff8a3d"></i>Real Estate</span>
-    <span class="pill pill--soft" style="left:55.5%; top:84%; transform: rotate(5deg)">Healthcare</span>
-    <span class="pill" style="left:80.4%; top:63.5%; transform: rotate(9deg); font-size:0.9em"><i style="background:#5ee0ff"></i>Manufacturing</span>
-    <span class="pill" style="left:84.3%; top:72.6%; transform: rotate(-6deg); font-size:0.9em"><i style="background:#3ddc97"></i>Insurance</span>
-    <span class="pill pill--soft" style="left:81.3%; top:80.5%; transform: rotate(4deg); font-size:0.84em">Energy &amp; Utilities</span>
   </div>
 </header>
 
@@ -733,18 +850,24 @@ html.motion-pending .hero { visibility: hidden; }  /* hidden only until the intr
 
       <div class="about__panel">
         <div class="about-card">
-          <img src="assets/about-card-bg.png" alt="" class="about-card__bg">
-          <div class="about-card__head"><img src="assets/about-man.png" alt="LightIdea consultant"></div>
-          <div class="about-card__warm"></div>
-          <div class="about-card__shade"></div>
-          <div class="about-card__stats">
-            <div style="width:41cqw">
-              <span class="about-card__big">10+</span>
-              <span class="about-card__label">Years of experience</span>
-              <div class="about-card__rule"></div>
-              <div class="about-card__small"><b>07+</b><span>Industries served</span></div>
+          <!-- Figma 1374:31084: sky ground → copper ribbon → warm band → frosted stats -->
+          <div class="about-card__inner">
+            <img src="assets/about-card-bg.webp" alt="" class="about-card__bg">
+            <div class="ribbon__track"><div class="ribbon__drift"><div class="ribbon"><img src="assets/hero-ribbon.webp" alt=""></div></div></div>
+            <div class="about-card__warm"></div>
+            <div class="about-card__glass">
+              <div class="about-card__stats">
+                <div class="about-card__main">
+                  <div class="about-card__head">
+                    <span class="about-card__big">10+</span>
+                    <span class="about-card__label">Years of experience</span>
+                  </div>
+                  <div class="about-card__rule"></div>
+                  <div class="about-card__small"><b>07+</b><span>Industries served</span></div>
+                </div>
+                <div class="about-card__partner"><span>PARTNER</span><img src="assets/oracle.svg" alt="Oracle"></div>
+              </div>
             </div>
-            <div class="about-card__partner"><span>PARTNER</span><img src="assets/oracle.svg" alt="Oracle"></div>
           </div>
         </div>
 
@@ -763,74 +886,99 @@ html.motion-pending .hero { visibility: hidden; }  /* hidden only until the intr
 
   <!-- ============================== 4. MISSION, VISION & VALUES ============================== -->
   <section class="panel panel--light values" id="values" aria-labelledby="values-title">
-   <div class="values__scroller" style="--n: 5">
-   <div class="values__sticky">
     <div class="container">
       <div class="section-head">
         <div class="section-head__titles">
           <span class="eyebrow">OUR FOUNDATION</span>
           <h2 class="h2" id="values-title">Mission, Vision &amp; Values</h2>
         </div>
-        <div class="values__nav">
-          <span class="values__count" id="values-counter" aria-live="polite">01 / 05</span>
-          <button type="button" class="icon-btn" id="values-prev" aria-label="Previous value"><i class="ph-bold ph-arrow-left"></i></button>
-          <button type="button" class="icon-btn icon-btn--dark" id="values-next" aria-label="Next value"><i class="ph-bold ph-arrow-right"></i></button>
+      </div>
+      <!-- Figma 1381:36269: one value open, the rest as vertical tabs (hover / focus / click opens) -->
+      <div class="values__wrap">
+        <div class="values__row">
+          <button type="button" class="v-card" aria-expanded="true">
+            <img src="assets/fan.png" alt="" class="v-card__fan" aria-hidden="true">
+            <span class="v-card__title" aria-hidden="true">Excellence</span>
+            <span class="v-card__num" aria-hidden="true">01</span>
+            <span class="v-card__body">
+              <span class="v-card__text">
+                <span class="v-card__top"><span class="v-card__icon"><i class="ph-bold ph-medal"></i></span><span class="v-card__count">01 / 05</span></span>
+                <strong class="v-card__h">Excellence</strong>
+                <span class="v-card__p">We hold ourselves to the highest professional standards in every engagement, delivering quality work that creates lasting value for our clients.</span>
+              </span>
+              <span class="v-card__art" aria-hidden="true">
+                <img src="assets/badge-collaboration.png" alt="" class="v-card__glow">
+                <img src="assets/badge-excellence.png" alt="" class="v-card__badge">
+              </span>
+            </span>
+          </button>
+          <button type="button" class="v-card" aria-expanded="false">
+            <img src="assets/fan.png" alt="" class="v-card__fan" aria-hidden="true">
+            <span class="v-card__title" aria-hidden="true">Integrity</span>
+            <span class="v-card__num" aria-hidden="true">02</span>
+            <span class="v-card__body">
+              <span class="v-card__text">
+                <span class="v-card__top"><span class="v-card__icon"><i class="ph-bold ph-shield-check"></i></span><span class="v-card__count">02 / 05</span></span>
+                <strong class="v-card__h">Integrity</strong>
+                <span class="v-card__p">We are transparent, honest, and accountable in all our relationships — with clients, partners, and each other.</span>
+              </span>
+              <span class="v-card__art" aria-hidden="true">
+                <img src="assets/badge-collaboration.png" alt="" class="v-card__glow">
+                <img src="assets/badge-integrity.png" alt="" class="v-card__badge">
+              </span>
+            </span>
+          </button>
+          <button type="button" class="v-card" aria-expanded="false">
+            <img src="assets/fan.png" alt="" class="v-card__fan" aria-hidden="true">
+            <span class="v-card__title" aria-hidden="true">Collaboration</span>
+            <span class="v-card__num" aria-hidden="true">03</span>
+            <span class="v-card__body">
+              <span class="v-card__text">
+                <span class="v-card__top"><span class="v-card__icon"><i class="ph-bold ph-handshake"></i></span><span class="v-card__count">03 / 05</span></span>
+                <strong class="v-card__h">Collaboration</strong>
+                <span class="v-card__p">We work as a true extension of our clients' teams, combining our expertise with their business knowledge to achieve the best outcomes.</span>
+              </span>
+              <span class="v-card__art" aria-hidden="true">
+                <img src="assets/badge-collaboration.png" alt="" class="v-card__glow">
+                <img src="assets/badge-collaboration.png" alt="" class="v-card__badge">
+              </span>
+            </span>
+          </button>
+          <button type="button" class="v-card" aria-expanded="false">
+            <img src="assets/fan.png" alt="" class="v-card__fan" aria-hidden="true">
+            <span class="v-card__title" aria-hidden="true">Innovation</span>
+            <span class="v-card__num" aria-hidden="true">04</span>
+            <span class="v-card__body">
+              <span class="v-card__text">
+                <span class="v-card__top"><span class="v-card__icon"><i class="ph-bold ph-lightbulb"></i></span><span class="v-card__count">04 / 05</span></span>
+                <strong class="v-card__h">Innovation</strong>
+                <span class="v-card__p">We continuously explore new technologies and approaches — including AI, automation, and analytics — to help our clients stay ahead in a rapidly evolving landscape.</span>
+              </span>
+              <span class="v-card__art" aria-hidden="true">
+                <img src="assets/badge-collaboration.png" alt="" class="v-card__glow">
+                <img src="assets/badge-innovation.png" alt="" class="v-card__badge">
+              </span>
+            </span>
+          </button>
+          <button type="button" class="v-card" aria-expanded="false">
+            <img src="assets/fan.png" alt="" class="v-card__fan" aria-hidden="true">
+            <span class="v-card__title" aria-hidden="true">Client Focus</span>
+            <span class="v-card__num" aria-hidden="true">05</span>
+            <span class="v-card__body">
+              <span class="v-card__text">
+                <span class="v-card__top"><span class="v-card__icon"><i class="ph-bold ph-target"></i></span><span class="v-card__count">05 / 05</span></span>
+                <strong class="v-card__h">Client Focus</strong>
+                <span class="v-card__p">Our clients' success is our success. We listen carefully, advise honestly, and remain committed throughout the entire journey.</span>
+              </span>
+              <span class="v-card__art" aria-hidden="true">
+                <img src="assets/badge-collaboration.png" alt="" class="v-card__glow">
+                <img src="assets/badge-clientfocus.png" alt="" class="v-card__badge">
+              </span>
+            </span>
+          </button>
         </div>
       </div>
-
-      <div class="values__slot" aria-hidden="true"></div>
     </div>
-
-    <!-- the stage sits on top of the slot and grows to full screen while scrolling -->
-      <div class="values__stage" id="values-stage">
-        <div class="bg-layers" aria-hidden="true">
-          <img src="assets/hero-bg3.jpg" alt="" style="object-position: bottom">
-          <img src="assets/hero-bg4.jpg" alt="" class="lighten">
-        </div>
-        <div class="values__deck" id="values-deck">
-          <article class="value-card">
-              <div class="value-card__text">
-                <div class="value-card__top"><span class="value-card__icon"><i class="ph ph-medal"></i></span><span class="value-card__num">01 / 05</span></div>
-                <h3>Excellence</h3>
-                <p>We hold ourselves to the highest professional standards in every engagement, delivering quality work that creates lasting value for our clients.</p>
-              </div>
-              <div class="value-card__art"><img src="assets/badge-excellence.png" alt=""></div>
-            </article>
-          <article class="value-card">
-              <div class="value-card__text">
-                <div class="value-card__top"><span class="value-card__icon"><i class="ph ph-shield-check"></i></span><span class="value-card__num">02 / 05</span></div>
-                <h3>Integrity</h3>
-                <p>We are transparent, honest, and accountable in all our relationships — with clients, partners, and each other.</p>
-              </div>
-              <div class="value-card__art"><img src="assets/badge-integrity.png" alt=""></div>
-            </article>
-          <article class="value-card">
-              <div class="value-card__text">
-                <div class="value-card__top"><span class="value-card__icon"><i class="ph ph-handshake"></i></span><span class="value-card__num">03 / 05</span></div>
-                <h3>Collaboration</h3>
-                <p>We work as a true extension of our clients' teams, combining our expertise with their business knowledge to achieve the best outcomes.</p>
-              </div>
-              <div class="value-card__art"><img src="assets/badge-collaboration.png" alt="" style="width:60%"></div>
-            </article>
-          <article class="value-card">
-              <div class="value-card__text">
-                <div class="value-card__top"><span class="value-card__icon"><i class="ph ph-lightbulb"></i></span><span class="value-card__num">04 / 05</span></div>
-                <h3>Innovation</h3>
-                <p>We continuously explore new technologies and approaches — including AI, automation, and analytics — to help our clients stay ahead in a rapidly evolving landscape.</p>
-              </div>
-              <div class="value-card__art"><img src="assets/badge-innovation.png" alt="" style="width:57%"></div>
-            </article>
-          <article class="value-card">
-              <div class="value-card__text">
-                <div class="value-card__top"><span class="value-card__icon"><i class="ph ph-target"></i></span><span class="value-card__num">05 / 05</span></div>
-                <h3>Client Focus</h3>
-                <p>Our clients' success is our success. We listen carefully, advise honestly, and remain committed throughout the entire journey.</p>
-              </div>
-              <div class="value-card__art"><img src="assets/badge-clientfocus.png" alt="" style="width:60%"></div>
-            </article>
-        </div>
-      </div>
-     </div></div>
   </section>
 
   <!-- ============================== 5. OUR APPROACH ============================== -->
@@ -1021,12 +1169,22 @@ html.motion-pending .hero { visibility: hidden; }  /* hidden only until the intr
 
       <div class="contact__grid">
         <div class="office on-dark">
-          <img src="assets/hero-bg3.jpg" alt="" class="bg">
+          <!-- Figma 1384:36314: sky ground → region map with the HQ pinned → frosted address card -->
+          <img src="assets/office-bg.webp" alt="" class="office__bg">
+          <div class="office__map" aria-hidden="true">
+            <img src="assets/contact-map-solid.svg" alt="">
+            <span class="office__pin"><span class="office__tag"><strong>Abu Dhabi</strong><span>Headquarters</span></span></span>
+          </div>
           <img src="assets/logo-white.svg" alt="LightIdea" class="office__logo">
+          <div class="office__legend" aria-hidden="true"><span><i></i>Headquarters</span><span><i></i>Markets we serve</span></div>
           <div class="office__card">
             <small>HEADQUARTERS</small>
             <strong>Office 207, Al Nahyan Camp, Muroor Road, Abu Dhabi, United Arab Emirates P.O.BOX 110620</strong>
-            <div><a href="mailto:info@lightidea.org">info@lightidea.org</a><a href="tel:+971543711199">+971 54 371 1199</a></div>
+            <div class="office__actions">
+              <a class="office__btn office__btn--primary" href="https://www.google.com/maps/search/?api=1&amp;query=Al+Nahyan+Camp+Muroor+Road+Abu+Dhabi" target="_blank" rel="noopener">Get directions <i class="ph ph-arrow-up-right"></i></a>
+              <a class="office__btn" href="mailto:info@lightidea.org"><i class="ph ph-tray"></i>info@lightidea.org</a>
+              <a class="office__btn" href="tel:+971543711199"><i class="ph ph-phone"></i>+971 54 371 1199</a>
+            </div>
           </div>
         </div>
 
@@ -1225,100 +1383,20 @@ document.addEventListener('click', (e) => {
   bar.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', () => bar.classList.remove('is-visible')));
 })();
 
-/* ---------- Mission, Vision & Values: opening stage + stacking cards ----------
-   Phase 1 (first ~0.8 screen of scrolling): the dark stage grows from its place under the
-   heading until it keeps the same margin as the other panels; the heading fades away.
-   Phase 2: only one card shows; each next card slides up from below and lands on top,
-   the covered ones shrink and peek out above — ending as a stack of all five. */
-const flatLayout = window.matchMedia('(max-width: 767px), (prefers-reduced-motion: reduce)');
-const valuesDeck = (function () {
-  const scroller = document.querySelector('.values__scroller');
-  const stage = document.getElementById('values-stage');
-  const slot = document.querySelector('.values__slot');
-  const head = document.querySelector('.values__sticky > .container .section-head');
-  const deck = document.getElementById('values-deck');
-  const cards = [...deck.children];
-  const counter = document.getElementById('values-counter');
-  const prev = document.getElementById('values-prev');
-  const next = document.getElementById('values-next');
-  const N = cards.length;
-  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-  cards.forEach((c, i) => { c.style.zIndex = i + 1; });           // later cards land on top
-
-  const span = () => scroller.offsetHeight - window.innerHeight;
-  const expandLen = () => window.innerHeight * 0.8;           // scroll distance used to open the stage
-  const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  const RADIUS = 24;
-  let current = 0;
-  const update = () => {
-    if (flatLayout.matches) {
-      cards.forEach((c) => ['--y', '--s', '--shade'].forEach((v) => c.style.removeProperty(v)));
-      ['--ins-t', '--ins-r', '--ins-b', '--ins-l', '--dx', '--dy', '--slot-h'].forEach((v) => (v.startsWith('--d') ? deck : stage).style.removeProperty(v));
-      head.style.opacity = ''; head.style.transform = '';
-      return;
-    }
-    const scrolled = clamp(-scroller.getBoundingClientRect().top, 0, span());
-    const E = expandLen();
-
-    // phase 1 — open the stage from the slot until it keeps the same margin as the other panels
-    const e = easeInOut(clamp(scrolled / E, 0, 1));
-    const st = stage.getBoundingClientRect(), sl = slot.getBoundingClientRect();
-    const M = stage.parentElement.getBoundingClientRect().left - st.left;   // = the page frame margin
-    const k = 1 - e;
-    const ins = (from) => (M + (from - M) * k).toFixed(1) + 'px';
-    stage.style.setProperty('--ins-t', ins(sl.top - st.top));
-    stage.style.setProperty('--ins-r', ins(st.right - sl.right));
-    stage.style.setProperty('--ins-b', ins(st.bottom - sl.bottom));
-    stage.style.setProperty('--ins-l', ins(sl.left - st.left));
-    stage.style.setProperty('--ins-rad', RADIUS + 'px');
-    stage.style.setProperty('--slot-h', sl.height.toFixed(1) + 'px');
-    deck.style.setProperty('--dx', (((sl.left + sl.right) - (st.left + st.right)) / 2 * k).toFixed(1) + 'px');
-    head.style.opacity = String(clamp(1 - e * 1.6, 0, 1));
-    head.style.transform = `translateY(${(-40 * e).toFixed(1)}px) scale(${(1 - 0.04 * e).toFixed(3)})`;
-
-    // phase 2 — one card at a time: the next card slides up from below and lands on top;
-    // the cards underneath shrink a little and peek out above, so the deck ends as a neat stack
-    const p = clamp((scrolled - E) / (span() - E), 0, 1);
-    const seg = p * (N - 1);
-    const arrived = cards.map((c, i) => (i === 0 ? 1 : clamp(seg - (i - 1), 0, 1)));
-    const STEP = Math.min(22, sl.height * 0.035);                 // how far each covered card peeks out
-    const enter = stage.clientHeight / 2 + cards[0].offsetHeight / 2 + 40;   // start fully below the stage
-    cards.forEach((c, i) => {
-      let above = 0;
-      for (let j = i + 1; j < N; j++) above += arrived[j];       // how many cards now sit on top of this one
-      c.style.setProperty('--y', ((1 - arrived[i]) * enter - STEP * above).toFixed(1) + 'px');
-      c.style.setProperty('--s', (1 - 0.045 * above).toFixed(4));
-      c.style.setProperty('--shade', Math.min(0.22, 0.07 * above).toFixed(3));
-    });
-    // keep the growing stack centred in the stage
-    const centreY = (((sl.top + sl.bottom) - (st.top + st.bottom)) / 2) * k;
-    deck.style.setProperty('--dy', (centreY + (STEP * seg) / 2).toFixed(1) + 'px');
-    current = clamp(Math.round(seg), 0, N - 1);
-    counter.textContent = String(current + 1).padStart(2, '0') + ' / ' + String(N).padStart(2, '0');
-    prev.disabled = current === 0;
-    next.disabled = current === N - 1;
-  };
-  const go = (d) => {
-    const k = clamp(current + d, 0, N - 1);
-    const top = scroller.getBoundingClientRect().top + window.scrollY;
-    const E = expandLen();
-    const y = top + E + (k / (N - 1)) * (span() - E);
-    lenis ? lenis.scrollTo(y) : window.scrollTo(0, y);
-  };
-  prev.addEventListener('click', () => go(-1));
-  next.addEventListener('click', () => go(1));
-  return update;
-})();
-
-/* Values deck follows the scroll (Lenis moves the real scroll position) */
-(function deckLoop() {
-  let queued = false;
-  const tick = () => { queued = false; valuesDeck(); };
-  const request = () => { if (!queued) { queued = true; requestAnimationFrame(tick); } };
-  window.addEventListener('scroll', request, { passive: true });
-  window.addEventListener('resize', request);
-  flatLayout.addEventListener('change', request);
-  tick();
+/* ---------- Mission, Vision & Values: one value open at a time, opens on hover ----------
+   Same behaviour as Our Approach: a short hover-intent delay so sweeping the mouse across the
+   tabs doesn't flicker; focus and click open a tab too. Below 1100px every value is shown open. */
+(function values() {
+  const cards = [...document.querySelectorAll('.v-card')];
+  const small = window.matchMedia('(max-width: 1099px)');
+  const activate = (c) => { if (!small.matches) cards.forEach((x) => x.setAttribute('aria-expanded', String(x === c))); };
+  let timer;
+  cards.forEach((c) => {
+    c.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'mouse') return; clearTimeout(timer); timer = setTimeout(() => activate(c), 90); });
+    c.addEventListener('pointerleave', () => clearTimeout(timer));
+    c.addEventListener('focus', () => activate(c));
+    c.addEventListener('click', () => activate(c));
+  });
 })();
 
 /* ---------- Our Approach: one card open at a time, opens smoothly on hover ---------- */
@@ -1472,7 +1550,7 @@ const valuesDeck = (function () {
   const once = (trigger, start = 'top 85%') => ({ trigger, start, once: true });
   const split = (el) => new SplitText(el, { type: 'words', wordsClass: 'split-word' }).words;
 
-  /* ---------- 1. Hero intro: shell → logo/nav → title words → copy → CTA → person → pills ---------- */
+  /* ---------- 1. Hero intro: shell → logo/nav → title words → copy → CTA → glow (the copper ribbon has its own blur-in) ---------- */
   const heroWords = split(document.querySelector('.hero h1'));
   const tl = gsap.timeline({ defaults: { ease: EASE } });
   tl.from('.hero', { opacity: 0, scale: 0.96, y: 20, duration: 1, clearProps: 'transform' })
@@ -1483,26 +1561,12 @@ const valuesDeck = (function () {
     .from('.hero__lead', { opacity: 0, y: 24, filter: 'blur(8px)', duration: 0.7, clearProps: 'filter,transform' }, '-=0.55')
     .from('.hero__actions > *', { opacity: 0, y: 18, scale: 0.97, duration: 0.55, stagger: 0.1, clearProps: 'transform' }, '-=0.45')
     .from('.hero__trust', { opacity: 0, y: 16, filter: 'blur(6px)', duration: 0.55, clearProps: 'filter,transform' }, '-=0.35')
-    .from('.hero__visual', { opacity: 0, y: 110 * S, scale: 0.92, filter: 'blur(10px)', duration: 1.1, transformOrigin: '50% 100%', clearProps: 'filter,transform' }, 0.7);
-  const pills = gsap.utils.toArray('.pill');
-  if (DESKTOP && pills.length) {
-    // each pill comes in from its own side, then keeps a slow, uneven float
-    const from = [{ x: -40 }, { y: 40 }, { x: 40, y: -30 }, { x: 40 }, { y: 40 }];
-    pills.forEach((p, i) => {
-      tl.from(p, { opacity: 0, scale: 0.92, ...from[i % from.length], duration: 0.8, ease: EASE }, 1.35 + i * 0.1);
-    });
-    tl.add(() => pills.forEach((p, i) => gsap.to(p, {
-      y: `-=${8 + (i % 3) * 3}`, rotation: `+=${i % 2 ? 1.2 : -1.2}`,
-      duration: 3.2 + i * 0.45, repeat: -1, yoyo: true, ease: 'sine.inOut',
-    })));
-  }
+    .from('.hero__glow', { opacity: 0, y: 110 * S, scale: 0.92, filter: 'blur(10px)', duration: 1.1, transformOrigin: '50% 100%', clearProps: 'filter,transform' }, 0.7);
   root.classList.remove('motion-pending');
 
   /* Hero leaves with depth while scrolling out (scrubbed, so it reverses on the way back) */
   if (DESKTOP) {
     const out = { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true };
-    gsap.to('.hero__person', { yPercent: 10, ease: 'none', scrollTrigger: out });
-    gsap.to('.pills', { yPercent: -10, ease: 'none', scrollTrigger: out });
     gsap.to('.hero__body', { y: -60, opacity: 0.25, ease: 'none', scrollTrigger: out });
   }
 
@@ -1528,16 +1592,15 @@ const valuesDeck = (function () {
     if (rest.length) t.from(rest, { opacity: 0, y: 24, filter: 'blur(8px)', duration: 0.7, stagger: 0.1, clearProps: 'filter,transform' }, '-=0.5');
   });
 
-  /* ---------- 5. About: card rises, copy follows, the portrait drifts (parallax) ---------- */
+  /* ---------- 5. About: card rises, copy follows (the ribbon inside has its own blur-in) ---------- */
   gsap.timeline({ scrollTrigger: once('.about__panel', 'top 80%'), defaults: { ease: EASE } })
     .from('.about__panel', { opacity: 0, y: 40 * S, scale: 0.98, duration: 0.9, clearProps: 'transform' })
-    .from('.about-card', { opacity: 0, y: 64 * S, scale: 0.96, filter: `blur(${BLUR}px)`, duration: 1, clearProps: 'filter,transform' }, '-=0.6')
+    .from('.about-card', { opacity: 0, y: 64 * S, duration: 1, clearProps: 'transform' }, '-=0.6')
     .from(split(document.querySelector('.about__copy h3')), { opacity: 0, yPercent: 60, filter: 'blur(12px)', duration: 0.8, stagger: 0.06, clearProps: 'filter' }, '-=0.75')
     .from('.about__copy .prose > p, .about__copy > .btn', { opacity: 0, y: 24, filter: 'blur(8px)', duration: 0.7, stagger: 0.1, clearProps: 'filter,transform' }, '-=0.55');
-  if (DESKTOP) gsap.to('.about-card__head', { yPercent: -6, ease: 'none', scrollTrigger: { trigger: '.about__panel', start: 'top bottom', end: 'bottom top', scrub: true } });
 
-  /* ---------- 6. Values: the dark stage scales in, then the card deck takes over ---------- */
-  gsap.from('.values__stage', { opacity: 0, y: 60 * S, scale: 0.96, filter: `blur(${BLUR}px)`, duration: 1, ease: EASE, clearProps: 'filter,transform', scrollTrigger: once('.values', 'top 70%') });
+  /* ---------- 6. Values: the cards rise in one after another ---------- */
+  gsap.from('.values__row > .v-card', { opacity: 0, y: 40 * S, duration: 0.9, stagger: 0.08, ease: EASE, clearProps: 'transform', scrollTrigger: once('.values__row', 'top 85%') });
 
   /* ---------- 7. Approach: Staggered Scatter-to-Grid Card Reveal ----------
      Each card starts small, blurred and slightly off its spot (fixed offsets, never random),
@@ -1588,6 +1651,109 @@ const valuesDeck = (function () {
     .from('.footer__grid > *, .footer__bottom', { opacity: 0, y: 25, filter: 'blur(8px)', duration: 0.6, stagger: 0.08, ease: 'power2.out', clearProps: 'filter,transform' }, '-=0.45');
 
   ScrollTrigger.refresh();
+})();
+</script>
+<script>
+/* Copper ribbon: plays the CSS blur-in (.is-in) — the hero right away, the About card when it
+   scrolls into view — and adds an eased pointer/scroll parallax to the hero ribbon. */
+(() => {
+  if (!document.documentElement.classList.contains('motion')) return;   // reduced motion: CSS shows it static
+
+  const ribbons = [...document.querySelectorAll('.ribbon')].map((el) => ({ el, hero: !!el.closest('.hero'), played: false }));
+  const play = (r) => {
+    if (r.played) return;
+    r.played = true;
+    // let the hero shell finish its own intro first
+    setTimeout(() => r.el.classList.add('is-in'), r.hero ? 450 : 0);
+  };
+  const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (e.isIntersecting) { play(ribbons.find((r) => r.el === e.target)); io.unobserve(e.target); }
+  }), { threshold: 0.3 });
+  ribbons.forEach((r) => {
+    if (!r.hero) io.observe(r.el);
+    else if (document.hidden) addEventListener('visibilitychange', () => play(r), { once: true });  // background tab
+    else play(r);
+  });
+  // fail-safe: never leave the copper hidden on screen
+  setTimeout(() => ribbons.forEach((r) => { if (r.el.getBoundingClientRect().top < innerHeight) play(r); }), 4000);
+
+  const track = document.querySelector('.hero__ribbon .ribbon__track');
+  const hero = document.querySelector('.hero');
+  if (!track) return;
+  let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
+  const apply = () => {
+    track.style.transform = `translate3d(${x.toFixed(2)}px, ${(y + Math.min(scrollY, 900) * 0.12).toFixed(2)}px, 0) rotate(${(x * 0.04).toFixed(3)}deg)`;
+  };
+  const tick = () => {
+    x += (tx - x) * 0.06; y += (ty - y) * 0.06;   // ease 6% of the remaining distance per frame
+    apply();
+    raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.05 ? requestAnimationFrame(tick) : 0;
+  };
+  const wake = () => { if (!raf) raf = requestAnimationFrame(tick); };
+  if (matchMedia('(pointer: fine)').matches) {
+    hero.addEventListener('pointermove', (e) => {
+      const b = hero.getBoundingClientRect();
+      tx = ((e.clientX - b.left) / b.width - 0.5) * -22;
+      ty = ((e.clientY - b.top) / b.height - 0.5) * -16;
+      wake();
+    });
+    hero.addEventListener('pointerleave', () => { tx = 0; ty = 0; wake(); });
+  }
+  addEventListener('scroll', apply, { passive: true });
+})();
+</script>
+<!-- ============================== ANNOUNCEMENT (first visit) ============================== -->
+<dialog class="announce" id="announce" tabindex="-1" aria-labelledby="announce-title" aria-describedby="announce-text">
+  <button type="button" class="announce__close" data-announce-close aria-label="Close announcement"><i class="ph-bold ph-x"></i></button>
+  <div class="announce__media">
+    <img src="assets/about-card-bg.webp" alt="" class="announce__sky">
+    <img src="assets/hero-ribbon.webp" alt="" class="announce__ribbon">
+  </div>
+  <div class="announce__body">
+    <span class="eyebrow">NEW · SANADE</span>
+    <h2 class="announce__title" id="announce-title">UAE E-Invoicing is here with Sanade</h2>
+    <p class="announce__text" id="announce-text">Get your finance team ready for the UAE e-invoicing mandate. Sanade connects to your ERP and keeps every invoice compliant, from issue to submission.</p>
+    <div class="announce__actions">
+      <button type="button" class="announce__later" data-announce-close>Maybe later</button>
+      <a href="#contact" class="submit" data-announce-close>Book a demo <span><i class="ph ph-arrow-up-right"></i></span></a>
+    </div>
+  </div>
+</dialog>
+
+<script>
+/* Announcement: opens once per visitor shortly after the hero intro; ?announce=1 forces it.
+   <dialog> gives focus trapping, Esc to close and the backdrop for free. */
+(() => {
+  const dlg = document.getElementById('announce');
+  if (!dlg || typeof dlg.showModal !== 'function') return;
+  const KEY = 'li-announce-sanade-v1';
+  const force = new URLSearchParams(location.search).has('announce');
+  let seen = false;
+  try { seen = localStorage.getItem(KEY) === '1'; } catch (e) {}
+  if (seen && !force) return;
+
+  const motion = document.documentElement.classList.contains('motion');
+  const close = () => {
+    try { localStorage.setItem(KEY, '1'); } catch (e) {}
+    if (!dlg.open) return;
+    if (!motion) { dlg.close(); return; }
+    dlg.classList.add('is-closing');
+    // close when the exit animation ends; the timer covers tabs where animations don't run
+    setTimeout(() => { dlg.classList.remove('is-closing'); if (dlg.open) dlg.close(); }, 320);
+  };
+  dlg.addEventListener('close', () => window.lenis && window.lenis.start());
+  dlg.addEventListener('cancel', (e) => { e.preventDefault(); close(); });                       // Esc
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) close(); });                      // backdrop
+  dlg.querySelectorAll('[data-announce-close]').forEach((el) => el.addEventListener('click', close));
+
+  const open = () => {
+    if (dlg.open) return;
+    window.lenis && window.lenis.stop();
+    dlg.showModal();
+    dlg.focus({ preventScroll: true });   // focus the dialog itself, so no button shows a focus ring on open
+  };
+  const start = () => setTimeout(open, motion ? 1800 : 600);   // after the hero intro settles
+  if (document.readyState === 'complete') start(); else addEventListener('load', start, { once: true });
 })();
 </script>
 </body>
