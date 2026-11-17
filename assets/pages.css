@@ -1,0 +1,94 @@
+/* =====================================================================
+   INNER PAGE HEADER — one pattern for every inner page
+   (Services, Solutions, Insights & Blog, About us, Contact us):
+   breadcrumb → title → description, on the same dark rounded shell,
+   photo layers and navbar as the home hero, only shorter.
+   ===================================================================== */
+.page-hero { min-height: clamp(440px, 54.4svh, 580px); }
+
+/* The photo keeps the home hero's full size and is cut at the top, so every
+   inner header shows the same top slice of the light fan: dark sky above,
+   the bright horizon behind the description, light blue at the bottom. */
+.page-hero .bg-layers { bottom: auto; height: clamp(600px, calc(100svh - 2 * var(--frame)), 980px); border-radius: 0; }
+.page-hero .bg-layers .warm { display: none; }
+
+.page-hero__body {
+  position: relative; z-index: 2; flex: 1;
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+  width: min(100% - 2 * var(--page-gutter), 1256px); margin-inline: auto;
+  padding-block: clamp(24px, 4vh, 40px) clamp(40px, 7vh, 90px);
+}
+
+/* Breadcrumb */
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; padding: 0; list-style: none; font-size: 14px; color: rgba(255,255,255,0.62); }
+.crumbs li { display: inline-flex; align-items: center; gap: 8px; }
+.crumbs li + li::before { content: ""; width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.4); }
+.crumbs a:hover { color: #fff; }
+.crumbs [aria-current] { color: #fff; }
+
+/* Title + description */
+.page-hero h1 { margin: clamp(14px, 2.4vh, 22px) 0 0; font-size: clamp(40px, min(5vw, 8vh), 76px); font-weight: 400; line-height: 1.05; letter-spacing: -0.04em; color: #fafafa; text-wrap: balance; }
+.page-hero__lead { margin: clamp(14px, 2.2vh, 20px) 0 0; max-width: 40em; font-size: clamp(16px, 1.25vw, 19px); line-height: 1.55; color: rgba(255,255,255,0.82); text-wrap: pretty; }
+
+/* =====================================================================
+   SERVICES — card grid (14 services). The heading block takes two cells of
+   the first row, so 2 + 14 fills a 4-column grid exactly; it takes one cell
+   at 3 columns (1 + 14 = 15) and a full row at 2 columns (2 + 14 = 16).
+   ===================================================================== */
+.svc-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--card-gap); }
+.svc-grid__head { grid-column: span 2; display: flex; flex-direction: column; justify-content: flex-end; gap: 16px; padding: 8px clamp(8px, 2vw, 40px) 24px 0; }
+.svc-grid__head p { margin: 0; max-width: 30em; font-size: var(--fs-lead); line-height: 1.6; text-wrap: pretty; }
+.svc-card {
+  display: flex; flex-direction: column; gap: 10px; min-height: 260px;
+  padding: clamp(20px, 1.8vw, 26px); border-radius: var(--card-radius);
+  background: var(--c-surface); border: 1px solid transparent;
+  transition: background-color 0.35s var(--ease-out), border-color 0.35s var(--ease-out), transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
+}
+.svc-card:hover { background: #fff; border-color: #dbe3ee; transform: translateY(-4px); box-shadow: 0 30px 60px -36px rgba(3,18,46,0.35); }
+.svc-card__icon { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: auto; border-radius: 12px; background: #fff; color: var(--c-blue); font-size: 24px; box-shadow: 0 0 0 1px rgba(15,45,77,0.08); }
+.svc-card:hover .svc-card__icon { background: var(--c-deep); color: #fff; box-shadow: none; }
+.svc-card h3 { margin: 28px 0 0; font-size: clamp(18px, 1.35vw, 20px); font-weight: 500; line-height: 1.3; letter-spacing: -0.02em; color: var(--c-navy); text-wrap: balance; }
+.svc-card p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--c-text); text-wrap: pretty; }
+@media (max-width: 1199px) {
+  .svc-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .svc-grid__head { grid-column: span 1; padding-right: 8px; }
+}
+@media (max-width: 899px) {
+  .svc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .svc-grid__head { grid-column: 1 / -1; padding: 0 0 12px; }
+  .svc-card { min-height: 0; }
+}
+@media (max-width: 559px) { .svc-grid { grid-template-columns: 1fr; } }
+
+/* FAQ questions the source gives no answer for: shown as plain rows, nothing to open */
+.faq-item--static .faq-q { margin: 0; cursor: default; }
+
+/* Contact: office card listing headquarters, global offices and email */
+.office__card--list { margin: 0; gap: 14px; }
+.office__card--list div { display: flex; flex-direction: column; gap: 4px; }
+.office__card--list div + div { padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.18); }
+.office__card--list dt { font-size: 12px; line-height: 1.6; letter-spacing: 0.08em; color: rgba(255,255,255,0.75); }
+.office__card--list dd { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.4; letter-spacing: -0.02em; }
+.office__card--list a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.form__foot--end { justify-content: flex-end; }
+
+/* CTA band: dark rounded panel with the hero photo */
+.cta-band { position: relative; overflow: hidden; margin: calc(var(--section-space) / 2) var(--frame); border-radius: var(--panel-radius); color: #fff; }
+.cta-band .bg-layers::after { content: ""; position: absolute; inset: 0; background: rgba(2,7,26,0.35); }
+.cta-band__body { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 18px; width: min(100% - 2 * var(--page-gutter), 820px); margin-inline: auto; padding-block: clamp(64px, 12vh, 120px); text-align: center; }
+.cta-band__body p { margin: 0; max-width: 36em; font-size: var(--fs-lead); line-height: 1.6; color: rgba(255,255,255,0.84); text-wrap: pretty; }
+.cta-band .btn { margin-top: 10px; }
+
+/* Active page in the navbars */
+.nav__links a[aria-current="page"] { position: relative; }
+.nav__links a[aria-current="page"]::after { content: ""; position: absolute; left: 50%; bottom: -10px; width: 5px; height: 5px; border-radius: 50%; background: var(--c-brand); transform: translateX(-50%); }
+.sticky-nav__links a[aria-current="page"] { color: var(--c-blue); }
+
+/* Hidden until the intro in assets/pages.js runs */
+html.motion-pending .page-hero__body > *, html.motion-pending .page-hero .nav { opacity: 0; }
+
+@media (max-width: 899px) {
+  .page-hero { min-height: clamp(360px, 60svh, 480px); }
+  .page-hero .bg-layers { height: 100%; bottom: 0; }   /* phones: the header is the whole photo, shaded for the text */
+  .page-hero .bg-layers::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(2,7,26,0.55), rgba(2,7,26,0.25) 60%, rgba(2,7,26,0.5)); }
+}
