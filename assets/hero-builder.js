@@ -272,9 +272,10 @@
     ctx.restore();
   }
 
-  let cssW = 0, cssH = 0, dpr = 1;
+  let cssW = 0, cssH = 0, dpr = 1, units = BOARD_W;
   function resize() {
     const r = canvas.getBoundingClientRect();
+    units = parseFloat(getComputedStyle(board).getPropertyValue('--board-units')) || BOARD_W;   /* 926.39 on desktop, 780 when stacked */
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     cssW = r.width; cssH = r.height;
     canvas.width = Math.round(cssW * dpr); canvas.height = Math.round(cssH * dpr);
@@ -282,11 +283,11 @@
 
   function draw(now) {
     if (!cssW) return;
-    const k = cssW / BOARD_W;
+    const k = cssW / units;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, cssW, cssH);
     ctx.scale(k, k);
-    const bw = BOARD_W, bh = cssH / k;
+    const bw = units, bh = cssH / k;
     /* ruler guides */
     ctx.save();
     ctx.strokeStyle = 'rgba(1,106,180,.2)'; ctx.lineWidth = 1.19; ctx.setLineDash([4, 4]);

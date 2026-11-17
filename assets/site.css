@@ -212,25 +212,42 @@ html.motion .ribbon__drift { animation: ribbon-drift 24s ease-in-out 2.2s infini
 .hero__trust span { display: block; }
 .hero__trust .muted { color: rgba(255,255,255,0.7); }
 
-/* Hero Builder board (Figma 1495:30760). Positioned in Figma units of the 1888px-wide hero,
-   so it keeps the same place and size at any width: 1cqw = 18.88 Figma px.
-   It bleeds off the right and bottom edges like the design. Shown from 1100px up; below that
-   the copper ribbon stays. */
-.hero__board { display: none; }
+/* Hero Builder board (Figma 1495:30760).
+   ≥1100px: on the right, positioned in Figma units of the 1888px-wide hero (1cqw = 18.88 Figma px),
+   bleeding off the right and bottom edges like the design.
+   <1100px: stacked under the copy, full artboard visible, bleeding off the bottom edge.
+   --board-units = how many design units the canvas width spans (read by assets/hero-builder.js). */
+.hero__board {
+  --board-units: 780;
+  position: relative; display: block;
+  width: min(100%, 760px); aspect-ratio: 780 / 700; margin: 0 auto calc(-1 * clamp(16px, 4vw, 40px));
+  border-radius: clamp(18px, 3.4vw, 30px); padding: clamp(7px, 1.4vw, 12px);
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.26);
+  backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 50px 100px -40px rgba(2,7,26,0.75);
+}
+.hero__board-sheet { position: relative; width: 100%; height: 100%; border-radius: clamp(12px, 2.4vw, 21px); overflow: hidden; background: #fff; box-shadow: 0 1px 2px rgba(2,7,26,0.08); }
+.hero__board canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+html.motion .hero__board { animation: board-in 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.8s both; }
+@media (max-width: 1099px) {
+  .hero { min-height: 0; }
+  .nav { order: 0; } .hero__body { order: 1; } .hero__visual { order: 2; }
+  .hero__body { padding-bottom: 0; flex: none; }
+  .hero__visual { position: relative; z-index: 1; margin-top: clamp(36px, 7vw, 64px); padding-inline: var(--page-gutter); pointer-events: none; }
+  .hero__ribbon { display: none; }
+  .hero__glow { left: 50%; top: -6%; width: min(90%, 640px); transform: translateX(-50%); }
+}
 @media (min-width: 1100px) {
   .hero__visual { container-type: size; }
   .hero__ribbon { display: none; }
   .hero__board {
-    display: block; position: absolute;
+    --board-units: 926.39;
+    position: absolute; margin: 0; aspect-ratio: auto;
     left: 59.587cqw; top: 13.4cqw; width: 51.25cqw; bottom: -2.2cqw;   /* x 1125, y 253, w 967.67; bleeds 41px off the bottom at any hero height */
     border-radius: 1.6cqw; padding: 1.093cqw;                            /* 30px corner, 20.64px frame */
-    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.26);
-    backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 60px 120px -40px rgba(2,7,26,0.75);
   }
-  .hero__board-sheet { position: relative; width: 100%; height: 100%; border-radius: 1.11cqw; overflow: hidden; background: #fff; box-shadow: 0 1px 2px rgba(2,7,26,0.08); }
-  .hero__board canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  html.motion .hero__board { animation: board-in 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.8s both; }
+  .hero__board-sheet { border-radius: 1.11cqw; }
 }
 @keyframes board-in { from { opacity: 0; transform: translate3d(6%, 4%, 0); } }
 @media (prefers-reduced-motion: reduce) { .hero__board { animation: none !important; } }
@@ -557,19 +574,13 @@ html.motion .office__pin::after { animation: pin-breathe 3.2s ease-in-out infini
   .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 899px) {
-  .hero { min-height: 0; }
-  .nav { order: 0; } .hero__body { order: 1; } .hero__visual { order: 2; }
   .hero .bg-layers::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(2,7,26,0.82) 0%, rgba(2,7,26,0.7) 40%, rgba(2,7,26,0) 68%); }
-  .hero__body { padding-bottom: 0; flex: none; }
   .hero__copy { max-width: 100%; }
-  .hero__visual { position: relative; height: clamp(320px, 72vw, 520px); margin-top: 24px; }
-  .hero__glow { left: 50%; top: 10%; width: 70%; transform: translateX(-50%); }
-  .hero__ribbon .ribbon__track { width: 135%; right: -22%; bottom: -4%; }
   .about__panel { grid-template-columns: 1fr; padding-top: clamp(64px, 14vw, 96px); }
   .about-card { width: min(100%, 460px); margin-inline: auto; }
   .faq { grid-template-columns: 1fr; }
 }
-@media (min-width: 900px) {
+@media (min-width: 1100px) {
   .hero__visual { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 }
 @media (max-width: 767px) {

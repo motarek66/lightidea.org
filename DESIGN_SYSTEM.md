@@ -173,7 +173,8 @@ Full-height dark panel (`clamp(600px, 100svh - 2 × frame, 980px)`) with three p
 - Placed in Figma units of the 1888px hero using container units (`1cqw` = 18.88px): `left 59.587cqw`, `top 13.4cqw`, `width 51.25cqw`. It bleeds off the right edge and 41px off the bottom at any hero height.
 - The animation is drawn on a `<canvas>` by `assets/hero-builder.js`. It's a port of the SwarmPanel "Builder" from `Home Hero.html`: three cursors build a dashboard, a list page and an AI workflow in 680ms steps, with selection boxes and size badges, then loop.
 - The animation pauses when the board is off screen or the tab is hidden. With reduced motion it shows the finished dashboard as a still.
-- Below 1100px the board is hidden and the copper ribbon shows instead.
+- Below 1100px the hero stacks: copy first, then the board centred under it (up to 760px wide, `aspect-ratio: 780 / 700`), running 16–40px off the bottom edge. The canvas fits 780 design units (`--board-units`) across, so the whole artboard is visible on phones.
+- The copper ribbon isn't shown in the home hero at any width; the board replaces it.
 
 ### 6.3 Inner page header (`.hero.page-hero`)
 
