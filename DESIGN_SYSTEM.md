@@ -13,6 +13,7 @@ The rules, tokens and components behind lightidea.org. Every value here comes fr
 | `assets/pages.css` | Inner page header, service cards, static FAQ rows, office detail list, CTA band, active nav state | Inner pages |
 | `assets/pages.js` | FAQ accordion, page-header intro, section reveals, footer reveal | Inner pages |
 | `assets/hero-builder.js` | Home hero Builder board, drawn on a canvas | Home |
+| `new-hero-section.html` + `assets/hero-globe.css`, `assets/hero-globe.js` | Alternative home hero: Figma 1507-27794 globe with country pins, lines, labels and HQ links that auto-cycle and respond to hover | New Hero Section page |
 | `index.html` | Home page and its own motion script | — |
 | `services.html`, `solutions.html`, `insights.html`, `about.html`, `contact.html` | Inner pages | — |
 

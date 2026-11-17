@@ -1,0 +1,89 @@
+/* New Hero Section page only (new-hero-section.html). Loaded after site.css. */
+/* Hero globe (Figma 1507:28100) with country pins.
+   .globe__stage is laid out in Figma px of the 1888 x 948 hero; assets/hero-globe.js scales and
+   offsets it (--k, --ox, --oy) and places the pins at the scaled country positions.
+   >=1100px: fills the hero, bottom-anchored, exactly as the Figma frame at 1888 x 948.
+   <1100px: stacked under the copy, cropped to the Middle East (Figma x 1000-1888, y 150-948). */
+.globe { position: absolute; inset: 0; overflow: hidden; overflow: clip; border-radius: inherit; }   /* clip: focusing a pin must never scroll the layer */
+.globe__stage { position: absolute; left: 0; top: 0; width: 1888px; height: 948px; transform-origin: 0 0; transform: translate(var(--ox, 0px), var(--oy, 0px)) scale(var(--k, 1)); pointer-events: none; }
+.globe__sphere {   /* Figma 1507:28101: 1900px glass sphere, faded in from the left */
+  position: absolute; left: 647px; top: 284px; width: 1900px; height: 1900px; border-radius: 50%;
+  background: linear-gradient(to bottom, rgba(40,90,150,0.19) 0%, rgba(14,44,90,0.25) 35%, rgba(6,22,52,0.33) 75%);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), inset 0 40px 80px -40px rgba(150,200,245,0.35), 0 -10px 70px -20px rgba(1,106,180,0.4);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 228px); mask-image: linear-gradient(to right, transparent 0, #000 228px);
+  -webkit-mask-clip: no-clip; mask-clip: no-clip;
+}
+.globe__dots {   /* Figma 1507:28107: dotted map, faded in from the left (12%) */
+  position: absolute; left: 1029px; top: -163px; width: 1085.77px; height: 1152px; max-width: none;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 12%); mask-image: linear-gradient(to right, transparent 0, #000 12%);
+}
+.globe__links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.globe__links .link { fill: none; stroke: rgba(160,215,255,0.22); stroke-width: 1; stroke-dasharray: 2 5; stroke-linecap: round; transition: stroke 0.4s; }
+.globe__links .link--on { stroke: url(#globe-link); stroke-width: 1.5; stroke-dasharray: none; filter: drop-shadow(0 0 4px rgba(94,224,255,0.6)); }
+.globe__links .comet { fill: #fff; filter: drop-shadow(0 0 6px #5ee0ff) drop-shadow(0 0 2px #fff); }
+
+.globe__pins { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; pointer-events: none; }
+.pin { --lift: 120px; position: absolute; left: 0; top: 0; width: 0; height: 0; }
+.pin__hit { position: absolute; left: -16px; top: -16px; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; pointer-events: auto; display: grid; place-items: center; }
+.pin__hit:focus-visible { outline: 2px solid #5ee0ff; outline-offset: 2px; }
+.pin__dot { position: relative; width: 9px; height: 9px; border-radius: 50%; background: #e9f7ff; box-shadow: 0 0 0 3px rgba(94,224,255,0.28), 0 0 14px 2px rgba(94,224,255,0.65); transition: transform 0.4s var(--ease-out); }
+.pin__dot::after { content: ""; position: absolute; inset: -5px; border-radius: 50%; border: 1px solid rgba(94,224,255,0.75); opacity: 0; }
+.pin--hq .pin__dot { background: var(--c-brand); box-shadow: 0 0 0 3px rgba(242,118,46,0.3), 0 0 16px 3px rgba(242,118,46,0.6); }
+.pin--hq .pin__dot::after { border-color: rgba(255,160,100,0.8); }
+html.motion .pin__dot::after { animation: pin-pulse 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+.pin:nth-child(2) .pin__dot::after { animation-delay: 0.5s; }
+.pin:nth-child(3) .pin__dot::after { animation-delay: 1s; }
+.pin:nth-child(4) .pin__dot::after { animation-delay: 1.5s; }
+.pin:nth-child(5) .pin__dot::after { animation-delay: 2s; }
+@keyframes pin-pulse { 0% { transform: scale(0.6); opacity: 0.9; } 100% { transform: scale(2.6); opacity: 0; } }
+.pin.is-active { z-index: 2; }
+.pin.is-active .pin__dot { transform: scale(1.35); }
+
+/* leader line: a short stub at rest, grows to --lift when the country is active */
+.pin__line {
+  position: absolute; left: -0.5px; bottom: 6px; width: 1px; height: var(--lift);
+  transform-origin: 50% 100%; transform: scaleY(0.14); opacity: 0.6;
+  background: linear-gradient(to top, rgba(94,224,255,0.95), rgba(255,255,255,0.5) 70%, rgba(255,255,255,0.9));
+  transition: transform 0.7s var(--ease-out), opacity 0.4s var(--ease-out);
+}
+.pin__line::before { content: ""; position: absolute; left: -2px; top: -2px; width: 5px; height: 5px; border-radius: 50%; background: #fff; box-shadow: 0 0 8px rgba(94,224,255,0.9); }
+.pin.is-active .pin__line { transform: scaleY(1); opacity: 1; }
+
+/* label: glass pill with the flag, on top of the line (hover or auto-cycle) */
+.pin__label {
+  position: absolute; left: -22px; bottom: calc(var(--lift) + 12px);
+  display: flex; align-items: center; gap: 10px; padding: 7px 14px 7px 7px; border-radius: 99px; white-space: nowrap;
+  color: #fff; background: rgba(3,18,46,0.5); border: 1px solid rgba(255,255,255,0.22);
+  backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: 0 18px 40px -18px rgba(2,7,26,0.8), inset 0 1px 0 rgba(255,255,255,0.18);
+  opacity: 0; transform: translateY(10px) scale(0.96); transform-origin: 22px 100%; pointer-events: none;
+  transition: opacity 0.35s var(--ease-out), transform 0.5s var(--ease-out);
+}
+.pin__label img { width: 30px; height: 30px; flex: none; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px rgba(255,255,255,0.85); }
+.pin__label > span { display: flex; flex-direction: column; gap: 1px; }
+.pin__label strong { font-size: 14px; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; }
+.pin__label small { font-size: 12px; line-height: 1.3; color: rgba(255,255,255,0.72); }
+.pin.is-active .pin__label { opacity: 1; transform: none; transition-delay: 0.25s, 0.25s; }
+.pin--flip .pin__label { flex-direction: row-reverse; padding: 7px 7px 7px 14px; }   /* left/origin set by hero-globe.js */
+.pin--flip .pin__label > span { align-items: flex-end; }
+
+html.motion .globe { animation: globe-in 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both; }
+@keyframes globe-in { from { opacity: 0; transform: translate3d(0, 48px, 0); } }
+.hero__ribbon { display: none; }
+
+@media (max-width: 1099px) {
+  .hero { min-height: 0; }
+  .nav { order: 0; } .hero__body { order: 1; } .hero__visual { order: 2; }
+  .hero__body { padding-bottom: 0; flex: none; }
+  .hero__visual { position: relative; z-index: 1; margin-top: clamp(8px, 3vw, 32px); padding-inline: 0; }
+  .globe { position: relative; inset: auto; width: 100%; aspect-ratio: 888 / 760; }
+  .hero__glow { left: 50%; top: 4%; width: min(90%, 640px); transform: translateX(-50%); }
+  .pin__label { gap: 8px; padding: 5px 11px 5px 5px; }
+  .pin--flip .pin__label { padding: 5px 5px 5px 11px; }
+  .pin__label img { width: 24px; height: 24px; }
+  .pin__label strong { font-size: 13px; }
+  .pin__label small { font-size: 11px; }
+}
+.hero.is-pin-hover { cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .globe { animation: none !important; } .pin__line, .pin__label { transition: none; } }

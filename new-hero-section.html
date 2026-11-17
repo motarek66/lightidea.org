@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Hero Section — LightIdea</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Manrope:wght@500;600&family=Geist:wght@400;500&family=Onest:wght@500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+<!-- Phosphor icons (same icon set used in the Figma file) -->
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+
+<!-- Motion flag: set before first paint so the hero intro doesn't flash -->
+<script>
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('motion', 'motion-pending');
+    setTimeout(() => document.documentElement.classList.remove('motion-pending'), 3000); // safety net
+  }
+</script>
+
+<!-- Lenis smooth scroll -->
+<link rel="stylesheet" href="https://unpkg.com/lenis@1.3.11/dist/lenis.css">
+
+
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/hero-globe.css">
+</head>
+<body>
+<!-- ============================== STICKY NAVBAR (appears on scroll up) ============================== -->
+<header class="sticky-nav" id="sticky-nav" aria-label="Sticky navigation">
+  <div class="sticky-nav__inner">
+    <a href="#" class="sticky-nav__logo"><img src="assets/logo-color.svg" alt="LightIdea" width="182" height="32"></a>
+    <ul class="sticky-nav__links">
+      <li><a href="#">Home</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="solutions.html">Solutions</a></li>
+      <li><a href="insights.html">Insights &amp; Blog</a></li>
+      <li><a href="about.html">About us</a></li>
+      <li><a href="#faq">More</a></li>
+    </ul>
+    <div class="sticky-nav__right">
+      <a href="contact.html" class="sticky-nav__cta">Contact US</a>
+      <button class="sticky-nav__menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="side-menu"><i class="ph ph-list"></i></button>
+    </div>
+  </div>
+</header>
+
+<div class="app" id="app">
+
+<!-- ============================== 1. HERO ============================== -->
+<header class="hero on-dark">
+  <div class="bg-layers" aria-hidden="true">
+    <img src="assets/hero-bg3.jpg" alt="" style="object-position: bottom">
+    <img src="assets/hero-bg4.jpg" alt="" class="lighten">
+    <div class="warm"></div>
+  </div>
+
+  <div class="hero__visual">
+    <div class="hero__glow" aria-hidden="true"><img src="assets/hero-glow.svg" alt=""></div>
+    <div class="hero__ribbon" aria-hidden="true"><div class="ribbon__track"><div class="ribbon__drift"><div class="ribbon"><img src="assets/hero-ribbon.webp" alt=""></div></div></div></div>
+    <!-- Figma 1507:28100: glass sphere (1507:28101) under the dotted Middle East map (1507:28107).
+         The stage is laid out in Figma px of the 1888 × 948 hero and scaled by assets/hero-globe.js.
+         Pins sit on the highlighted countries; lines, labels and the HQ links are drawn on top. -->
+    <div class="globe">
+      <div class="globe__stage" aria-hidden="true">
+        <div class="globe__sphere"></div>
+        <img src="assets/hero-globe-dots.png" alt="" class="globe__dots" width="1086" height="1152">
+      </div>
+      <svg class="globe__links" aria-hidden="true"></svg>
+      <ul class="globe__pins" aria-label="Countries we work in">
+        <li class="pin pin--hq" data-x="1594" data-y="605" data-lift="230">
+          <span class="pin__line"></span>
+          <button class="pin__hit" type="button" aria-label="United Arab Emirates, headquarters"><span class="pin__dot"></span></button>
+          <span class="pin__label"><img src="assets/flags/ae.png" alt=""><span><strong>United Arab Emirates</strong><small>Headquarters · Abu Dhabi</small></span></span>
+        </li>
+        <li class="pin" data-x="1422" data-y="598" data-lift="175">
+          <span class="pin__line"></span>
+          <button class="pin__hit" type="button" aria-label="Saudi Arabia"><span class="pin__dot"></span></button>
+          <span class="pin__label"><img src="assets/flags/sa.png" alt=""><span><strong>Saudi Arabia</strong><small>Global office</small></span></span>
+        </li>
+        <li class="pin" data-x="1215" data-y="597" data-lift="120">
+          <span class="pin__line"></span>
+          <button class="pin__hit" type="button" aria-label="Egypt"><span class="pin__dot"></span></button>
+          <span class="pin__label"><img src="assets/flags/eg.png" alt=""><span><strong>Egypt</strong><small>Global office</small></span></span>
+        </li>
+        <li class="pin" data-x="1641" data-y="637" data-lift="140">
+          <span class="pin__line"></span>
+          <button class="pin__hit" type="button" aria-label="Oman"><span class="pin__dot"></span></button>
+          <span class="pin__label"><img src="assets/flags/om.png" alt=""><span><strong>Oman</strong><small>Global office</small></span></span>
+        </li>
+        <li class="pin" data-x="1862" data-y="610" data-lift="190">
+          <span class="pin__line"></span>
+          <button class="pin__hit" type="button" aria-label="India"><span class="pin__dot"></span></button>
+          <span class="pin__label"><img src="assets/flags/in.png" alt=""><span><strong>India</strong><small>Global office</small></span></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <nav class="nav" aria-label="Main">
+    <a href="#"><img src="assets/logo-white.svg" alt="LightIdea" class="nav__logo"></a>
+    <ul class="nav__links" id="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="solutions.html">Solutions</a></li>
+      <li><a href="insights.html">Insights &amp; Blog</a></li>
+      <li><a href="about.html">About us</a></li>
+      <li><a href="#faq">More</a></li>
+    </ul>
+    <div class="nav__right">
+      <a href="contact.html" class="nav__cta">Contact US</a>
+      <button class="nav__menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="side-menu"><i class="ph ph-list"></i></button>
+    </div>
+  </nav>
+
+  <div class="hero__body">
+    <div class="hero__copy">
+      <a href="#" class="hero__badge"><b>NEW</b> UAE E-Invoicing with Sanade Book a demo now <i class="ph-bold ph-arrow-right" style="font-size:12px"></i></a>
+      <h1>Business is multichannel and business software should be too</h1>
+      <p class="hero__lead">Transform your business with a cloud-based business management platform that enables streamlining operations and increases efficiency</p>
+      <div class="hero__actions">
+        <a href="#contact" class="btn btn--light">Start Your Transformation</a>
+        <a href="#solutions" class="btn btn--ghost">Explore Services</a>
+      </div>
+      <div class="hero__trust">
+        <img src="assets/flags.png" alt="Flags of UAE, Egypt, KSA, Oman and India">
+        <div><span style="font-weight:500">UAE · EGYPT · KSA · OMAN · INDIA</span><span class="muted">Trusted in</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ============================== 2. TRUSTED BY ============================== -->
+  <section class="trusted container" aria-label="Clients">
+    <p>Trusted by finance teams at <span>companies</span> and <span>institutions</span> across the UAE</p>
+    <div class="logos">
+      <div class="logos__track">
+       <div class="logos__group">
+        <img src="assets/client-1.svg" alt="Prograte Printing &amp; Packing">
+        <span class="duo"><img src="assets/client-2a.svg" alt=""><img src="assets/client-2b.svg" alt="Trio"></span>
+        <img src="assets/client-3.svg" alt="Quarter Accounting">
+        <img src="assets/client-4.svg" alt="Prograte Printing &amp; Packing">
+        <img src="assets/client-5.svg" alt="GCDS">
+        <img src="assets/client-6.svg" alt="Al-Fairouz">
+        <img src="assets/client-7.svg" alt="Client seal" class="round">
+        <img src="assets/client-8.svg" alt="Al-Fairouz">
+       </div>
+       <div class="logos__group" aria-hidden="true">
+        <img src="assets/client-1.svg" alt="" data-alt="Prograte Printing &amp; Packing">
+        <span class="duo"><img src="assets/client-2a.svg" alt="" data-alt=""><img src="assets/client-2b.svg" alt="" data-alt="Trio"></span>
+        <img src="assets/client-3.svg" alt="" data-alt="Quarter Accounting">
+        <img src="assets/client-4.svg" alt="" data-alt="Prograte Printing &amp; Packing">
+        <img src="assets/client-5.svg" alt="" data-alt="GCDS">
+        <img src="assets/client-6.svg" alt="" data-alt="Al-Fairouz">
+        <img src="assets/client-7.svg" alt="" data-alt="Client seal" class="round">
+        <img src="assets/client-8.svg" alt="" data-alt="Al-Fairouz">
+       </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== 3. ABOUT ============================== -->
+  <section id="about" class="section" style="padding-top: var(--section-space)">
+    <div class="container">
+      <div class="section-head section-head--center">
+        <div class="section-head__titles">
+          <span class="eyebrow" style="letter-spacing:0">About us</span>
+          <h2 class="h2" style="max-width: 12.5em">Transform Your Business with Smart Digital Solutions</h2>
+        </div>
+      </div>
+
+      <div class="about__panel">
+        <div class="about-card">
+          <!-- Figma 1374:31084: sky ground → copper ribbon → warm band → frosted stats -->
+          <div class="about-card__inner">
+            <img src="assets/about-card-bg.webp" alt="" class="about-card__bg">
+            <div class="ribbon__track"><div class="ribbon__drift"><div class="ribbon"><img src="assets/hero-ribbon.webp" alt=""></div></div></div>
+            <div class="about-card__warm"></div>
+            <div class="about-card__glass">
+              <div class="about-card__stats">
+                <div class="about-card__main">
+                  <div class="about-card__head">
+                    <span class="about-card__big">10+</span>
+                    <span class="about-card__label">Years of experience</span>
+                  </div>
+                  <div class="about-card__rule"></div>
+                  <div class="about-card__small"><b>07+</b><span>Industries served</span></div>
+                </div>
+                <div class="about-card__partner"><span>PARTNER</span><img src="assets/oracle.svg" alt="Oracle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="about__copy">
+          <h3>About LightIdea</h3>
+          <div class="prose">
+            <p>LightIdea is an esteemed <strong>Oracle Partner</strong> dedicated to empowering organizations with sustainable improvement and effective business performance management. We specialize in Oracle Fusion solutions spanning ERP, EPM, Risk Management, and Fusion Analytics Warehouse, combining proven methodologies with deep functional and technical expertise.</p>
+            <p>Our team is drawn from Big-4 and leading consulting firms, bringing together senior professionals with extensive experience in enterprise transformation, finance, supply chain, risk, and analytics. We serve organizations across the public and private sectors, delivering solutions that are practical, scalable, and aligned with real business objectives.</p>
+            <p>At LightIdea, we believe that technology alone does not drive transformation — it is the combination of the right solution, the right expertise, and the right support that creates lasting value. That belief shapes everything we do, from initial advisory engagements through full-scale implementation and long-term managed services.</p>
+          </div>
+          <a href="#solutions" class="btn btn--pill" style="margin-top:4px">Explore Services <i class="ph-bold ph-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== 4. MISSION, VISION & VALUES ============================== -->
+  <section class="panel panel--light values" id="values" aria-labelledby="values-title">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__titles">
+          <span class="eyebrow">OUR FOUNDATION</span>
+          <h2 class="h2" id="values-title">Mission, Vision &amp; Values</h2>
+        </div>
+      </div>
+      <!-- Figma 1381:36269: one value open, the rest as vertical tabs (hover / focus / click opens) -->
+      <div class="values__wrap">
+        <div class="values__row">
+          <button type="button" class="v-card" aria-expanded="true">
+            <img src="assets/fan.png" alt="" class="v-card__fan" aria-hidden="true">
+            <span class="v-card__title" aria-hidden="true">Excellence</span>
+            <span class="v-card__num" aria-hidden="true">01</span>
+            <span class="v-card__body">
+              <span class="v-card__text">
+                <span class="v-card__top"><span class="v-card__icon"><i class="ph-bold ph-medal"></i></span><span class="v-card__count">01 / 05</span></span>
+                <strong class="v-card__h">Excellence</strong>
+                <span class="v-card__p">We hold ourselves to the highest professional standards in every engagement, delivering quality work that creates lasting value for our clients.</span>
+              </span>
+              <span class="v-card__art" aria-hidden="true">
+                <img src="assets/badge-collaboration.png" alt="" class="v-card__glow">
+                <img src="assets/badge-excellence.png" alt="" class="v-card__badge">
+              </span>
+            </span>
+          </button>
+          <button type="button" class="v-card" aria-expanded="false">
+            <img src="assets/fan.png" alt="" class="v-card__fan" aria-hidden="true">
+            <span class="v-card__title" aria-hidden="true">Integrity</span>
+            <span class="v-card__num" aria-hidden="true">02</span>
+            <span class="v-card__body">
+              <span class="v-card__text">
+                <span class="v-card__top"><span class="v-card__icon"><i class="ph-bold ph-shield-check"></i></span><span class="v-card__count">02 / 05</span></span>
+                <strong class="v-card__h">Integrity</strong>
+                <span class="v-card__p">We are transparent, honest, and accountable in all our relationships — with clients, partners, and each other.</span>
+              </span>
+              <span class="v-card__art" aria-hidden="true">
+                <img src="assets/badge-collaboration.png" alt="" class="v-card__glow">
+                <img src="assets/badge-integrity.png" alt="" class="v-card__badge">
+              </span>
+            </span>
+          </button>
+          <button type="button" class="v-card" aria-expanded="false">
+            <img src="assets/fan.png" alt="" class="v-card__fan" aria-hidden="true">
+            <span class="v-card__title" aria-hidden="true">Collaboration</span>
+            <span class="v-card__num" aria-hidden="true">03</span>
+            <span class="v-card__body">
+              <span class="v-card__text">
+                <span class="v-card__top"><span class="v-card__icon"><i class="ph-bold ph-handshake"></i></span><span class="v-card__count">03 / 05</span></span>
+                <strong class="v-card__h">Collaboration</strong>
+                <span class="v-card__p">We work as a true extension of our clients' teams, combining our expertise with their business knowledge to achieve the best outcomes.</span>
+              </span>
+              <span class="v-card__art" aria-hidden="true">
+                <img src="assets/badge-collaboration.png" alt="" class="v-card__glow">
+                <img src="assets/badge-collaboration.png" alt="" class="v-card__badge">
+              </span>
+            </span>
+          </button>
+          <button type="button" class="v-card" aria-expanded="false">
+            <img src="assets/fan.png" alt="" class="v-card__fan" aria-hidden="true">
+            <span class="v-card__title" aria-hidden="true">Innovation</span>
+            <span class="v-card__num" aria-hidden="true">04</span>
+            <span class="v-card__body">
+              <span class="v-card__text">
+                <span class="v-card__top"><span class="v-card__icon"><i class="ph-bold ph-lightbulb"></i></span><span class="v-card__count">04 / 05</span></span>
+                <strong class="v-card__h">Innovation</strong>
+                <span class="v-card__p">We continuously explore new technologies and approaches — including AI, automation, and analytics — to help our clients stay ahead in a rapidly evolving landscape.</span>
+              </span>
+              <span class="v-card__art" aria-hidden="true">
+                <img src="assets/badge-collaboration.png" alt="" class="v-card__glow">
+                <img src="assets/badge-innovation.png" alt="" class="v-card__badge">
+              </span>
+            </span>
+          </button>
+          <button type="button" class="v-card" aria-expanded="false">
+            <img src="assets/fan.png" alt="" class="v-card__fan" aria-hidden="true">
+            <span class="v-card__title" aria-hidden="true">Client Focus</span>
+            <span class="v-card__num" aria-hidden="true">05</span>
+            <span class="v-card__body">
+              <span class="v-card__text">
+                <span class="v-card__top"><span class="v-card__icon"><i class="ph-bold ph-target"></i></span><span class="v-card__count">05 / 05</span></span>
+                <strong class="v-card__h">Client Focus</strong>
+                <span class="v-card__p">Our clients' success is our success. We listen carefully, advise honestly, and remain committed throughout the entire journey.</span>
+              </span>
+              <span class="v-card__art" aria-hidden="true">
+                <img src="assets/badge-collaboration.png" alt="" class="v-card__glow">
+                <img src="assets/badge-clientfocus.png" alt="" class="v-card__badge">
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== 5. OUR APPROACH ============================== -->
+  <section class="section" aria-labelledby="approach-title">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__titles">
+          <span class="eyebrow eyebrow--blue">HOW WE WORK</span>
+          <h2 class="h2 h2--medium" id="approach-title">Our Approach</h2>
+        </div>
+      </div>
+
+      <div class="approach" id="approach">
+        <div class="approach__row">
+          <button type="button" class="ap-card" aria-expanded="true" data-img="assets/approach-1.png" data-num="01" data-title="Oracle Partner Expertise" data-text="As a recognized Oracle Partner, LightIdea brings certified expertise across Oracle ERP, EPM, Risk Management, and Analytics Warehouse, ensuring implementations aligned with Oracle best practices."></button>
+          <button type="button" class="ap-card" aria-expanded="false" data-img="assets/approach-2.png" data-num="02" data-title="Big-4 Consulting Pedigree" data-text="Our team is drawn from Big-4 and leading consulting firms, combining deep subject matter knowledge with hands-on implementation experience across complex enterprise environments."></button>
+          <button type="button" class="ap-card" aria-expanded="false" data-img="assets/approach-3.png" data-num="03" data-title="Local Presence, Global Standards" data-text="LightIdea maintains a strong local presence while delivering services to the highest international standards, providing clients with responsive support and culturally aligned delivery."></button>
+        </div>
+        <div class="approach__row">
+          <button type="button" class="ap-card" aria-expanded="false" data-img="assets/approach-4.png" data-num="04" data-title="End-to-End Delivery" data-text="From strategy and advisory through implementation, training, and ongoing managed support, LightIdea provides full-lifecycle services under one trusted partnership."></button>
+          <button type="button" class="ap-card" aria-expanded="false" data-img="assets/approach-5.png" data-num="05" data-title="AI and Automation Integration" data-text="We enhance business solutions with automation, Generative AI, and intelligent process optimization, helping clients achieve greater efficiency, stronger compliance, and reduced operational costs."></button>
+          <button type="button" class="ap-card" aria-expanded="false" data-img="assets/approach-6.png" data-num="06" data-title="Referenceable Client Base" data-text="LightIdea has delivered successful outcomes for a wide network of enterprise clients across government, finance, healthcare, and other sectors, with a strong track record of measurable results."></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== 6. ENTERPRISE-GRADE SOLUTIONS ============================== -->
+  <section id="solutions" class="panel panel--dark solutions on-dark" aria-labelledby="solutions-title">
+    <div class="bg-layers" aria-hidden="true">
+      <img src="assets/hero-bg3.jpg" alt="" style="object-position: bottom">
+      <img src="assets/hero-bg4.jpg" alt="" class="lighten">
+      <div class="glow"><img src="assets/hero-glow.svg" alt=""></div>
+      <div class="tint"></div>
+    </div>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__titles">
+          <h2 class="h2" id="solutions-title"><span style="white-space:nowrap">Enterprise-Grade</span> Solutions</h2>
+        </div>
+        <p class="section-head__copy">We deliver comprehensive technology consulting services tailored to complex enterprise environments across the Middle East and beyond.</p>
+      </div>
+
+      <div class="sol-grid">
+        <div class="sol-tiles">
+          <button type="button" class="tile" data-icon="ph-stack" data-desc="End-to-end Oracle Fusion ERP implementation services that modernize your core business operations and deliver a unified, cloud-native enterprise platform."><span class="tile__top"><i class="ph-light ph-stack"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Oracle Fusion ERP Implementation</span></button>
+          <button type="button" class="tile" data-icon="ph-chart-line-up" data-desc="Implement Oracle EPM to unify financial planning, budgeting, forecasting, and consolidation — enabling smarter, faster business decisions."><span class="tile__top"><i class="ph-light ph-chart-line-up"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Oracle Enterprise Performance Management (EPM)</span></button>
+          <button type="button" class="tile" data-icon="ph-shield-check" data-desc="Strengthen your internal controls, audit management, and compliance framework with Oracle Risk Management Cloud, implemented by LightIdea."><span class="tile__top"><i class="ph-light ph-shield-check"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Oracle Risk Management</span></button>
+          <button type="button" class="tile" data-icon="ph-chart-pie-slice" data-desc="Unlock enterprise insights with Oracle Fusion Analytics Warehouse — pre-built analytics for ERP, HCM, SCM, and CX, implemented and customized by LightIdea."><span class="tile__top"><i class="ph-light ph-chart-pie-slice"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Oracle Fusion Analytics Warehouse</span></button>
+          <button type="button" class="tile" data-icon="ph-compass" data-desc="Chart a clear path to Oracle Cloud with LightIdea's advisory services — covering business case development, roadmap planning, and cloud readiness assessment."><span class="tile__top"><i class="ph-light ph-compass"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Oracle Cloud Advisory and Strategy</span></button>
+          <button type="button" class="tile is-active" data-icon="ph-target" data-desc="Align strategy with execution through integrated performance management frameworks, KPI design, and Oracle-powered reporting solutions." aria-current="true"><span class="tile__top"><i class="ph-light ph-target"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Business Performance Management</span></button>
+          <button type="button" class="tile" data-icon="ph-chalkboard-teacher" data-desc="Maximize Oracle adoption with structured training programs and change management support tailored to your organization and users."><span class="tile__top"><i class="ph-light ph-chalkboard-teacher"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">End-User Training and Change Enablement</span></button>
+          <button type="button" class="tile" data-icon="ph-headset" data-desc="Keep your Oracle environment stable and performing with LightIdea's dedicated 24/7 managed support service — staffed by experienced Oracle consultants."><span class="tile__top"><i class="ph-light ph-headset"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">24/7 Oracle Application Support</span></button>
+          <button type="button" class="tile tile--extra" data-icon="ph-robot" data-desc="Enhance your Oracle environment with AI and automation capabilities that improve efficiency, reduce manual effort, and accelerate decision-making." hidden><span class="tile__top"><i class="ph-light ph-robot"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">AI and Automation Services</span></button>
+          <button type="button" class="tile tile--extra" data-icon="ph-cpu" data-desc="Deploy cognitive robotic process automation to handle complex, judgment-intensive Oracle processes that go beyond traditional rule-based automation." hidden><span class="tile__top"><i class="ph-light ph-cpu"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Cognitive RPA</span></button>
+          <button type="button" class="tile tile--extra" data-icon="ph-sparkle" data-desc="Apply Generative AI within Oracle environments to accelerate content creation, enhance decision support, and automate knowledge-intensive tasks." hidden><span class="tile__top"><i class="ph-light ph-sparkle"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Generative AI for Enterprise Operations</span></button>
+          <button type="button" class="tile tile--extra" data-icon="ph-flow-arrow" data-desc="Use AI-powered process mining and analytics to identify inefficiencies in your Oracle processes and implement targeted improvements." hidden><span class="tile__top"><i class="ph-light ph-flow-arrow"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Intelligent Process Optimization</span></button>
+          <button type="button" class="tile tile--extra" data-icon="ph-plugs-connected" data-desc="Connect Oracle Fusion seamlessly with your existing enterprise systems, third-party applications, and data sources through robust integration architecture." hidden><span class="tile__top"><i class="ph-light ph-plugs-connected"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">System Integration</span></button>
+          <button type="button" class="tile tile--extra" data-icon="ph-database" data-desc="Design and implement Oracle-native reporting and data solutions that give your organization accurate, timely, and actionable information." hidden><span class="tile__top"><i class="ph-light ph-database"></i><i class="ph-bold ph-arrow-right tile__go"></i></span><span class="tile__name">Data and Reporting Solutions</span></button>
+          <button type="button" class="tile tile--more" aria-expanded="false"><span class="tile__name">Explore All</span><i class="ph-bold ph-arrow-right tile__go"></i></button>
+        </div>
+        <aside class="sol-detail" aria-live="polite">
+          <div class="sol-detail__body">
+            <span class="sol-detail__icon"><i class="ph-light ph-target"></i></span>
+            <h3>Business Performance Management</h3>
+            <p>Align strategy with execution through integrated performance management frameworks, KPI design, and Oracle-powered reporting solutions.</p>
+          </div>
+          <span class="sol-detail__foot">06 / 14</span>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== 7. INSIGHTS & BLOG ============================== -->
+  <section id="insights" class="section" aria-labelledby="insights-title">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__titles">
+          <span class="eyebrow eyebrow--blue">INSIGHTS &amp; BLOG</span>
+          <h2 class="h2 h2--medium" id="insights-title" style="max-width: 17em">Insights &amp; expert advice for enterprise transformation</h2>
+        </div>
+        <div class="values__nav">
+          <button type="button" class="icon-btn" id="blog-prev" aria-label="Previous articles"><i class="ph-bold ph-arrow-left"></i></button>
+          <button type="button" class="icon-btn icon-btn--dark" id="blog-next" aria-label="Next articles"><i class="ph-bold ph-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <div class="blog__track no-scrollbar" id="blog-track">
+        <a href="#" class="post">
+          <div class="post__media">
+            <img src="assets/blog-bg1.png" alt="" class="bgimg" style="left:-5.97%">
+            <img src="assets/blog-1.png" alt="LightIdea team at an e-invoicing event" class="photo" style="width:101.8%; height:236%; transform: translate(-49.1%, -42.4%)">
+            <span class="post__tag">Compliance</span>
+          </div>
+          <h3>UAE E-Invoicing: what finance teams must prepare before go-live</h3>
+          <p>A practical sequence for data, systems and approvals so the mandate lands without disrupting the close.</p>
+          <time>Nov 4, 2026 · 6 min read</time>
+        </a>
+        <a href="#" class="post">
+          <div class="post__media">
+            <img src="assets/blog-bg2.png" alt="" class="bgimg" style="left:-2.99%">
+            <img src="assets/blog-2.png" alt="LightIdea team at the Oracle EPM Cloud Summit" class="photo" style="width:100.1%; height:284.8%; transform: translate(-49.94%, -49.94%)">
+            <span class="post__tag">ERP</span>
+          </div>
+          <h3>Oracle Fusion ERP migration: a 90-day readiness checklist</h3>
+          <p>The decisions that matter before the first workshop — scope, data ownership, and integration boundaries.</p>
+          <time>Oct 28, 2026 · 8 min read</time>
+        </a>
+        <a href="#" class="post">
+          <div class="post__media">
+            <img src="assets/blog-bg2.png" alt="" class="bgimg" style="left:-8.96%">
+            <img src="assets/blog-3.png" alt="Oracle EPM CXO Summit speakers" class="photo" style="width:134.35%; height:108.45%; transform: translate(-45.33%, -53.84%)">
+            <span class="post__tag">EPM</span>
+          </div>
+          <h3>Closing the books faster with Oracle EPM Cloud</h3>
+          <p>How consolidation, reconciliation and narrative reporting fit together in a modern close.</p>
+          <time>Oct 21, 2026 · 5 min read</time>
+        </a>
+        <a href="#" class="post">
+          <div class="post__media">
+            <img src="assets/blog-bg1.png" alt="" class="bgimg" style="left:-1.79%">
+            <img src="assets/blog-4.png" alt="LightIdea team at a technology exhibition" class="photo" style="width:100%; height:120%; transform: translate(-50%, -45.3%)">
+            <span class="post__tag">AI &amp; Automation</span>
+          </div>
+          <h3>Where Generative AI actually fits in enterprise finance</h3>
+          <p>Separating useful automation from demos — the processes where AI earns its place today.</p>
+          <time>Oct 14, 2026 · 7 min read</time>
+        </a>
+        <a href="#" class="post">
+          <div class="post__media">
+            <img src="assets/blog-bg2.png" alt="" class="bgimg" style="left:-5.97%">
+            <span class="post__tag">Risk</span>
+          </div>
+          <h3>Risk Management Cloud: building controls auditors trust</h3>
+          <p>Designing segregation-of-duties and continuous monitoring that hold up under audit.</p>
+          <time>Oct 7, 2026 · 6 min read</time>
+        </a>
+        <a href="#" class="post">
+          <div class="post__media">
+            <img src="assets/blog-bg1.png" alt="" class="bgimg" style="left:-10.15%">
+            <span class="post__tag">Analytics</span>
+          </div>
+          <h3>From reports to decisions: Fusion Analytics for executives</h3>
+          <p>Turning pre-built ERP and HCM analytics into a dashboard leadership actually opens.</p>
+          <time>Sep 30, 2026 · 4 min read</time>
+        </a>
+      </div>
+      <div class="blog__progress" aria-hidden="true"><div id="blog-progress"></div></div>
+    </div>
+  </section>
+
+  <!-- ============================== 8. FAQ ============================== -->
+  <section id="faq" class="section" aria-labelledby="faq-title">
+    <div class="container faq">
+      <div class="faq__intro">
+        <h2 class="h2 h2--medium" id="faq-title" style="max-width: 9em">Frequently Asked Questions</h2>
+        <p>Find answers to common questions about our services, methodologies, and enterprise solutions.</p>
+      </div>
+      <div class="faq__list" id="faq-list">
+        <div class="faq-item is-open">
+          <button class="faq-q" type="button" aria-expanded="true" aria-controls="faq-a1"><span>What services does LightIdea provide?</span><span class="faq-icon"><i class="ph ph-plus"></i></span></button>
+          <div class="faq-a" id="faq-a1"><p>LightIdea provides business transformation, performance management, AI solutions, automation, digital strategy, process optimization, training, and ongoing application support to help organizations improve efficiency and decision-making.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a2"><span>How can LightIdea help improve business performance?</span><span class="faq-icon"><i class="ph ph-plus"></i></span></button>
+          <!-- Answer text is not in the Figma file yet -->
+          <div class="faq-a" id="faq-a2" hidden><p></p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a3"><span>Does LightIdea provide AI and automation solutions?</span><span class="faq-icon"><i class="ph ph-plus"></i></span></button>
+          <!-- Answer text is not in the Figma file yet -->
+          <div class="faq-a" id="faq-a3" hidden><p></p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== 9. GET IN TOUCH ============================== -->
+  <section id="contact" class="panel panel--light" aria-labelledby="contact-title">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__titles">
+          <span class="eyebrow">GLOBAL OFFICES</span>
+          <h2 class="h2 h2--medium" id="contact-title">Get in Touch</h2>
+        </div>
+        <p class="section-head__copy" style="max-width: 31em">Whether you are exploring digital transformation for the first time, looking to enhance your existing business systems, or seeking ongoing managed support, LightIdea’s team is ready to help. Contact us to speak with a specialist about your specific needs.</p>
+      </div>
+
+      <div class="contact__grid">
+        <div class="office on-dark">
+          <!-- Figma 1384:36314: sky ground → region map with the HQ pinned → frosted address card -->
+          <img src="assets/office-bg.webp" alt="" class="office__bg">
+          <div class="office__map" aria-hidden="true">
+            <img src="assets/contact-map-solid.svg" alt="">
+            <span class="office__pin"><span class="office__tag"><strong>Abu Dhabi</strong><span>Headquarters</span></span></span>
+          </div>
+          <img src="assets/logo-white.svg" alt="LightIdea" class="office__logo">
+          <div class="office__legend" aria-hidden="true"><span><i></i>Headquarters</span><span><i></i>Markets we serve</span></div>
+          <div class="office__card">
+            <small>HEADQUARTERS</small>
+            <strong>Office 207, Al Nahyan Camp, Muroor Road, Abu Dhabi, United Arab Emirates P.O.BOX 110620</strong>
+            <div class="office__actions">
+              <a class="office__btn office__btn--primary" href="https://www.google.com/maps/search/?api=1&amp;query=Al+Nahyan+Camp+Muroor+Road+Abu+Dhabi" target="_blank" rel="noopener">Get directions <i class="ph ph-arrow-up-right"></i></a>
+              <a class="office__btn" href="mailto:info@lightidea.org"><i class="ph ph-tray"></i>info@lightidea.org</a>
+              <a class="office__btn" href="tel:+971543711199"><i class="ph ph-phone"></i>+971 54 371 1199</a>
+            </div>
+          </div>
+        </div>
+
+        <form class="form" onsubmit="return false;">
+          <p class="form__title">Send us a <span style="color:var(--c-orange)">message</span> and one of our <span style="color:#094e87">experts</span> will respond ASAP</p>
+          <div class="form__grid">
+            <label class="field">First Name<input type="text" name="first_name" autocomplete="given-name"></label>
+            <label class="field">Last Name<input type="text" name="last_name" autocomplete="family-name"></label>
+            <label class="field">Work Email<input type="email" name="email" autocomplete="email"></label>
+            <label class="field">Company Name<input type="text" name="company" autocomplete="organization"></label>
+          </div>
+          <label class="field">How can we help you?<textarea name="message"></textarea></label>
+          <div class="form__foot">
+            <label class="check"><input type="checkbox" name="privacy"><span class="box"><i class="ph-bold ph-check"></i></span>I have read and agree to the Privacy Policy <i class="ph ph-arrow-up-right"></i></label>
+            <button type="submit" class="submit">Submit <span><i class="ph ph-arrow-up-right"></i></span></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============================== 10. FOOTER ============================== -->
+<footer class="footer">
+  <img src="assets/hero-bg3.jpg" alt="" class="bg">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__col footer__about">
+        <img src="assets/logo-white.svg" alt="LightIdea" style="height:28px; width:auto">
+        <p>Lightidea helps organizations execute digital, data, and platform initiatives with more clarity and control.</p>
+      </div>
+      <div class="footer__col">
+        <h4>SOLUTIONS</h4>
+        <a href="#">Sanade – UAE Electronic Invoicing Platform</a>
+        <a href="#">Oracle Fusion ERP Transformation</a>
+        <a href="#">Enterprise Performance Management Platform</a>
+        <a href="#">Risk and Compliance Management</a>
+        <a href="#">Fusion Analytics and Executive Dashboards</a>
+        <a href="#">AI-Powered Finance Operations</a>
+      </div>
+      <div class="footer__col">
+        <h4>COMPANY</h4>
+        <a href="#about">About Us</a>
+        <a href="#">Our Clients</a>
+        <a href="#">Technology Partners</a>
+        <a href="#">Our Team</a>
+        <a href="#insights">Insights</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer__col">
+        <h4>GLOBAL PRESENCE</h4>
+        <span style="line-height:1.5">HQ: Office 207, Al Nahyan Camp, Muroor Road, Abu Dhabi, United Arab Emirates P.O.BOX 110620</span>
+        <a href="tel:+971543711199">Phone: +971543711199</a>
+        <a href="mailto:info@lightidea.org">info@lightidea.org</a>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span style="color:#e1e4ea">© LightIdea. All rights reserved.</span>
+      <nav aria-label="Legal"><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Site Map</a></nav>
+    </div>
+  </div>
+</footer>
+</div><!-- /.app -->
+
+<!-- ============================== MOBILE SIDE MENU ============================== -->
+<nav class="side-menu" id="side-menu" aria-label="Site menu">
+  <button type="button" class="side-menu__close" aria-label="Close menu"></button>
+  <ul>
+    <li><a href="#" aria-current="true">Home</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="solutions.html">Solutions</a></li>
+    <li><a href="insights.html">Insights &amp; Blog</a></li>
+    <li><a href="about.html">About us</a></li>
+    <li><a href="#faq">More</a></li>
+    <li><a href="contact.html">Contact us</a></li>
+  </ul>
+</nav>
+
+<script src="https://unpkg.com/lenis@1.3.11/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="assets/site.js"></script>
+<script src="assets/hero-globe.js"></script>
+<script>
+
+/* ---------- Mission, Vision & Values: one value open at a time, opens on hover ----------
+   Same behaviour as Our Approach: a short hover-intent delay so sweeping the mouse across the
+   tabs doesn't flicker; focus and click open a tab too. Below 1100px every value is shown open. */
+(function values() {
+  const cards = [...document.querySelectorAll('.v-card')];
+  const small = window.matchMedia('(max-width: 1099px)');
+  const activate = (c) => { if (!small.matches) cards.forEach((x) => x.setAttribute('aria-expanded', String(x === c))); };
+  let timer;
+  cards.forEach((c) => {
+    c.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'mouse') return; clearTimeout(timer); timer = setTimeout(() => activate(c), 90); });
+    c.addEventListener('pointerleave', () => clearTimeout(timer));
+    c.addEventListener('focus', () => activate(c));
+    c.addEventListener('click', () => activate(c));
+  });
+})();
+
+/* ---------- Our Approach: one card open at a time, opens smoothly on hover ---------- */
+(function approach() {
+  const cards = [...document.querySelectorAll('.ap-card')];
+  cards.forEach((c) => {
+    const d = c.dataset;
+    c.innerHTML = `
+      <img src="assets/fan.png" alt="" class="ap-card__fan" aria-hidden="true">
+      <span class="ap-card__num" aria-hidden="true">${d.num}.</span>
+      <span class="ap-card__title">${d.title}</span>
+      <span class="ap-card__body">
+        <img src="${d.img}" alt="" class="ap-card__img">
+        <span class="ap-card__text">
+          <small>${d.num} / 06</small>
+          <strong class="ap-card__h">${d.title}</strong>
+          <span class="ap-card__p">${d.text}</span>
+        </span>
+      </span>`;
+  });
+  // open on hover (with a short intent delay so passing the mouse across doesn't flicker), focus or click
+  const small = window.matchMedia('(max-width: 1099px)');   // all cards are open on smaller screens
+  const activate = (c) => { if (!small.matches) cards.forEach((x) => x.setAttribute('aria-expanded', String(x === c))); };
+  let timer;
+  cards.forEach((c) => {
+    c.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'mouse') return; clearTimeout(timer); timer = setTimeout(() => activate(c), 90); });
+    c.addEventListener('pointerleave', () => clearTimeout(timer));
+    c.addEventListener('focus', () => activate(c));
+    c.addEventListener('click', () => activate(c));
+  });
+})();
+
+/* ---------- Insights: native horizontal scroll + buttons + progress ---------- */
+(function blog() {
+  const track = document.getElementById('blog-track');
+  const bar = document.getElementById('blog-progress');
+  const prev = document.getElementById('blog-prev');
+  const next = document.getElementById('blog-next');
+  const step = () => track.firstElementChild.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap || 20);
+  const update = () => {
+    const max = track.scrollWidth - track.clientWidth;
+    bar.style.width = (Math.min(1, track.clientWidth / track.scrollWidth + (max > 0 ? track.scrollLeft / track.scrollWidth : 0)) * 100) + '%';
+    prev.disabled = track.scrollLeft <= 2;
+    next.disabled = track.scrollLeft >= max - 2;
+  };
+  // glide one card at a time and land exactly on a card edge
+  const go = (dir) => {
+    const s = step(), max = track.scrollWidth - track.clientWidth;
+    const target = Math.max(0, Math.min(max, (Math.round(track.scrollLeft / s) + dir) * s));
+    if (window.gsap && !REDUCED_MOTION) gsap.to(track, { scrollLeft: target, duration: 1, ease: 'power3.inOut', overwrite: true });
+    else track.scrollTo({ left: target });
+  };
+  prev.addEventListener('click', () => go(-1));
+  next.addEventListener('click', () => go(1));
+  track.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+/* ---------- Solutions: hover / tap a card to read it; Explore All opens the rest ---------- */
+(function solutions() {
+  const tiles = [...document.querySelectorAll('.sol-tiles .tile:not(.tile--more)')];
+  const extras = tiles.filter((t) => t.classList.contains('tile--extra'));
+  const more = document.querySelector('.tile--more');
+  const body = document.querySelector('.sol-detail__body');
+  const icon = body.querySelector('.sol-detail__icon i');
+  const title = body.querySelector('h3');
+  const text = body.querySelector('p');
+  const foot = document.querySelector('.sol-detail__foot');
+  const animate = HAS_GSAP && !REDUCED_MOTION;
+  const pad = (n) => String(n).padStart(2, '0');
+  let active = tiles.find((t) => t.classList.contains('is-active'));
+
+  const show = (t) => {
+    if (t === active) return;
+    active.classList.remove('is-active'); active.removeAttribute('aria-current');
+    t.classList.add('is-active'); t.setAttribute('aria-current', 'true');
+    active = t;
+    const fill = () => {
+      icon.className = 'ph-light ' + t.dataset.icon;
+      title.textContent = t.querySelector('.tile__name').textContent;
+      text.textContent = t.dataset.desc;
+      foot.textContent = pad(tiles.indexOf(t) + 1) + ' / ' + pad(tiles.length);
+    };
+    if (!animate) return fill();
+    gsap.killTweensOf(body);
+    gsap.timeline()
+      .to(body, { opacity: 0, y: -10, filter: 'blur(6px)', duration: 0.2, ease: 'power2.in', onComplete: fill })
+      .to(body, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5, ease: 'power3.out', clearProps: 'filter,transform' });
+  };
+
+  let timer;
+  tiles.forEach((t) => {
+    t.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'mouse') return; clearTimeout(timer); timer = setTimeout(() => show(t), 90); });
+    t.addEventListener('pointerleave', () => clearTimeout(timer));
+    t.addEventListener('focus', () => show(t));
+    t.addEventListener('click', () => show(t));
+  });
+
+  more.addEventListener('click', () => {
+    const open = more.getAttribute('aria-expanded') !== 'true';
+    more.setAttribute('aria-expanded', String(open));
+    more.querySelector('.tile__name').textContent = open ? 'Show less' : 'Explore All';
+    extras.forEach((x) => { x.hidden = !open; });
+    if (!open && extras.includes(active)) show(tiles[5]);
+    if (open && animate) {
+      gsap.from(extras, { opacity: 0, y: 30, scale: 0.96, filter: 'blur(8px)', duration: 0.65, stagger: 0.06, ease: 'power3.out', clearProps: 'filter,transform,opacity' });
+    }
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+  });
+})();
+
+/* ---------- FAQ accordion (height + fade) ---------- */
+(function faq() {
+  const items = [...document.querySelectorAll('.faq-item')];
+  const animate = HAS_GSAP && !REDUCED_MOTION;
+  const setOpen = (x, open) => {
+    const a = x.querySelector('.faq-a');
+    x.classList.toggle('is-open', open);
+    x.querySelector('.faq-q').setAttribute('aria-expanded', String(open));
+    if (!animate) { a.hidden = !open; return; }
+    gsap.killTweensOf(a);
+    if (open) {
+      a.hidden = false;
+      gsap.fromTo(a, { height: 0, opacity: 0 }, { height: 'auto', opacity: 1, duration: 0.45, ease: 'power2.out', clearProps: 'height,opacity' });
+    } else if (!a.hidden) {
+      gsap.to(a, { height: 0, opacity: 0, duration: 0.35, ease: 'power2.out', onComplete: () => { a.hidden = true; gsap.set(a, { clearProps: 'height,opacity' }); } });
+    }
+  };
+  items.forEach((it) => it.querySelector('.faq-q').addEventListener('click', () => {
+    const willOpen = !it.classList.contains('is-open');
+    items.forEach((x) => { if (x === it) setOpen(x, willOpen); else if (x.classList.contains('is-open')) setOpen(x, false); });
+  }));
+})();
+
+/* =====================================================================
+   PAGE MOTION — hero intro timeline + scroll-triggered reveals,
+   split-text headings, staggers, masked images, parallax, blobs, footer.
+   ===================================================================== */
+(async function pageMotion() {
+  const root = document.documentElement;
+  if (!HAS_GSAP || REDUCED_MOTION) { root.classList.remove('motion-pending'); return; }
+  // give the text font a moment to load (max 300ms) so the hero never waits on icon fonts
+  await Promise.race([document.fonts.load('400 64px Inter'), new Promise((r) => setTimeout(r, 300))]);
+
+  const W = window.innerWidth;
+  const S = W < 768 ? 0.55 : W < 1100 ? 0.8 : 1;     // shorter travel on tablet / phone
+  const BLUR = W < 768 ? 8 : 12;
+  const DESKTOP = W >= 900;
+  const EASE = 'power3.out';
+  const once = (trigger, start = 'top 85%') => ({ trigger, start, once: true });
+  const split = (el) => new SplitText(el, { type: 'words', wordsClass: 'split-word' }).words;
+
+  /* ---------- 1. Hero intro: shell → logo/nav → title words → copy → CTA → glow (the copper ribbon has its own blur-in) ---------- */
+  const heroWords = split(document.querySelector('.hero h1'));
+  const tl = gsap.timeline({ defaults: { ease: EASE } });
+  tl.from('.hero', { opacity: 0, scale: 0.96, y: 20, duration: 1, clearProps: 'transform' })
+    .from('.nav__logo', { opacity: 0, scale: 0.92, filter: `blur(${BLUR}px)`, duration: 0.7, clearProps: 'filter' }, 0.2)
+    .from('.nav__links li, .nav__right', { opacity: 0, y: -12, duration: 0.5, stagger: 0.05, clearProps: 'transform' }, 0.3)
+    .from('.hero__badge', { opacity: 0, y: 16, filter: 'blur(8px)', duration: 0.6, clearProps: 'filter,transform' }, 0.45)
+    .from(heroWords, { opacity: 0, yPercent: 70, filter: 'blur(14px)', duration: 0.85, stagger: 0.06, clearProps: 'filter' }, 0.55)
+    .from('.hero__lead', { opacity: 0, y: 24, filter: 'blur(8px)', duration: 0.7, clearProps: 'filter,transform' }, '-=0.55')
+    .from('.hero__actions > *', { opacity: 0, y: 18, scale: 0.97, duration: 0.55, stagger: 0.1, clearProps: 'transform' }, '-=0.45')
+    .from('.hero__trust', { opacity: 0, y: 16, filter: 'blur(6px)', duration: 0.55, clearProps: 'filter,transform' }, '-=0.35')
+    .from('.hero__glow', { opacity: 0, y: 110 * S, scale: 0.92, filter: 'blur(10px)', duration: 1.1, transformOrigin: '50% 100%', clearProps: 'filter,transform' }, 0.7);
+  root.classList.remove('motion-pending');
+
+  /* Hero leaves with depth while scrolling out (scrubbed, so it reverses on the way back) */
+  if (DESKTOP) {
+    const out = { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true };
+    gsap.to('.hero__body', { y: -60, opacity: 0.25, ease: 'none', scrollTrigger: out });
+  }
+
+  /* ---------- 2. Animated gradient blobs (the existing glows drift slowly) ---------- */
+  if (DESKTOP) {
+    gsap.to('.hero__glow', { xPercent: 12, yPercent: -10, scale: 1.12, duration: 8, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+    gsap.to('.solutions .glow', { xPercent: -14, yPercent: 10, scale: 1.15, duration: 9, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+  }
+
+  /* ---------- 3. Client logos: stagger with a light blur ---------- */
+  gsap.timeline({ scrollTrigger: once('.trusted', 'top 90%') })
+    .from('.trusted > p', { opacity: 0, y: 16, filter: 'blur(6px)', duration: 0.6, ease: EASE, clearProps: 'filter,transform' })
+    .from('.logos__group:first-child > *', { opacity: 0, y: 18, scale: 0.9, filter: 'blur(8px)', duration: 0.55, stagger: 0.07, ease: 'power2.out', clearProps: 'filter,transform' }, '-=0.3');
+
+  /* ---------- 4. Every section header: eyebrow → split heading → copy ---------- */
+  document.querySelectorAll('.section-head, .faq__intro').forEach((head) => {
+    const h2 = head.querySelector('.h2');
+    const t = gsap.timeline({ scrollTrigger: once(head, 'top 82%'), defaults: { ease: EASE } });
+    const eyebrow = head.querySelector('.eyebrow');
+    if (eyebrow) t.from(eyebrow, { opacity: 0, y: 16, filter: 'blur(6px)', duration: 0.6, clearProps: 'filter,transform' });
+    if (h2) t.from(split(h2), { opacity: 0, yPercent: 60, filter: 'blur(14px)', duration: 0.85, stagger: 0.05, clearProps: 'filter' }, eyebrow ? '-=0.35' : 0);
+    const rest = head.querySelectorAll(':scope > .section-head__copy, :scope > .values__nav, :scope > p');
+    if (rest.length) t.from(rest, { opacity: 0, y: 24, filter: 'blur(8px)', duration: 0.7, stagger: 0.1, clearProps: 'filter,transform' }, '-=0.5');
+  });
+
+  /* ---------- 5. About: card rises, copy follows (the ribbon inside has its own blur-in) ---------- */
+  gsap.timeline({ scrollTrigger: once('.about__panel', 'top 80%'), defaults: { ease: EASE } })
+    .from('.about__panel', { opacity: 0, y: 40 * S, scale: 0.98, duration: 0.9, clearProps: 'transform' })
+    .from('.about-card', { opacity: 0, y: 64 * S, duration: 1, clearProps: 'transform' }, '-=0.6')
+    .from(split(document.querySelector('.about__copy h3')), { opacity: 0, yPercent: 60, filter: 'blur(12px)', duration: 0.8, stagger: 0.06, clearProps: 'filter' }, '-=0.75')
+    .from('.about__copy .prose > p, .about__copy > .btn', { opacity: 0, y: 24, filter: 'blur(8px)', duration: 0.7, stagger: 0.1, clearProps: 'filter,transform' }, '-=0.55');
+
+  /* ---------- 6. Values: the cards rise in one after another ---------- */
+  gsap.from('.values__row > .v-card', { opacity: 0, y: 40 * S, duration: 0.9, stagger: 0.08, ease: EASE, clearProps: 'transform', scrollTrigger: once('.values__row', 'top 85%') });
+
+  /* ---------- 7. Approach: Staggered Scatter-to-Grid Card Reveal ----------
+     Each card starts small, blurred and slightly off its spot (fixed offsets, never random),
+     then flies into its own place in the existing layout. Phones: vertical offset only. */
+  const PHONE = W < 768;
+  const apOffsets = [{ x: -110, y: 30 }, { x: 0, y: -70 }, { x: 110, y: 25 }, { x: -90, y: 85 }, { x: 5, y: 105 }, { x: 95, y: 80 }];
+  gsap.fromTo('.ap-card',
+    {
+      opacity: 0,
+      scale: PHONE ? 0.75 : 0.35,
+      x: (i) => (PHONE ? 0 : apOffsets[i % apOffsets.length].x * S),
+      y: (i) => (PHONE ? 45 : apOffsets[i % apOffsets.length].y * S),
+      filter: `blur(${PHONE ? 6 : 10}px)`,
+      transformOrigin: 'center center',
+    },
+    {
+      opacity: 1, scale: 1, x: 0, y: 0, filter: 'blur(0px)',
+      duration: 0.85, stagger: { each: PHONE ? 0.08 : 0.1, from: 'start' }, ease: EASE,
+      clearProps: 'transform,filter', scrollTrigger: once('#approach', 'top 72%'),
+    });
+
+  /* ---------- 8. Solutions: panel scales in, bento tiles + detail stagger ---------- */
+  gsap.from('.solutions', { opacity: 0, y: 60 * S, scale: 0.97, duration: 1, ease: EASE, clearProps: 'transform', scrollTrigger: once('.solutions', 'top 88%') });
+  gsap.from('.sol-tiles > *, .sol-detail', { opacity: 0, y: 56 * S, scale: 0.97, filter: `blur(${BLUR}px)`, duration: 0.9, stagger: 0.07, ease: EASE, clearProps: 'filter,transform', scrollTrigger: once('.sol-grid', 'top 80%') });
+
+  /* ---------- 9. Insights: cards fade up, images open from a mask ---------- */
+  gsap.timeline({ scrollTrigger: once('#blog-track', 'top 82%'), defaults: { ease: EASE } })
+    .from('.post', { opacity: 0, y: 40 * S, duration: 0.8, stagger: 0.1, clearProps: 'transform' })
+    .fromTo('.post__media', { clipPath: 'inset(100% 0% 0% 0% round 18px)', scale: 1.08 },
+      { clipPath: 'inset(0% 0% 0% 0% round 18px)', scale: 1, duration: 1.1, stagger: 0.1, clearProps: 'clipPath,transform' }, 0)
+    .from('.blog__progress', { scaleX: 0, transformOrigin: 'left center', duration: 0.9, clearProps: 'transform' }, 0.3);
+
+  /* ---------- 10. FAQ: questions stagger in ---------- */
+  gsap.from('.faq-item', { opacity: 0, y: 30, filter: 'blur(6px)', duration: 0.6, stagger: 0.08, ease: 'power2.out', clearProps: 'filter,transform', scrollTrigger: once('#faq-list', 'top 82%') });
+
+  /* ---------- 11. Contact: panel rises, office image opens from a mask, form fields stagger ---------- */
+  gsap.from('#contact', { opacity: 0, y: 60 * S, scale: 0.97, duration: 1, ease: EASE, clearProps: 'transform', scrollTrigger: once('#contact', 'top 88%') });
+  gsap.timeline({ scrollTrigger: once('.contact__grid', 'top 80%'), defaults: { ease: EASE } })
+    .fromTo('.office', { clipPath: 'inset(100% 0% 0% 0% round 24px)' }, { clipPath: 'inset(0% 0% 0% 0% round 24px)', duration: 1.1, clearProps: 'clipPath' })
+    .from('.office__card', { opacity: 0, y: 30, filter: 'blur(8px)', duration: 0.7, clearProps: 'filter,transform' }, '-=0.45')
+    .from('.form', { opacity: 0, y: 50 * S, scale: 0.98, duration: 0.9, clearProps: 'transform' }, 0.1)
+    .from('.form > *, .form__grid > *', { opacity: 0, y: 20, filter: 'blur(6px)', duration: 0.55, stagger: 0.05, clearProps: 'filter,transform' }, 0.35);
+  if (DESKTOP) gsap.to('.office__card', { yPercent: -10, ease: 'none', scrollTrigger: { trigger: '.office', start: 'top bottom', end: 'bottom top', scrub: true } });
+
+  /* ---------- 12. Footer: dark block wipes up, columns stagger ---------- */
+  gsap.timeline({ scrollTrigger: once('.footer', 'top 88%'), defaults: { ease: EASE } })
+    .fromTo('.footer', { clipPath: 'inset(100% 0% 0% 0% round 24px)' }, { clipPath: 'inset(0% 0% 0% 0% round 24px)', duration: 1, clearProps: 'clipPath' })
+    .from('.footer__grid > *, .footer__bottom', { opacity: 0, y: 25, filter: 'blur(8px)', duration: 0.6, stagger: 0.08, ease: 'power2.out', clearProps: 'filter,transform' }, '-=0.45');
+
+  ScrollTrigger.refresh();
+})();
+</script>
+<!-- ============================== ANNOUNCEMENT (first visit) ============================== -->
+<dialog class="announce" id="announce" tabindex="-1" aria-labelledby="announce-title" aria-describedby="announce-text">
+  <button type="button" class="announce__close" data-announce-close aria-label="Close announcement"><i class="ph-bold ph-x"></i></button>
+  <div class="announce__media">
+    <img src="assets/about-card-bg.webp" alt="" class="announce__sky">
+    <img src="assets/hero-ribbon.webp" alt="" class="announce__ribbon">
+  </div>
+  <div class="announce__body">
+    <span class="eyebrow">NEW · SANADE</span>
+    <h2 class="announce__title" id="announce-title">UAE E-Invoicing is here with Sanade</h2>
+    <p class="announce__text" id="announce-text">Get your finance team ready for the UAE e-invoicing mandate. Sanade connects to your ERP and keeps every invoice compliant, from issue to submission.</p>
+    <div class="announce__actions">
+      <button type="button" class="announce__later" data-announce-close>Maybe later</button>
+      <a href="#contact" class="submit" data-announce-close>Book a demo</a>
+    </div>
+  </div>
+</dialog>
+
+<script>
+/* Announcement: opens once per visitor shortly after the hero intro; ?announce=1 forces it.
+   <dialog> gives focus trapping, Esc to close and the backdrop for free. */
+(() => {
+  const dlg = document.getElementById('announce');
+  if (!dlg || typeof dlg.showModal !== 'function') return;
+  const KEY = 'li-announce-sanade-v1';
+  const force = new URLSearchParams(location.search).has('announce');
+  let seen = false;
+  try { seen = localStorage.getItem(KEY) === '1'; } catch (e) {}
+  if (seen && !force) return;
+
+  const motion = document.documentElement.classList.contains('motion');
+  const close = () => {
+    try { localStorage.setItem(KEY, '1'); } catch (e) {}
+    if (!dlg.open) return;
+    if (!motion) { dlg.close(); return; }
+    dlg.classList.add('is-closing');
+    // close when the exit animation ends; the timer covers tabs where animations don't run
+    setTimeout(() => { dlg.classList.remove('is-closing'); if (dlg.open) dlg.close(); }, 320);
+  };
+  dlg.addEventListener('close', () => window.lenis && window.lenis.start());
+  dlg.addEventListener('cancel', (e) => { e.preventDefault(); close(); });                       // Esc
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) close(); });                      // backdrop
+  dlg.querySelectorAll('[data-announce-close]').forEach((el) => el.addEventListener('click', close));
+
+  const open = () => {
+    if (dlg.open) return;
+    window.lenis && window.lenis.stop();
+    dlg.showModal();
+    dlg.focus({ preventScroll: true });   // focus the dialog itself, so no button shows a focus ring on open
+  };
+  const start = () => setTimeout(open, motion ? 1800 : 600);   // after the hero intro settles
+  if (document.readyState === 'complete') start(); else addEventListener('load', start, { once: true });
+})();
+</script>
+</body>
+</html>
