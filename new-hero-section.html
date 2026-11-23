@@ -29,6 +29,57 @@
 
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/hero-globe.css">
+<style>
+/* =====================================================================
+   SIDE POP-UP · FEATURE CARD (Sanade) — slides in after the hero intro,
+   shown while the hero is on screen, dismissible for the session.
+   ===================================================================== */
+.promo {
+  position: fixed; right: 24px; bottom: 24px; z-index: 80; width: 345px; max-width: calc(100vw - 24px);
+  border-radius: 16px; overflow: hidden; background: #fff; font-family: 'Inter', system-ui, sans-serif;
+  box-shadow: 0 30px 60px -20px rgba(0,20,50,0.45), 0 0 0 1px rgba(11,26,51,0.04);
+  opacity: 0; visibility: hidden; transform: translateY(28px) scale(0.96);
+  transition: opacity 0.6s var(--ease-out), transform 0.9s var(--ease-soft), visibility 0s linear 0.9s;
+}
+.promo.is-shown { opacity: 1; visibility: visible; transform: none; transition: opacity 0.6s var(--ease-out), transform 0.9s var(--ease-soft), visibility 0s; }
+.promo.is-shown.is-away { opacity: 0; visibility: hidden; transform: translateY(40px) scale(0.97); transition: opacity 0.35s var(--ease-out), transform 0.5s var(--ease-out), visibility 0s linear 0.5s; }
+html.menu-open .promo, html.menu-closing .promo { display: none; }
+.promo__media { position: relative; height: 164px; overflow: hidden; background: #060f22 url(assets/popup-bg.png) center bottom / cover no-repeat; }
+.promo__glow { position: absolute; left: -60px; top: -90px; width: 260px; height: 200px; border-radius: 50%; pointer-events: none; background: radial-gradient(closest-side, rgba(242,107,33,0.55), rgba(242,107,33,0)); animation: promo-glow 5s ease-in-out infinite; }
+.promo__dash { position: absolute; left: -116px; top: 41px; width: 439px; opacity: 0; transform: translateY(40px) rotate(-2deg); transition: opacity 0.8s var(--ease-out) 0.4s, transform 1s var(--ease-soft) 0.4s; }
+.promo.is-shown .promo__dash { opacity: 1; transform: none; }
+.promo__float { position: relative; animation: promo-float 6s ease-in-out 2s infinite; }
+.promo__float img { display: block; width: 100%; height: auto; }
+.promo__screen { position: absolute; left: 5.8%; right: 5.9%; top: 1.9%; bottom: 17.4%; border-radius: 11px; overflow: hidden; pointer-events: none; mix-blend-mode: soft-light; }
+.promo__screen::before { content: ""; position: absolute; top: -10%; left: 0; width: 22%; height: 120%; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.55), rgba(255,255,255,0)); transform: translateX(-120%) skewX(-18deg); animation: promo-sheen 4.5s ease-in-out 2.4s infinite; }
+.promo__close { position: absolute; top: 12px; right: 12px; z-index: 2; width: 25px; height: 25px; border-radius: 50%; border: 0; padding: 0; display: grid; place-items: center; background: rgba(10,20,40,0.85); cursor: pointer; }
+.promo__close svg { display: block; }
+.promo__close:focus-visible, .promo__dismiss:focus-visible, .promo__cta:focus-visible { outline: 2px solid #F26B21; outline-offset: 2px; }
+.promo__body { padding: 18px 20px 19px; }
+.promo__eyebrow { font-size: 9.5px; font-weight: 600; letter-spacing: 0.12em; color: #F26B21; }
+.promo__title { margin-top: 10px; font-size: 16px; font-weight: 600; line-height: 1.3; letter-spacing: -0.005em; color: #0b1a33; }
+.promo__text { margin-top: 10px; font-size: 11.5px; line-height: 18px; color: #5b6474; }
+.promo__text b { font-weight: 600; color: #0b1a33; font-variant-numeric: tabular-nums; }
+.promo__actions { display: flex; align-items: center; gap: 13px; margin-top: 14px; }
+.promo__cta { display: flex; align-items: center; height: 34px; padding: 0 14px; border-radius: 5px; background: #F26B21; color: #fff; font-size: 12px; font-weight: 600; animation: promo-pulse 2.6s ease-out 2.2s infinite; }
+.promo__cta:hover { opacity: 0.92; }
+.promo__dismiss { border: 0; background: none; padding: 0; font: inherit; font-size: 12px; color: #5b6474; cursor: pointer; }
+.promo__dismiss:hover { color: #0b1a33; }
+@keyframes promo-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes promo-glow { 0%, 100% { opacity: 0.55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.15); } }
+@keyframes promo-sheen { 0% { transform: translateX(-120%) skewX(-18deg); } 55%, 100% { transform: translateX(420%) skewX(-18deg); } }
+@keyframes promo-pulse { 0% { box-shadow: 0 0 0 0 rgba(242,107,33,0.55); } 70% { box-shadow: 0 0 0 10px rgba(242,107,33,0); } 100% { box-shadow: 0 0 0 0 rgba(242,107,33,0); } }
+/* phones: a compact card along the bottom, without the image */
+@media (max-width: 767px) {
+  .promo { left: 12px; right: 12px; bottom: 12px; width: auto; max-width: none; }
+  .promo__media { height: 0; overflow: visible; background: none; }
+  .promo__glow, .promo__dash { display: none; }
+  .promo__close { background: #eef1f5; }
+  .promo__close svg { stroke: #0b1a33; }
+  .promo__body { padding: 16px 48px 16px 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .promo, .promo * { animation: none !important; transition: none !important; } }
+</style>
 </head>
 <body>
 <!-- ============================== STICKY NAVBAR (appears on scroll up) ============================== -->
@@ -869,6 +920,31 @@
 })();
 </script>
 <!-- ============================== ANNOUNCEMENT (first visit) ============================== -->
+<!-- ============================== SIDE POP-UP · FEATURE CARD ============================== -->
+<aside class="promo" id="promo" aria-label="Sanade announcement" hidden>
+  <div class="promo__media">
+    <div class="promo__glow" aria-hidden="true"></div>
+    <div class="promo__dash" aria-hidden="true">
+      <div class="promo__float">
+        <img src="assets/sanade-dashboard.svg" alt="" decoding="async">
+        <div class="promo__screen"></div>
+      </div>
+    </div>
+    <button type="button" class="promo__close" aria-label="Close">
+      <svg width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M1 1l8 8M9 1l-8 8"/></svg>
+    </button>
+  </div>
+  <div class="promo__body">
+    <div class="promo__eyebrow">NEW · SANADE</div>
+    <div class="promo__title">Your e-invoices, live in one dashboard</div>
+    <p class="promo__text"><b id="promo-count">38,412</b> invoices processed and counting. See how Sanade keeps UAE businesses compliant.</p>
+    <div class="promo__actions">
+      <a href="#contact" class="promo__cta">Book a demo</a>
+      <button type="button" class="promo__dismiss">Dismiss</button>
+    </div>
+  </div>
+</aside>
+
 <dialog class="announce" id="announce" tabindex="-1" aria-labelledby="announce-title" aria-describedby="announce-text">
   <button type="button" class="announce__close" data-announce-close aria-label="Close announcement"><i class="ph-bold ph-x"></i></button>
   <div class="announce__media">
@@ -919,6 +995,42 @@
     dlg.focus({ preventScroll: true });   // focus the dialog itself, so no button shows a focus ring on open
   };
   const start = () => setTimeout(open, motion ? 1800 : 600);   // after the hero intro settles
+  if (document.readyState === 'complete') start(); else addEventListener('load', start, { once: true });
+})();
+</script>
+<script>
+/* Side pop-up · feature card: slides in bottom-right after the hero intro (or after the
+   announcement dialog closes, so the two never show together); hides once the hero scrolls
+   away and comes back with it; Dismiss / × keep it closed for the rest of the visit. */
+(() => {
+  const card = document.getElementById('promo');
+  if (!card) return;
+  let dismissed = false;
+  try { dismissed = sessionStorage.getItem('li-promo-sanade-dismissed') === '1'; } catch (e) {}
+  if (dismissed) { card.remove(); return; }
+  card.hidden = false;
+
+  let count = 38412, tick = 0;
+  const out = document.getElementById('promo-count');
+  const close = () => {
+    try { sessionStorage.setItem('li-promo-sanade-dismissed', '1'); } catch (e) {}
+    card.classList.remove('is-shown');
+    clearInterval(tick);
+    setTimeout(() => card.remove(), 900);
+  };
+  card.querySelectorAll('.promo__close, .promo__dismiss').forEach((b) => b.addEventListener('click', close));
+
+  const hero = document.querySelector('.hero');
+  if (hero) new IntersectionObserver(([e]) => card.classList.toggle('is-away', e.intersectionRatio < 0.35), { threshold: [0, 0.35, 1] }).observe(hero);
+
+  const reduced = typeof REDUCED_MOTION !== 'undefined' && REDUCED_MOTION;
+  const dlg = document.getElementById('announce');
+  const show = () => {
+    if (dlg && dlg.open) { dlg.addEventListener('close', () => setTimeout(show, 500), { once: true }); return; }
+    requestAnimationFrame(() => card.classList.add('is-shown'));
+    if (!tick) tick = setInterval(() => { if (Math.random() < 0.55) out.textContent = (++count).toLocaleString('en-US'); }, 1400);
+  };
+  const start = () => setTimeout(show, reduced ? 800 : 2600);
   if (document.readyState === 'complete') start(); else addEventListener('load', start, { once: true });
 })();
 </script>
