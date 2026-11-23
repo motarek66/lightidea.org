@@ -48,11 +48,12 @@ html.menu-open .promo, html.menu-closing .promo { display: none; }
 .promo__wave { position: absolute; inset: 0; z-index: -2; background: url(assets/promo-wave.jpg) center / cover no-repeat; transform-origin: 30% 80%; }
 .promo__glow {                       /* the orange light behind the dashboard */
   position: absolute; left: 221px; top: 48px; width: 416px; height: 249px; z-index: -1; pointer-events: none;
-  box-shadow: 0 -6px 60px 0 rgba(242, 107, 33, 0.45); transform: perspective(700px) rotateX(22deg); transform-origin: 50% 0;
+  margin-top: -6px; background: rgba(242, 107, 33, 0.45); filter: blur(30px);   /* = Figma's 0 -6 60 orange shadow, without CSS box-shadow's hard inner edge */
+  transform: perspective(700px) rotateX(22deg); transform-origin: 50% 0;
 }
 .promo__dash {                       /* translucent device frame (Figma 1598:43928) with the dashboard screen inside */
   position: absolute; left: 220px; top: 57px; width: 285px; height: 157.36px; padding: 4.125px; border-radius: 10px;
-  background: rgba(255, 255, 255, 0.27); box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.45); will-change: transform;
+  background: #6c4f46; will-change: transform;   /* the frame colour as Figma renders it (27% white over the dark header) */
 }
 .promo__dash img { display: block; width: 196px; height: auto; max-width: none; border-radius: 6px 0 0 0; }
 .promo__intro { position: absolute; left: 20px; top: 22px; display: flex; flex-direction: column; align-items: flex-start; }
@@ -1069,7 +1070,7 @@ html.menu-open .promo, html.menu-closing .promo { display: none; }
     if (!G || idle.length) return;
     if (!phone()) {
       idle.push(G.to($('.promo__wave'), { scale: 1.08, xPercent: -3, duration: 9, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
-      idle.push(G.to($('.promo__dash'), { y: -4, rotation: -0.6, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
+      idle.push(G.to($('.promo__dash'), { y: -4, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
       idle.push(G.to($('.promo__glow'), { opacity: 0.55, duration: 2.6, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
       const h2 = $('.promo__h2');
       h2.classList.add('is-shining');
