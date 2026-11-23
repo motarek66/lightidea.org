@@ -35,7 +35,7 @@
    shown while the hero is on screen, dismissible for the session.
    ===================================================================== */
 .promo {
-  position: fixed; right: 24px; bottom: 24px; z-index: 80; width: 345px; max-width: calc(100vw - 24px);
+  position: fixed; right: var(--promo-r, 48px); bottom: var(--promo-b, 48px); z-index: 80;   /* set from the hero frame in JS: same gap from its right and bottom edges */ width: 345px; max-width: calc(100vw - 24px);
   border-radius: 16px; overflow: hidden; background: #fff; font-family: 'Inter', system-ui, sans-serif;
   box-shadow: 0 30px 60px -20px rgba(0,20,50,0.45), 0 0 0 1px rgba(11,26,51,0.04);
   opacity: 0; visibility: hidden; transform: translateY(28px) scale(0.96);
@@ -1022,6 +1022,18 @@ html.menu-open .promo, html.menu-closing .promo { display: none; }
 
   const hero = document.querySelector('.hero');
   if (hero) new IntersectionObserver(([e]) => card.classList.toggle('is-away', e.intersectionRatio < 0.35), { threshold: [0, 0.35, 1] }).observe(hero);
+
+  // sit inside the hero frame, the same gap from its right edge and its bottom edge
+  const place = () => {
+    if (!hero || innerWidth < 768) { card.style.removeProperty('--promo-r'); card.style.removeProperty('--promo-b'); return; }
+    const gap = Math.round(Math.min(32, Math.max(20, innerWidth * 0.0185)));
+    const r = hero.getBoundingClientRect();
+    const heroBottom = r.top + scrollY + r.height;            // where the hero ends with the page at the top
+    card.style.setProperty('--promo-r', Math.round(document.documentElement.clientWidth - r.right + gap) + 'px');
+    card.style.setProperty('--promo-b', Math.round(Math.max(gap, innerHeight - heroBottom + gap)) + 'px');
+  };
+  place();
+  addEventListener('resize', place);
 
   const reduced = typeof REDUCED_MOTION !== 'undefined' && REDUCED_MOTION;
   const dlg = document.getElementById('announce');
