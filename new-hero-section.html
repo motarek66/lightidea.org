@@ -1027,9 +1027,11 @@ html.menu-open .promo, html.menu-closing .promo { display: none; }
   const place = () => {
     if (!hero || innerWidth < 768) { card.style.removeProperty('--promo-r'); card.style.removeProperty('--promo-b'); return; }
     const gap = Math.round(Math.min(32, Math.max(20, innerWidth * 0.0185)));
-    const r = hero.getBoundingClientRect();
-    const heroBottom = r.top + scrollY + r.height;            // where the hero ends with the page at the top
-    card.style.setProperty('--promo-r', Math.round(document.documentElement.clientWidth - r.right + gap) + 'px');
+    // layout box of the hero (offset* ignore the intro's scale/translate, unlike getBoundingClientRect)
+    let left = 0, top = 0;
+    for (let el = hero; el; el = el.offsetParent) { left += el.offsetLeft; top += el.offsetTop; }
+    const heroRight = left + hero.offsetWidth, heroBottom = top + hero.offsetHeight;   // page at the top
+    card.style.setProperty('--promo-r', Math.round(document.documentElement.clientWidth - heroRight + gap) + 'px');
     card.style.setProperty('--promo-b', Math.round(Math.max(gap, innerHeight - heroBottom + gap)) + 'px');
   };
   place();
@@ -1039,6 +1041,7 @@ html.menu-open .promo, html.menu-closing .promo { display: none; }
   const dlg = document.getElementById('announce');
   const show = () => {
     if (dlg && dlg.open) { dlg.addEventListener('close', () => setTimeout(show, 500), { once: true }); return; }
+    place();
     requestAnimationFrame(() => card.classList.add('is-shown'));
     if (!tick) tick = setInterval(() => { if (Math.random() < 0.55) out.textContent = (++count).toLocaleString('en-US'); }, 1400);
   };
