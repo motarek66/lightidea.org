@@ -164,3 +164,112 @@ document.addEventListener('click', (e) => {
   }
   addEventListener('scroll', apply, { passive: true });
 })();
+
+/* ---------- Offices: Abu Dhabi (HQ) · Riyadh · Muscat — tabs + autoplay with a smooth swap ---------- */
+(function offices() {
+  const box = document.querySelector('.office[data-offices]');
+  if (!box) return;
+  const OFFICES = {
+    ae: { label: 'HEADQUARTERS', addr: 'Office 207, Al Nahyan Camp, Muroor Road, Abu Dhabi, United Arab Emirates P.O.BOX 110620',
+          maps: 'Al+Nahyan+Camp+Muroor+Road+Abu+Dhabi', tel: '+971543711199', phone: '+971 54 371 1199' },
+    sa: { label: 'SAUDI ARABIA OFFICE', addr: '7161 Alshaikh Hassan Bin Hussian Bin Ali, Ishbiliyah Dist, Kingdom of Saudi Arabia',
+          maps: '7161+Alshaikh+Hassan+Bin+Hussian+Bin+Ali+Ishbiliyah+Riyadh+Saudi+Arabia', tel: '+966561112912', phone: '+966 56 111 2912' },
+    // placeholder until the Muscat office address and phone are confirmed
+    om: { label: 'OMAN OFFICE', addr: 'Muscat, Sultanate of Oman', maps: 'Muscat+Oman', tel: '', phone: '' },
+  };
+  const ORDER = ['ae', 'sa', 'om'];
+  const DWELL = 6500;                                   // ms each office stays before the next one
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const card = box.querySelector('.office__card');
+  const swap = box.querySelector('.office__swap');
+  const label = box.querySelector('.office__label');
+  const addr = box.querySelector('.office__addr');
+  const dir = box.querySelector('.office__dir');
+  const phone = box.querySelector('.office__phone');
+  const map = box.querySelector('.office__map');
+  const tabs = [...box.querySelectorAll('.office__tab')];
+  const pins = [...box.querySelectorAll('.office__pin')];
+  const hls = [...box.querySelectorAll('.office__hl')];
+  let current = 'ae', busy = false;
+
+  const fill = (k) => {
+    const o = OFFICES[k];
+    label.textContent = o.label;
+    addr.textContent = o.addr;
+    dir.href = 'https://www.google.com/maps/search/?api=1&query=' + o.maps;
+    phone.hidden = !o.tel;
+    if (o.tel) { phone.href = 'tel:' + o.tel; phone.querySelector('span').textContent = o.phone; }
+  };
+  const mark = (k) => {
+    tabs.forEach((t) => { const on = t.dataset.office === k; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    pins.forEach((p) => p.classList.toggle('is-active', p.dataset.office === k));
+    hls.forEach((h) => h.classList.toggle('is-active', h.dataset.office === k));
+    const pin = pins.find((p) => p.dataset.office === k);
+    map.style.setProperty('--fx', pin.style.getPropertyValue('--x'));
+    map.style.setProperty('--fy', pin.style.getPropertyValue('--y'));
+  };
+
+  const show = (k) => {
+    if (k === current || busy) return;
+    current = k;
+    mark(k);
+    if (reduced) { fill(k); return; }
+    busy = true;
+    const from = card.offsetHeight;
+    swap.classList.remove('is-in');
+    swap.classList.add('is-out');
+    setTimeout(() => {
+      card.style.height = from + 'px';                      // freeze, swap the text, then ease to the new height
+      fill(k);
+      card.style.height = 'auto';
+      const to = card.offsetHeight;
+      card.style.height = from + 'px';
+      card.offsetHeight;                                    // reflow
+      card.style.height = to + 'px';
+      swap.classList.remove('is-out');
+      swap.classList.add('is-in');
+      setTimeout(() => { card.style.height = ''; busy = false; }, 520);
+    }, 260);
+  };
+
+  /* autoplay: runs while the card is on screen, pauses on hover / focus, stops after a manual pick */
+  let timer = 0, start = 0, left = DWELL, visible = false, hovered = false, stopped = reduced, raf = 0;
+  const bar = () => tabs.find((t) => t.dataset.office === current).querySelector('.office__tab-bar');
+  const draw = () => {
+    tabs.forEach((t) => { const b = t.querySelector('.office__tab-bar'); if (t.dataset.office !== current) b.style.transform = 'scaleX(0)'; });
+    if (stopped) { bar().style.transform = 'scaleX(0)'; return; }
+    const done = DWELL - left + (timer ? performance.now() - start : 0);
+    bar().style.transform = `scaleX(${Math.min(1, done / DWELL)})`;
+    if (timer) raf = requestAnimationFrame(draw);
+  };
+  const run = () => {
+    if (stopped || !visible || hovered || timer) return;
+    start = performance.now();
+    timer = setTimeout(() => { timer = 0; left = DWELL; show(ORDER[(ORDER.indexOf(current) + 1) % ORDER.length]); run(); }, left);
+    cancelAnimationFrame(raf); raf = requestAnimationFrame(draw);
+  };
+  const pause = () => {
+    if (!timer) return;
+    clearTimeout(timer); timer = 0; left = Math.max(0, left - (performance.now() - start));
+    cancelAnimationFrame(raf); draw();
+  };
+  const stop = () => { stopped = true; pause(); draw(); };
+
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => { stop(); show(t.dataset.office); });
+    t.addEventListener('keydown', (e) => {
+      const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      const n = tabs[(i + d + tabs.length) % tabs.length];
+      n.focus(); stop(); show(n.dataset.office);
+    });
+  });
+  box.addEventListener('pointerenter', () => { hovered = true; pause(); });
+  box.addEventListener('pointerleave', () => { hovered = false; run(); });
+  box.addEventListener('focusin', () => { hovered = true; pause(); });
+  box.addEventListener('focusout', () => { hovered = false; run(); });
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; visible ? run() : pause(); }, { threshold: 0.4 }).observe(box);
+  document.addEventListener('visibilitychange', () => (document.hidden ? pause() : run()));
+  mark(current);
+})();

@@ -576,22 +576,36 @@ html.menu-open .promo, html.menu-closing .promo { display: none; }
       </div>
 
       <div class="contact__grid">
-        <div class="office on-dark">
-          <!-- Figma 1384:36314: sky ground → region map with the HQ pinned → frosted address card -->
+        <div class="office on-dark" data-offices>
+          <!-- Figma 1384:36314 + two more offices: sky ground → region map with the office pins → frosted address card -->
           <img src="assets/office-bg.webp" alt="" class="office__bg">
           <div class="office__map" aria-hidden="true">
-            <img src="assets/contact-map-solid.svg" alt="">
-            <span class="office__pin"><span class="office__tag"><strong>Abu Dhabi</strong><span>Headquarters</span></span></span>
+            <img src="assets/contact-map-base.svg" alt="">
+            <img src="assets/contact-map-hl-ae.svg" alt="" class="office__hl is-active" data-office="ae">
+            <img src="assets/contact-map-hl-sa.svg" alt="" class="office__hl" data-office="sa">
+            <img src="assets/contact-map-hl-om.svg" alt="" class="office__hl" data-office="om">
+            <span class="office__pin is-active" data-office="ae" style="--x: 52.38%; --y: 46.18%"><span class="office__tag"><strong>Abu Dhabi</strong><span>Headquarters</span></span></span>
+            <span class="office__pin" data-office="sa" style="--x: 39.24%; --y: 45.61%"><span class="office__tag"><strong>Riyadh</strong><span>Saudi Arabia office</span></span></span>
+            <span class="office__pin" data-office="om" style="--x: 59.27%; --y: 48.53%"><span class="office__tag"><strong>Muscat</strong><span>Oman office</span></span></span>
           </div>
           <img src="assets/logo-white.svg" alt="LightIdea" class="office__logo">
-          <div class="office__legend" aria-hidden="true"><span><i></i>Headquarters</span><span><i></i>Markets we serve</span></div>
+          <div class="office__legend" aria-hidden="true"><span><i></i>Our offices</span><span><i></i>Markets we serve</span></div>
           <div class="office__card">
-            <small>HEADQUARTERS</small>
-            <strong>Office 207, Al Nahyan Camp, Muroor Road, Abu Dhabi, United Arab Emirates P.O.BOX 110620</strong>
-            <div class="office__actions">
-              <a class="office__btn office__btn--primary" href="https://www.google.com/maps/search/?api=1&amp;query=Al+Nahyan+Camp+Muroor+Road+Abu+Dhabi" target="_blank" rel="noopener">Get directions <i class="ph ph-arrow-up-right"></i></a>
-              <a class="office__btn" href="mailto:info@lightidea.org"><i class="ph ph-tray"></i>info@lightidea.org</a>
-              <a class="office__btn" href="tel:+971543711199"><i class="ph ph-phone"></i>+971 54 371 1199</a>
+            <div class="office__top">
+              <small class="office__label">HEADQUARTERS</small>
+              <div class="office__tabs" role="tablist" aria-label="Our offices">
+                <button type="button" role="tab" class="office__tab" data-office="ae" aria-selected="true">Abu Dhabi<i class="office__tab-bar"></i></button>
+                <button type="button" role="tab" class="office__tab" data-office="sa" aria-selected="false" tabindex="-1">Riyadh<i class="office__tab-bar"></i></button>
+                <button type="button" role="tab" class="office__tab" data-office="om" aria-selected="false" tabindex="-1">Muscat<i class="office__tab-bar"></i></button>
+              </div>
+            </div>
+            <div class="office__swap" aria-live="polite">
+              <strong class="office__addr">Office 207, Al Nahyan Camp, Muroor Road, Abu Dhabi, United Arab Emirates P.O.BOX 110620</strong>
+              <div class="office__actions">
+                <a class="office__btn office__btn--primary office__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Al+Nahyan+Camp+Muroor+Road+Abu+Dhabi" target="_blank" rel="noopener">Get directions <i class="ph ph-arrow-up-right"></i></a>
+                <a class="office__btn" href="mailto:info@lightidea.org"><i class="ph ph-tray"></i>info@lightidea.org</a>
+                <a class="office__btn office__phone" href="tel:+971543711199"><i class="ph ph-phone"></i><span>+971 54 371 1199</span></a>
+              </div>
             </div>
           </div>
         </div>

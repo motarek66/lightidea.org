@@ -516,6 +516,63 @@ html.motion .office__pin::after { animation: pin-breathe 3.2s ease-in-out infini
 .office__btn--primary:hover { background: #eaf3fb; }
 .office__btn--primary i { font-size: 16px; }
 @media (max-width: 560px) { .office__legend { display: none; } }
+/* =====================================================================
+   OFFICES — three offices in the contact map card (Abu Dhabi HQ, Riyadh,
+   Muscat). The map eases toward the active city, its country lights up,
+   the pin tag swaps and the address card cross-fades. Autoplays.
+   ===================================================================== */
+.office[data-offices] .office__map {
+  transform: scale(1.06); transform-origin: var(--fx, 52.38%) var(--fy, 46.18%);
+  transition: transform-origin 1.2s var(--ease-soft);
+}
+.office[data-offices] .office__map > img:first-child { position: relative; }
+.office__hl { position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s var(--ease-out); }
+.office__hl.is-active { opacity: 1; }
+.office[data-offices] .office__pin { left: var(--x); top: var(--y); }
+.office[data-offices] .office__pin::before { transform: scale(0.55); background: #ffb27a; box-shadow: 0 0 0 2px rgba(255,255,255,0.55); transition: transform 0.6s var(--ease-out), background-color 0.6s, box-shadow 0.6s; }
+.office[data-offices] .office__pin::after { opacity: 0; transform: scale(0.4); transition: opacity 0.5s var(--ease-out), transform 0.8s var(--ease-out); }
+.office[data-offices] .office__pin.is-active::before { transform: none; background: var(--c-brand); box-shadow: 0 0 0 3px rgba(255,255,255,0.9); }
+.office[data-offices] .office__pin.is-active::after { opacity: 0.42; transform: none; }
+html.motion .office[data-offices] .office__pin:not(.is-active)::after { animation: none; }
+.office[data-offices] .office__tag {
+  opacity: 0; transform: translateX(-8px) scale(0.96); filter: blur(6px); pointer-events: none;
+  transition: opacity 0.35s var(--ease-out), transform 0.5s var(--ease-out), filter 0.35s var(--ease-out);
+}
+.office[data-offices] .office__pin.is-active .office__tag { opacity: 1; transform: none; filter: none; transition-delay: 0.35s; }
+.office[data-offices] .office__pin.is-active { z-index: 2; }
+.office[data-offices] .office__pin[data-office="sa"] .office__tag { left: auto; right: 16px; transform: translateX(8px) scale(0.96); }   /* Riyadh opens to the left, clear of the Gulf pins */
+.office[data-offices] .office__pin[data-office="sa"].is-active .office__tag { transform: none; }
+
+.office__top { display: flex; align-items: center; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; }
+.office__tabs { display: inline-flex; gap: 4px; padding: 3px; border-radius: 99px; background: rgba(2,7,26,0.28); border: 1px solid rgba(255,255,255,0.22); }
+.office__tab {
+  position: relative; overflow: hidden; min-height: 30px; padding: 0 13px; border: 0; border-radius: 99px; cursor: pointer;
+  font: inherit; font-size: 12.5px; font-weight: 500; line-height: 1; white-space: nowrap; color: rgba(255,255,255,0.8); background: transparent;
+  transition: background-color 0.45s var(--ease-out), color 0.45s var(--ease-out);
+}
+.office__tab:hover { color: #fff; background: rgba(255,255,255,0.1); }
+.office__tab[aria-selected="true"] { color: #03122e; background: #fff; }
+.office__tab:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.office__tab-bar {                 /* autoplay progress along the bottom of the active tab */
+  position: absolute; left: 12px; right: 12px; bottom: 4px; height: 2px; border-radius: 2px;
+  background: var(--c-brand); transform: scaleX(0); transform-origin: left center; opacity: 0;
+}
+.office__tab[aria-selected="true"] .office__tab-bar { opacity: 0.85; }
+.office__swap { display: flex; flex-direction: column; gap: 10px; }
+.office__swap.is-out { opacity: 0; transform: translateY(-8px); filter: blur(6px); transition: opacity 0.25s var(--ease-out), transform 0.3s var(--ease-out), filter 0.25s; }
+.office__swap.is-in { animation: office-in 0.6s var(--ease-soft) both; }
+@keyframes office-in { from { opacity: 0; transform: translateY(12px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.office__card { transition: height 0.5s var(--ease-soft); }
+@media (max-width: 560px) {
+  .office__tabs { width: 100%; }
+  .office[data-offices] .office__pin[data-office="sa"] .office__tag { left: 16px; right: auto; transform: translateX(-8px) scale(0.96); }   /* no room on the left on phones */
+  .office__tab { flex: 1; padding: 0 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .office[data-offices] .office__map, .office__hl, .office[data-offices] .office__pin::before, .office[data-offices] .office__tag, .office__card { transition: none; }
+  .office__swap.is-in { animation: none; }
+}
+
 .form { background: #fff; border-radius: 24px; padding: clamp(20px, 2.6vw, 36px); display: flex; flex-direction: column; gap: 16px; }
 .form__title { margin: 0 0 4px; font-size: clamp(19px, 1.55vw, 22px); font-weight: 500; line-height: 1.35; letter-spacing: -0.02em; color: var(--c-navy); }
 .form__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
